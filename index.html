@@ -40,6 +40,13 @@
 }
 
   body{font-family:Chicago,Geneva,system-ui,sans-serif;background:#d6d6d6;display:flex;flex-direction:column;align-items:center;padding:20px}
+  @media (max-width: 480px) {
+  body {
+    padding-top: 12px;   /* was 20px */
+    padding-bottom: 20px;
+  }
+}
+
   h1{margin-bottom:4px;font-size:20px}
   .clue{font-weight:bold;margin-bottom:8px}
   .controls{margin-bottom:10px}
@@ -105,7 +112,7 @@ body.solved .cell:not(.selected) {
 </style>
 </head>
 <body>
-<h1>Can of Words 🪱</h1>
+<h1>Can of Words 🪱🪱</h1>
 <div id="clue" class="clue"></div>
 <div class="controls"><button id="undoBtn">Undo Last Word</button></div>
 <div class="frame"><div id="grid" class="grid"></div></div>

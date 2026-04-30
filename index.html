@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.2 LOCKED (Fade-in Hints + Completion Fix)</title>
+<title>Can of Words — VERSION 2.0 (LOCKED, Selection Fix)</title>
 <style>
   body{
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -28,27 +28,21 @@
     position:relative;z-index:1
   }
 
-  .selected{
-    z-index:3;
-    box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.35)
-  }
+  .selected{z-index:3;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.35)}
 
-  /* Next-letter halo with fade-in */
+  /* Next-letter hint: neutral gray, fade-in */
   .next-hint::after{
     content:'';
     position:absolute;
     inset:6px;
     border-radius:50%;
-    background:color-mix(in srgb, var(--hint-color) 35%, transparent);
+    background:rgba(120,120,120,0.35);
     opacity:0;
-    animation:hintFade 350ms ease-out forwards;
+    animation:hintFade 300ms ease-out forwards;
     z-index:-1;
   }
 
-  @keyframes hintFade{
-    from{opacity:0;transform:scale(0.85)}
-    to{opacity:1;transform:scale(1)}
-  }
+  @keyframes hintFade{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 
   .sentence{margin-top:14px;max-width:360px;text-align:center}
   .sentence-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:6px}
@@ -67,17 +61,15 @@
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceRow" class="sentence-row"></div></div>
 
 <script>
-const GRID_SIZE=7;
 const COLORS=['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
-    const PUZZLE = { clue: 'Titanic', sentence:'ninety eight best picture oscar winner '};  ////////////////////////////////////////////////////////
+const PUZZLE={clue:'Whale',sentence:'the largest mammal on earth'};
 const LETTERS=PUZZLE.sentence.replaceAll(' ','');
 
 function rng(seed){return()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296)}
 function genPath(len){const r=rng(123456);while(true){let used=new Set(),p=[];let x=r()*7|0,y=r()*7|0;
  p.push([x,y]);used.add(x+','+y);let ok=true;
  for(let i=1;i<len;i++){
-  let opts=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>{
-   let nx=x+d[0],ny=y+d[1];return nx>=0&&ny>=0&&nx<7&&ny<7&&!used.has(nx+','+ny)});
+  let opts=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>{let nx=x+d[0],ny=y+d[1];return nx>=0&&ny>=0&&nx<7&&ny<7&&!used.has(nx+','+ny)})
   if(!opts.length){ok=false;break}
   let [dx,dy]=opts[r()*opts.length|0];x+=dx;y+=dy;p.push([x,y]);used.add(x+','+y)}
  if(ok)return p}}
@@ -102,7 +94,7 @@ function build(){gridEl.innerHTML='';grid.forEach((row,r)=>row.forEach((l,c)=>{
  d.dataset.r=r;d.dataset.c=c;d.onpointerdown=start;gridEl.appendChild(d)}))}
 
 function clear(){document.querySelectorAll('.cell').forEach(c=>{
- c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0';c.style.removeProperty('--hint-color')})}
+ c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0'})}
 
 const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
 function corner(a,b){const m={'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl','0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};return m[a+'|'+b]}
@@ -123,60 +115,46 @@ function applyWorm(cells,color){cells.forEach((c,i)=>{
 function highlightNext(){
  if(!words.length||drag.length||done)return;
  const last=words.at(-1).cells.at(-1);
- const col=COLORS[words.length%COLORS.length];
  document.querySelectorAll('.cell').forEach(c=>{
-  if(!c.classList.contains('selected')&&adj(c,last)){
-    c.classList.add('next-hint');
-    c.style.setProperty('--hint-color',col);
-  }
- });
-}
+  if(!c.classList.contains('selected')&&adj(c,last))c.classList.add('next-hint');
+ })}
 
 function redraw(){
  clear();
  words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS.length]));
  if(drag.length)applyWorm(drag,COLORS[words.length%COLORS.length]);
-
  rowEl.innerHTML='';
- words.forEach((w,i)=>{
-  let wordEl=document.createElement('div');wordEl.className='word';
-  w.text.split('').forEach((ch,j)=>{
-   let c=document.createElement('div');c.className='cell selected';c.textContent=ch.toUpperCase();
-   c.style.background=COLORS[i%COLORS.length];
-   c.style.borderRadius=j==0? '50% 0 0 50%' : j==w.text.length-1? '0 50% 50% 0' : '0';
-   wordEl.appendChild(c)});
-  rowEl.appendChild(wordEl)
- });
-
+ words.forEach((w,i)=>{let wordEl=document.createElement('div');wordEl.className='word';
+  w.text.split('').forEach((ch,j)=>{let c=document.createElement('div');c.className='cell selected';c.textContent=ch.toUpperCase();
+   c.style.background=COLORS[i%COLORS.length];c.style.borderRadius=j==0?'50% 0 0 50%':j==w.text.length-1?'0 50% 50% 0':'0';
+   wordEl.appendChild(c)});rowEl.appendChild(wordEl)});
  highlightNext();
-
  checkCompletion();
 }
 
 function checkCompletion(){
  const total=words.reduce((a,w)=>a+w.text.length,0);
- if(total===LETTERS.length&&!done){
-  done=true;
-  undoBtn.disabled=true;
+ if(total===LETTERS.length&&!done){done=true;undoBtn.disabled=true;
+  document.querySelectorAll('.next-hint').forEach(n=>n.classList.remove('next-hint'));
   words.flatMap(w=>w.cells).forEach((c,i)=>setTimeout(()=>c.classList.add('success'),i*30));
- }
-}
+ }}
 
 function adj(a,b){return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)==1}
 
-function start(e){if(done)return;let c=e.target;
- if(words.length&&!adj(c,words.at(-1).cells.at(-1)))return;
+function start(e){if(done)return;const c=e.target;
+ if(c.classList.contains('selected')) return; // NEW: cannot start on committed worm
+ if(words.length && !adj(c, words.at(-1).cells.at(-1))) return;
  drag=[c];gridEl.onpointermove=move;document.onpointerup=end;redraw()}
 
-function move(e){let t=document.elementFromPoint(e.clientX,e.clientY);
+function move(e){const t=document.elementFromPoint(e.clientX,e.clientY);
  if(!t||!t.classList.contains('cell'))return;
+ if(t.classList.contains('selected'))return; // NEW: cannot enter committed worm
  if(drag.length>1&&t===drag[drag.length-2]){drag.pop();redraw();return}
  if(drag.includes(t)||!adj(drag.at(-1),t))return;
  drag.push(t);redraw()}
 
 function end(){document.onpointerup=null;gridEl.onpointermove=null;
- if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});
- drag=[];redraw()}
+ if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});drag=[];redraw()}
 
 build();redraw();
 </script>

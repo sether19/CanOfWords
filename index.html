@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.2 FINAL</title>
+<title>Can of Words — v1.2 FINAL (Visual Polish)</title>
 <style>
   body{
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -12,6 +12,7 @@
   h1{margin-bottom:4px;font-size:20px}
   .clue{font-weight:bold;margin-bottom:8px}
   .controls{margin-bottom:10px}
+
   button{
     font-family: Chicago, Geneva, system-ui, sans-serif;
     font-size:13px;padding:4px 10px;background:#e6e6e6;
@@ -21,26 +22,46 @@
   button:active{border-top:2px solid #7a7a7a;border-left:2px solid #7a7a7a;border-right:2px solid #fff;border-bottom:2px solid #fff}
   button:disabled{opacity:0.5}
 
+  /* GRID FRAME — centered background */
   .grid{
-    display:grid;grid-template-columns:repeat(7,44px);grid-template-rows:repeat(7,44px);
-    padding:6px;background:#bdbdbd;
-    border-top:3px solid #fff;border-left:3px solid #fff;
-    border-right:3px solid #7a7a7a;border-bottom:3px solid #7a7a7a;
+    display:grid;
+    grid-template-columns:repeat(7,44px);
+    grid-template-rows:repeat(7,44px);
+    gap:4px;               /* replaces cell margins (fixes centering) */
+    padding:8px;           /* equal padding on all sides */
+    background:#bdbdbd;
+    border-top:3px solid #fff;
+    border-left:3px solid #fff;
+    border-right:3px solid #7a7a7a;
+    border-bottom:3px solid #7a7a7a;
     touch-action:none;
   }
+
+  /* CELLS — flat by default */
   .cell{
-    width:44px;height:44px;margin:2px;background:#e6e6e6;
+    width:44px;height:44px;
+    background:#e6e6e6;
     display:flex;align-items:center;justify-content:center;
     font-size:18px;font-weight:bold;user-select:none;
-    border-top:2px solid #fff;border-left:2px solid #fff;
-    border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;
-    transition:transform .25s ease,box-shadow .25s ease;
+    border:none;           /* flat, no bevel for unselected */
+    transition:transform .25s ease, box-shadow .25s ease;
   }
-  .selected{position:relative;top:-2px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #5a5a5a;border-bottom:2px solid #5a5a5a}
-  .valid-next{box-shadow:inset 0 0 0 3px var(--hint-color), inset 0 0 10px var(--hint-color)}
+
+  /* SELECTED WORM CELLS — raised only here */
+  .selected{
+    position:relative;top:-2px;
+    border-top:2px solid #fff;
+    border-left:2px solid #fff;
+    border-right:2px solid #5a5a5a;
+    border-bottom:2px solid #5a5a5a;
+  }
+
+  .valid-next{
+    box-shadow:inset 0 0 0 3px var(--hint-color), inset 0 0 10px var(--hint-color);
+  }
 
   .cell.success{animation:pop 450ms ease-out forwards}
-  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15);box-shadow:0 6px 0 rgba(0,0,0,.25)}100%{transform:scale(1)}}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
 
   .sentence{margin-top:14px;max-width:320px;text-align:center;font-size:14px}
 </style>
@@ -53,17 +74,15 @@
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceText"></div></div>
 
 <script>
-// ===== CONFIG =====
+/* === Script identical to v1.2 FINAL — visuals only changed above === */
 const GRID_SIZE=7;
 const COLORS=['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
 const alphabet='abcdefghijklmnopqrstuvwxyz';
 const PUZZLE={clue:'Whale',sentence:'the largest mammal on earth'};
 
-// ===== RNG =====
 function seedFromString(str){let s=0;for(let i=0;i<str.length;i++)s=(s*31+str.charCodeAt(i))>>>0;return s}
 function makeRNG(seed){return()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296)}
 
-// ===== PATH =====
 function generatePath(len){const rand=makeRNG(seedFromString(Math.random().toString()));
   while(true){const used=new Set(),path=[];let r=rand()*GRID_SIZE|0,c=rand()*GRID_SIZE|0;path.push([r,c]);used.add(r+','+c);let fail=false;
     for(let i=1;i<len;i++){
@@ -74,7 +93,6 @@ function generatePath(len){const rand=makeRNG(seedFromString(Math.random().toStr
     if(!fail)return path
   }}
 
-// ===== SETUP =====
 const LETTERS=PUZZLE.sentence.replaceAll(' ','');
 const PATH=generatePath(LETTERS.length);
 const grid=Array.from({length:GRID_SIZE},()=>Array(GRID_SIZE).fill(''));
@@ -96,22 +114,27 @@ function clearCells(){document.querySelectorAll('.cell').forEach(c=>{c.className
 const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
 function corner(vin,vout){const m={'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl','0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};return m[`${vin.x},${vin.y}|${vout.x},${vout.y}`]}
 
-function applyWorm(cells,color){cells.forEach((cell,i)=>{cell.classList.add('selected');cell.style.background=color;if(cells.length===1){cell.style.borderRadius='50%';return}if(i===0||i===cells.length-1){const n=i===0?cells[1]:cells[cells.length-2];const dr=n.dataset.r-cell.dataset.r,dc=n.dataset.c-cell.dataset.c;if(dc==1)cell.style.borderRadius='50% 0 0 50%';if(dc==-1)cell.style.borderRadius='0 50% 50% 0';if(dr==1)cell.style.borderRadius='50% 50% 0 0';if(dr==-1)cell.style.borderRadius='0 0 50% 50%';return}const p=cells[i-1],n=cells[i+1];const k=corner({x:cell.dataset.c-p.dataset.c,y:cell.dataset.r-p.dataset.r},{x:n.dataset.c-cell.dataset.c,y:n.dataset.r-cell.dataset.r});if(k)cell.style.borderRadius=RAD[k]})}
+function applyWorm(cells,color){cells.forEach((cell,i)=>{cell.classList.add('selected');cell.style.background=color;if(cells.length===1){cell.style.borderRadius='50%';return}
+  if(i===0||i===cells.length-1){const n=i===0?cells[1]:cells[cells.length-2];const dr=n.dataset.r-cell.dataset.r,dc=n.dataset.c-cell.dataset.c;
+    if(dc==1)cell.style.borderRadius='50% 0 0 50%';if(dc==-1)cell.style.borderRadius='0 50% 50% 0';
+    if(dr==1)cell.style.borderRadius='50% 50% 0 0';if(dr==-1)cell.style.borderRadius='0 0 50% 50%';return}
+  const p=cells[i-1],n=cells[i+1];const k=corner({x:cell.dataset.c-p.dataset.c,y:cell.dataset.r-p.dataset.r},{x:n.dataset.c-cell.dataset.c,y:n.dataset.r-cell.dataset.r});if(k)cell.style.borderRadius=RAD[k]
+})}
 
 function redraw(){clearCells();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS.length]));sentenceEl.textContent=words.map(w=>w.text).join(' ');if(!gameComplete)highlightNext()}
-
 function adj(a,b){return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)===1}
 
 function highlightNext(){if(!words.length||dragging)return;const tail=words.at(-1).cells.at(-1);const col=COLORS[words.length%COLORS.length];document.querySelectorAll('.cell').forEach(c=>{if(!c.classList.contains('selected')&&adj(c,tail)){c.classList.add('valid-next');c.style.setProperty('--hint-color',col)}})}
 
 function startDrag(e){if(gameComplete)return;const c=e.target;if(words.length&&!adj(c,words.at(-1).cells.at(-1)))return;dragging=true;drag=[c];redraw();applyWorm(drag,COLORS[words.length%COLORS.length])}
 
-function dragMove(e){if(!dragging||gameComplete)return;const t=document.elementFromPoint(e.clientX,e.clientY);if(!t||!t.classList.contains('cell'))return;if(drag.length>1&&t===drag[drag.length-2]){drag.pop();redraw();applyWorm(drag,COLORS[words.length%COLORS.length]);return}if(drag.includes(t)||!adj(drag.at(-1),t))return;drag.push(t);redraw();applyWorm(drag,COLORS[words.length%COLORS.length])}
+function dragMove(e){if(!dragging||gameComplete)return;const t=document.elementFromPoint(e.clientX,e.clientY);if(!t||!t.classList.contains('cell'))return;
+  if(drag.length>1&&t===drag[drag.length-2]){drag.pop();redraw();applyWorm(drag,COLORS[words.length%COLORS.length]);return}
+  if(drag.includes(t)||!adj(drag.at(-1),t))return;drag.push(t);redraw();applyWorm(drag,COLORS[words.length%COLORS.length])}
 
 function endDrag(){if(!dragging||gameComplete)return;dragging=false;if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});drag=[];redraw();checkSuccess()}
 
 function checkSuccess(){const total=words.reduce((a,w)=>a+w.text.length,0);if(total===LETTERS.length){gameComplete=true;document.getElementById('undoBtn').disabled=true;clearHighlights();words.flatMap(w=>w.cells).forEach((c,i)=>setTimeout(()=>c.classList.add('success'),i*30))}}
-
 function clearHighlights(){document.querySelectorAll('.cell').forEach(c=>{c.classList.remove('valid-next');c.style.removeProperty('--hint-color')})}
 
 buildGrid();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.1b</title>
+<title>Can of Words — v1.1c</title>
 <style>
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -78,41 +78,30 @@ function generatePath(letters, daily){
     const used = new Set();
     const path = [];
 
-    // random start anywhere
     let r = Math.floor(rand()*GRID_SIZE);
     let c = Math.floor(rand()*GRID_SIZE);
 
-    path.push([r,c]);
-    used.add(r+','+c);
-    let dir = null;
-    let failed = false;
+    path.push([r,c]); used.add(r+','+c);
+    let dir = null; let failed=false;
 
     for(let i=1;i<letters.length;i++){
-      const neighbors = [
-        ['up',-1,0],['down',1,0],['left',0,-1],['right',0,1]
-      ].filter(([d,dr,dc])=>{
-        const nr=r+dr, nc=c+dc;
-        return nr>=0 && nr<GRID_SIZE && nc>=0 && nc<GRID_SIZE && !used.has(nr+','+nc);
-      });
-
+      const neighbors = [['up',-1,0],['down',1,0],['left',0,-1],['right',0,1]]
+        .filter(([d,dr,dc])=>{
+          const nr=r+dr, nc=c+dc;
+          return nr>=0&&nr<GRID_SIZE&&nc>=0&&nc<GRID_SIZE&&!used.has(nr+','+nc);
+        });
       if(!neighbors.length){ failed=true; break; }
 
       const weighted = neighbors.map(([d,dr,dc])=>{
-        let w=1;
-        if(d===dir) w*=0.4;       // discourage straights
-        if(dir && d!==dir) w*=1.5; // prefer turns
-        return {d,dr,dc,w};
+        let w=1; if(d===dir) w*=0.4; if(dir&&d!==dir) w*=1.5; return {d,dr,dc,w};
       });
-
       const total = weighted.reduce((a,b)=>a+b.w,0);
-      let pick = rand()*total;
-      let choice = weighted[0];
+      let pick = rand()*total; let choice=weighted[0];
       for(const o of weighted){ if((pick-=o.w)<=0){ choice=o; break; } }
 
       r+=choice.dr; c+=choice.dc; dir=choice.d;
       path.push([r,c]); used.add(r+','+c);
     }
-
     if(!failed) return path;
   }
   throw new Error('Path generation failed');
@@ -149,7 +138,9 @@ function buildGrid(){
 }
 
 function clearCells(){ document.querySelectorAll('.cell').forEach(c=>{c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0';}); }
+
 const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
+
 function bendCorner(vin,vout){
   if(vin.x===1&&vout.y===1) return 'tr'; if(vin.x===1&&vout.y===-1) return 'br';
   if(vin.x===-1&&vout.y===1) return 'tl'; if(vin.x===-1&&vout.y===-1) return 'bl';
@@ -164,6 +155,9 @@ function redraw(){
     const col=COLORS[i%COLORS.length];
     w.cells.forEach((cell,idx)=>{
       cell.classList.add('selected'); cell.style.background=col;
+      // SINGLE-LETTER WORD: fully rounded
+      if(w.cells.length===1){ cell.style.borderRadius='50%'; return; }
+
       if(idx===0||idx===w.cells.length-1){
         const n=idx===0?w.cells[1]:w.cells[w.cells.length-2];
         const dr=n.dataset.r-cell.dataset.r, dc=n.dataset.c-cell.dataset.c;
@@ -188,11 +182,12 @@ function isAdjacent(a,b){ return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.da
 function startDrag(e){
   const cell=e.target;
 
-  // enforce sentence continuity
+  // enforce sentence continuity (allow extending single-letter)
   if(words.length){
     const lastWord = words[words.length-1];
     const tail = lastWord.cells[lastWord.cells.length-1];
-    if(!isAdjacent(cell, tail)) return;
+    const sameCell = lastWord.cells.length===1 && cell===tail;
+    if(!sameCell && !isAdjacent(cell, tail)) return;
   }
 
   if(removeWord(cell)) return;

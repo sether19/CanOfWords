@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.1e</title>
+<title>Can of Words — v1.1f</title>
 <style>
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -13,7 +13,28 @@
     padding: 20px;
   }
   h1 { margin-bottom: 4px; font-size: 20px; }
-  .clue { font-weight: bold; margin-bottom: 12px; }
+  .clue { font-weight: bold; margin-bottom: 8px; }
+
+  .controls {
+    margin-bottom: 10px;
+  }
+
+  button {
+    font-family: Chicago, Geneva, system-ui, sans-serif;
+    font-size: 13px;
+    padding: 4px 10px;
+    background: #e6e6e6;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #7a7a7a;
+    border-bottom: 2px solid #7a7a7a;
+  }
+  button:active {
+    border-top: 2px solid #7a7a7a;
+    border-left: 2px solid #7a7a7a;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+  }
 
   .grid {
     display: grid;
@@ -37,11 +58,6 @@
     border-left: 2px solid #fff;
     border-right: 2px solid #7a7a7a;
     border-bottom: 2px solid #7a7a7a;
-    transition: background 0.15s ease;
-  }
-
-  .preview {
-    background: #ddd;
   }
 
   .selected {
@@ -58,14 +74,19 @@
       inset 0 0 10px var(--hint-color);
   }
 
-  .sentence { margin-top: 16px; max-width: 320px; text-align: center; font-size: 14px; }
+  .sentence { margin-top: 14px; max-width: 320px; text-align: center; font-size: 14px; }
 </style>
 </head>
 <body>
+
 <h1>Can of Words</h1>
 <div id="clue" class="clue"></div>
+<div class="controls">
+  <button id="undoBtn">Undo Last Word</button>
+</div>
 <div id="grid" class="grid"></div>
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceText"></div></div>
+
 <script>
 // ================= PUZZLES =================
 const PUZZLES = [
@@ -75,9 +96,7 @@ const PUZZLE_INDEX = 0;
 
 // ================= CONFIG =================
 const GRID_SIZE = 7;
-const COLORS = [
-  '#f8bbd0', '#b9f6ca', '#ffe082', '#9bdcff', '#ffcc80', '#d1c4e9', '#d7c4a0'
-];
+const COLORS = ['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
 const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
 // ================= RNG =================
@@ -135,6 +154,10 @@ const gridEl=document.getElementById('grid');
 const sentenceEl=document.getElementById('sentenceText');
 document.getElementById('clue').textContent = `${puzzle.clue} (${ANSWER.split(' ').length})`;
 
+document.getElementById('undoBtn').onclick = () => {
+  if(words.length>0){ words.pop(); redraw(); }
+};
+
 let isDragging=false, dragCells=[], words=[];
 
 function buildGrid(){
@@ -150,7 +173,7 @@ function buildGrid(){
 }
 
 function clearCells(){ document.querySelectorAll('.cell').forEach(c=>{
-  c.classList.remove('selected','preview','valid-next');
+  c.classList.remove('selected','valid-next');
   c.style.background='#e6e6e6'; c.style.borderRadius='0'; c.style.removeProperty('--hint-color');
 }); }
 
@@ -215,19 +238,29 @@ function startDrag(e){
     const sameCell = lastWord.cells.length===1 && cell===tail;
     if(!sameCell && !isAdjacent(cell, tail)) return;
   }
-  const idx = words.length;
   isDragging=true; dragCells=[cell];
   gridEl.setPointerCapture(e.pointerId);
-  applyWormStyle(dragCells, COLORS[idx % COLORS.length]);
+  redraw();
+  applyWormStyle(dragCells, COLORS[words.length % COLORS.length]);
 }
 
 function dragMove(e){
   if(!isDragging) return;
   const t=document.elementFromPoint(e.clientX,e.clientY);
   if(!t||!t.classList.contains('cell')) return;
+
+  // BACKTRACK: move back to previous cell
+  if(dragCells.length>1 && t===dragCells[dragCells.length-2]){
+    dragCells.pop();
+    redraw();
+    applyWormStyle(dragCells, COLORS[words.length % COLORS.length]);
+    return;
+  }
+
   if(dragCells.includes(t)) return;
   const last=dragCells[dragCells.length-1];
   if(!isAdjacent(last,t)) return;
+
   dragCells.push(t);
   redraw();
   applyWormStyle(dragCells, COLORS[words.length % COLORS.length]);

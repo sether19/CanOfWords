@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.1</title>
+<title>Can of Words — v1.1b</title>
 <style>
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -65,9 +65,7 @@ const COLORS = ['#9bdcff','#b9f6ca','#ffe082','#f8bbd0','#ffcc80','#d1c4e9','#d7
 const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
 // ================= RNG =================
-function seedFromString(str){
-  let s=0; for(let i=0;i<str.length;i++) s=(s*31+str.charCodeAt(i))>>>0; return s;
-}
+function seedFromString(str){ let s=0; for(let i=0;i<str.length;i++) s=(s*31+str.charCodeAt(i))>>>0; return s; }
 function makeRNG(seed){ return ()=>((seed = (seed*1664525+1013904223)>>>0)/4294967296); }
 
 // ================= PATH GENERATOR =================
@@ -79,9 +77,13 @@ function generatePath(letters, daily){
   for(let attempt=0; attempt<maxAttempts; attempt++){
     const used = new Set();
     const path = [];
-    let r = Math.floor(GRID_SIZE/2), c = Math.floor(GRID_SIZE/2);
-    path.push([r,c]); used.add(r+','+c);
 
+    // random start anywhere
+    let r = Math.floor(rand()*GRID_SIZE);
+    let c = Math.floor(rand()*GRID_SIZE);
+
+    path.push([r,c]);
+    used.add(r+','+c);
     let dir = null;
     let failed = false;
 
@@ -93,13 +95,12 @@ function generatePath(letters, daily){
         return nr>=0 && nr<GRID_SIZE && nc>=0 && nc<GRID_SIZE && !used.has(nr+','+nc);
       });
 
-      if(neighbors.length===0){ failed=true; break; }
+      if(!neighbors.length){ failed=true; break; }
 
-      // weight choices
       const weighted = neighbors.map(([d,dr,dc])=>{
         let w=1;
-        if(d===dir) w*=0.4;           // discourage straight lines
-        if(dir && d!==dir) w*=1.5;    // prefer turns
+        if(d===dir) w*=0.4;       // discourage straights
+        if(dir && d!==dir) w*=1.5; // prefer turns
         return {d,dr,dc,w};
       });
 
@@ -127,8 +128,7 @@ const grid = Array.from({length:GRID_SIZE},()=>Array(GRID_SIZE).fill(''));
 PATH.forEach((p,i)=>grid[p[0]][p[1]] = LETTERS[i]);
 
 const randFill = makeRNG(123456);
-for(let r=0;r<GRID_SIZE;r++)for(let c=0;c<GRID_SIZE;c++)
-  if(!grid[r][c]) grid[r][c]=alphabet[Math.floor(randFill()*alphabet.length)];
+for(let r=0;r<GRID_SIZE;r++)for(let c=0;c<GRID_SIZE;c++) if(!grid[r][c]) grid[r][c]=alphabet[Math.floor(randFill()*alphabet.length)];
 
 const gridEl=document.getElementById('grid');
 const sentenceEl=document.getElementById('sentenceText');
@@ -183,10 +183,44 @@ function redraw(){
   sentenceEl.textContent=words.map(w=>w.text).join(' ');
 }
 
-function startDrag(e){const cell=e.target;if(removeWord(cell))return;isDragging=true;dragCells=[cell];gridEl.setPointerCapture(e.pointerId);cell.classList.add('preview');}
-function dragMove(e){if(!isDragging)return;const t=document.elementFromPoint(e.clientX,e.clientY);if(!t||!t.classList.contains('cell'))return;if(dragCells.includes(t))return;const last=dragCells[dragCells.length-1];if(Math.abs(last.dataset.r-t.dataset.r)+Math.abs(last.dataset.c-t.dataset.c)!==1)return;dragCells.push(t);t.classList.add('preview');}
-function endDrag(){if(!isDragging)return;isDragging=false;if(dragCells.length)words.push({cells:[...dragCells],text:dragCells.map(c=>c.textContent.toLowerCase()).join('')});dragCells=[];redraw();}
-function removeWord(cell){const i=words.findIndex(w=>w.cells.includes(cell));if(i!==-1){words.splice(i,1);redraw();return true;}return false;}
+function isAdjacent(a,b){ return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)===1; }
+
+function startDrag(e){
+  const cell=e.target;
+
+  // enforce sentence continuity
+  if(words.length){
+    const lastWord = words[words.length-1];
+    const tail = lastWord.cells[lastWord.cells.length-1];
+    if(!isAdjacent(cell, tail)) return;
+  }
+
+  if(removeWord(cell)) return;
+  isDragging=true; dragCells=[cell]; gridEl.setPointerCapture(e.pointerId); cell.classList.add('preview');
+}
+
+function dragMove(e){
+  if(!isDragging) return;
+  const t=document.elementFromPoint(e.clientX,e.clientY);
+  if(!t||!t.classList.contains('cell'))return;
+  if(dragCells.includes(t))return;
+  const last=dragCells[dragCells.length-1];
+  if(Math.abs(last.dataset.r-t.dataset.r)+Math.abs(last.dataset.c-t.dataset.c)!==1)return;
+  dragCells.push(t); t.classList.add('preview');
+}
+
+function endDrag(){
+  if(!isDragging) return;
+  isDragging=false;
+  if(dragCells.length) words.push({cells:[...dragCells], text:dragCells.map(c=>c.textContent.toLowerCase()).join('')});
+  dragCells=[]; redraw();
+}
+
+function removeWord(cell){
+  const i=words.findIndex(w=>w.cells.includes(cell));
+  if(i!==-1){ words.splice(i,1); redraw(); return true; }
+  return false;
+}
 
 buildGrid();
 </script>

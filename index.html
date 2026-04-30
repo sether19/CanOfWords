@@ -6,7 +6,7 @@
   name="viewport"
   content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 />
-<title>Can of Words — VERSION 2.0 (Randomization Restored)</title>
+<title>Can of Words — v3.0</title>
 <style>
   html, body {
   margin: 0;
@@ -105,7 +105,7 @@ body.solved .cell:not(.selected) {
 </style>
 </head>
 <body>
-<h1>Can of Words 🪱</h1>
+<h1>Can of Words 🪱🪱</h1>
 <div id="clue" class="clue"></div>
 <div class="controls"><button id="undoBtn">Undo Last Word</button></div>
 <div class="frame"><div id="grid" class="grid"></div></div>
@@ -190,8 +190,18 @@ function redraw(){clear();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS
  highlightNext();checkCompletion()}
 
 function checkCompletion(){
-  const playerSentence = words.map(w => w.text).join(' ');
- if(playerSentence === PUZZLE.sentence && !done){
+  
+const playerSentence = words
+  .map(w => w.text)
+  .join(' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const targetSentence = PUZZLE.sentence
+  .replace(/\s+/g, ' ')
+  .trim()
+
+ if(playerSentence === targetSentence && !done){
   done = true;
    drag.length = 0;
   undoBtn.disabled = true;

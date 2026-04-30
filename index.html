@@ -126,8 +126,8 @@ for(let r=0;r<7;r++)for(let c=0;c<7;c++)if(!grid[r][c])grid[r][c]=alpha[r2()*26|
 const gridEl=document.getElementById('grid');
 const rowEl=document.getElementById('sentenceRow');
 const undoBtn=document.getElementById('undoBtn');
-document.getElementById('clue').textContent=`${PUZZLE.clue} (${PUZZLE.sentence.split(' ').length})`;
-
+document.getElementById('clue').textContent =
+  `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
 let words=[],drag=[],done=false;
 undoBtn.onclick=()=>{if(words.length&&!done){words.pop();redraw()}};
 

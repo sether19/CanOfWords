@@ -105,7 +105,7 @@ body.solved .cell:not(.selected) {
 </style>
 </head>
 <body>
-<h1>Can of Words 🪱🪱🪱</h1>
+<h1>Can of Words 🪱</h1>
 <div id="clue" class="clue"></div>
 <div class="controls"><button id="undoBtn">Undo Last Word</button></div>
 <div class="frame"><div id="grid" class="grid"></div></div>
@@ -191,15 +191,19 @@ function redraw(){clear();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS
 
 function checkCompletion(){
   
+
 const playerSentence = words
   .map(w => w.text)
   .join(' ')
   .replace(/\s+/g, ' ')
-  .trim();
+  .trim()
+  .toLowerCase();
 
 const targetSentence = PUZZLE.sentence
   .replace(/\s+/g, ' ')
   .trim()
+  .toLowerCase();
+
 
  if(playerSentence === targetSentence && !done){
   done = true;

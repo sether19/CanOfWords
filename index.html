@@ -8,6 +8,37 @@
 />
 <title>Can of Words — VERSION 2.0 (Randomization Restored)</title>
 <style>
+  html, body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.cell {
+  touch-action: none;
+}
+  :root {
+  --ui-scale: 1;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --ui-scale: 1.25;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --ui-scale: 1.35;
+  }
+}
+
+.frame {
+  transform: scale(var(--ui-scale));
+  transform-origin: top center;
+}
+
   body{font-family:Chicago,Geneva,system-ui,sans-serif;background:#d6d6d6;display:flex;flex-direction:column;align-items:center;padding:20px}
   h1{margin-bottom:4px;font-size:20px}
   .clue{font-weight:bold;margin-bottom:8px}

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Can of Words — v1.1c</title>
+<title>Can of Words — v1.1e</title>
 <style>
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -14,6 +14,7 @@
   }
   h1 { margin-bottom: 4px; font-size: 20px; }
   .clue { font-weight: bold; margin-bottom: 12px; }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(7, 44px);
@@ -26,6 +27,7 @@
     border-bottom: 3px solid #7a7a7a;
     touch-action: none;
   }
+
   .cell {
     width: 44px; height: 44px; margin: 2px;
     background: #e6e6e6;
@@ -35,8 +37,13 @@
     border-left: 2px solid #fff;
     border-right: 2px solid #7a7a7a;
     border-bottom: 2px solid #7a7a7a;
+    transition: background 0.15s ease;
   }
-  .preview { filter: brightness(0.9); }
+
+  .preview {
+    background: #ddd;
+  }
+
   .selected {
     position: relative; top: -2px;
     border-top: 2px solid #fff;
@@ -44,6 +51,13 @@
     border-right: 2px solid #5a5a5a;
     border-bottom: 2px solid #5a5a5a;
   }
+
+  .valid-next {
+    box-shadow:
+      inset 0 0 0 3px var(--hint-color),
+      inset 0 0 10px var(--hint-color);
+  }
+
   .sentence { margin-top: 16px; max-width: 320px; text-align: center; font-size: 14px; }
 </style>
 </head>
@@ -61,15 +75,8 @@ const PUZZLE_INDEX = 0;
 
 // ================= CONFIG =================
 const GRID_SIZE = 7;
-
 const COLORS = [
-  '#f8bbd0', // Pink
-  '#b9f6ca', // Mint Green
-  '#ffe082', // Yellow
-  '#9bdcff', // Light Blue
-  '#ffcc80', // Orange
-  '#d1c4e9', // Purple
-  '#d7c4a0'  // Tan
+  '#f8bbd0', '#b9f6ca', '#ffe082', '#9bdcff', '#ffcc80', '#d1c4e9', '#d7c4a0'
 ];
 const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -86,29 +93,25 @@ function generatePath(letters, daily){
   for(let attempt=0; attempt<maxAttempts; attempt++){
     const used = new Set();
     const path = [];
-
     let r = Math.floor(rand()*GRID_SIZE);
     let c = Math.floor(rand()*GRID_SIZE);
-
     path.push([r,c]); used.add(r+','+c);
     let dir = null; let failed=false;
-
     for(let i=1;i<letters.length;i++){
-      const neighbors = [['up',-1,0],['down',1,0],['left',0,-1],['right',0,1]]
-        .filter(([d,dr,dc])=>{
-          const nr=r+dr, nc=c+dc;
-          return nr>=0&&nr<GRID_SIZE&&nc>=0&&nc<GRID_SIZE&&!used.has(nr+','+nc);
-        });
-      if(!neighbors.length){ failed=true; break; }
-
-      const weighted = neighbors.map(([d,dr,dc])=>{
-        let w=1; if(d===dir) w*=0.4; if(dir&&d!==dir) w*=1.5; return {d,dr,dc,w};
+      const neighbors = [[-1,0],[1,0],[0,-1],[0,1]].filter(([dr,dc])=>{
+        const nr=r+dr, nc=c+dc;
+        return nr>=0&&nr<GRID_SIZE&&nc>=0&&nc<GRID_SIZE&&!used.has(nr+','+nc);
       });
-      const total = weighted.reduce((a,b)=>a+b.w,0);
-      let pick = rand()*total; let choice=weighted[0];
+      if(!neighbors.length){ failed=true; break; }
+      const weighted = neighbors.map(([dr,dc])=>{
+        const key = dr+','+dc;
+        let w = (!dir || key!==dir) ? 1.5 : 0.4;
+        return {dr,dc,w,key};
+      });
+      let pick = rand()*weighted.reduce((a,b)=>a+b.w,0);
+      let choice = weighted[0];
       for(const o of weighted){ if((pick-=o.w)<=0){ choice=o; break; } }
-
-      r+=choice.dr; c+=choice.dc; dir=choice.d;
+      r+=choice.dr; c+=choice.dc; dir=choice.key;
       path.push([r,c]); used.add(r+','+c);
     }
     if(!failed) return path;
@@ -146,10 +149,12 @@ function buildGrid(){
   gridEl.addEventListener('pointerup',endDrag);
 }
 
-function clearCells(){ document.querySelectorAll('.cell').forEach(c=>{c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0';}); }
+function clearCells(){ document.querySelectorAll('.cell').forEach(c=>{
+  c.classList.remove('selected','preview','valid-next');
+  c.style.background='#e6e6e6'; c.style.borderRadius='0'; c.style.removeProperty('--hint-color');
+}); }
 
 const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
-
 function bendCorner(vin,vout){
   if(vin.x===1&&vout.y===1) return 'tr'; if(vin.x===1&&vout.y===-1) return 'br';
   if(vin.x===-1&&vout.y===1) return 'tl'; if(vin.x===-1&&vout.y===-1) return 'bl';
@@ -158,72 +163,84 @@ function bendCorner(vin,vout){
   return null;
 }
 
+function applyWormStyle(cells, color){
+  cells.forEach((cell,idx)=>{
+    cell.style.background=color;
+    cell.classList.add('selected');
+    if(cells.length===1){ cell.style.borderRadius='50%'; return; }
+    if(idx===0||idx===cells.length-1){
+      const n = idx===0 ? cells[1] : cells[cells.length-2];
+      const dr=n.dataset.r-cell.dataset.r, dc=n.dataset.c-cell.dataset.c;
+      if(dc===1) cell.style.borderRadius='50% 0 0 50%';
+      if(dc===-1) cell.style.borderRadius='0 50% 50% 0';
+      if(dr===1) cell.style.borderRadius='50% 50% 0 0';
+      if(dr===-1) cell.style.borderRadius='0 0 50% 50%';
+      return;
+    }
+    const p=cells[idx-1], n=cells[idx+1];
+    const vin={x:cell.dataset.c-p.dataset.c,y:cell.dataset.r-p.dataset.r};
+    const vout={x:n.dataset.c-cell.dataset.c,y:n.dataset.r-cell.dataset.r};
+    const k=bendCorner(vin,vout); if(k) cell.style.borderRadius=RAD[k];
+  });
+}
+
 function redraw(){
   clearCells();
-  words.forEach((w,i)=>{
-    const col=COLORS[i%COLORS.length];
-    w.cells.forEach((cell,idx)=>{
-      cell.classList.add('selected'); cell.style.background=col;
-      // SINGLE-LETTER WORD: fully rounded
-      if(w.cells.length===1){ cell.style.borderRadius='50%'; return; }
-
-      if(idx===0||idx===w.cells.length-1){
-        const n=idx===0?w.cells[1]:w.cells[w.cells.length-2];
-        const dr=n.dataset.r-cell.dataset.r, dc=n.dataset.c-cell.dataset.c;
-        if(dc===1) cell.style.borderRadius='50% 0 0 50%';
-        if(dc===-1) cell.style.borderRadius='0 50% 50% 0';
-        if(dr===1) cell.style.borderRadius='50% 50% 0 0';
-        if(dr===-1) cell.style.borderRadius='0 0 50% 50%';
-        return;
-      }
-      const p=w.cells[idx-1], n=w.cells[idx+1];
-      const vin={x:cell.dataset.c-p.dataset.c,y:cell.dataset.r-p.dataset.r};
-      const vout={x:n.dataset.c-cell.dataset.c,y:n.dataset.r-cell.dataset.r};
-      if(vin.x===vout.x&&vin.y===vout.y) return;
-      const k=bendCorner(vin,vout); if(k) cell.style.borderRadius=RAD[k];
-    });
-  });
-  sentenceEl.textContent=words.map(w=>w.text).join(' ');
+  words.forEach((w,i)=>applyWormStyle(w.cells, COLORS[i%COLORS.length]));
+  highlightValidNextCells();
+  sentenceEl.textContent = words.map(w=>w.text).join(' ');
 }
 
 function isAdjacent(a,b){ return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)===1; }
 
+function highlightValidNextCells(){
+  if(!words.length) return;
+  const nextColor = COLORS[words.length % COLORS.length];
+  const lastWord = words[words.length-1];
+  const tail = lastWord.cells[lastWord.cells.length-1];
+  document.querySelectorAll('.cell').forEach(cell=>{
+    if(cell.classList.contains('selected')) return;
+    if(isAdjacent(cell, tail)){
+      cell.classList.add('valid-next');
+      cell.style.setProperty('--hint-color', nextColor);
+    }
+  });
+}
+
 function startDrag(e){
   const cell=e.target;
-
-  // enforce sentence continuity (allow extending single-letter)
   if(words.length){
-    const lastWord = words[words.length-1];
-    const tail = lastWord.cells[lastWord.cells.length-1];
+    const lastWord=words[words.length-1];
+    const tail=lastWord.cells[lastWord.cells.length-1];
     const sameCell = lastWord.cells.length===1 && cell===tail;
     if(!sameCell && !isAdjacent(cell, tail)) return;
   }
-
-  if(removeWord(cell)) return;
-  isDragging=true; dragCells=[cell]; gridEl.setPointerCapture(e.pointerId); cell.classList.add('preview');
+  const idx = words.length;
+  isDragging=true; dragCells=[cell];
+  gridEl.setPointerCapture(e.pointerId);
+  applyWormStyle(dragCells, COLORS[idx % COLORS.length]);
 }
 
 function dragMove(e){
   if(!isDragging) return;
   const t=document.elementFromPoint(e.clientX,e.clientY);
-  if(!t||!t.classList.contains('cell'))return;
-  if(dragCells.includes(t))return;
+  if(!t||!t.classList.contains('cell')) return;
+  if(dragCells.includes(t)) return;
   const last=dragCells[dragCells.length-1];
-  if(Math.abs(last.dataset.r-t.dataset.r)+Math.abs(last.dataset.c-t.dataset.c)!==1)return;
-  dragCells.push(t); t.classList.add('preview');
+  if(!isAdjacent(last,t)) return;
+  dragCells.push(t);
+  redraw();
+  applyWormStyle(dragCells, COLORS[words.length % COLORS.length]);
 }
 
 function endDrag(){
   if(!isDragging) return;
   isDragging=false;
-  if(dragCells.length) words.push({cells:[...dragCells], text:dragCells.map(c=>c.textContent.toLowerCase()).join('')});
-  dragCells=[]; redraw();
-}
-
-function removeWord(cell){
-  const i=words.findIndex(w=>w.cells.includes(cell));
-  if(i!==-1){ words.splice(i,1); redraw(); return true; }
-  return false;
+  if(dragCells.length){
+    words.push({cells:[...dragCells], text:dragCells.map(c=>c.textContent.toLowerCase()).join('')});
+  }
+  dragCells=[];
+  redraw();
 }
 
 buildGrid();

@@ -65,7 +65,33 @@
   .sentence-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:6px}
   .word{display:inline-flex;white-space:nowrap;margin:0 4px 4px 4px}
   .sentence .cell{width:30px;height:30px;font-size:14px}
+/* ===== Win celebration animations ===== */
 
+@keyframes boardPulse {
+  0%   { transform: scale(var(--ui-scale)); }
+  40%  { transform: scale(calc(var(--ui-scale) * 1.03)); }
+  100% { transform: scale(var(--ui-scale)); }
+}
+
+@keyframes successPop {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  40% {
+    filter: brightness(1.25);
+    transform: scale(1.08);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* Dim background cells once solved */
+body.solved .cell:not(.selected) {
+  opacity: 0.35;
+}
   .cell.success{animation:pop 450ms ease-out forwards}
   @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
   @media (max-width: 480px) {
@@ -165,16 +191,23 @@ function redraw(){clear();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS
 
 function checkCompletion(){
   const playerSentence = words.map(w => w.text).join(' ');
-  if(playerSentence === PUZZLE.sentence && !done){
-    done = true;
-    undoBtn.disabled = true;
-    document.querySelectorAll('.next-hint')
-      .forEach(n => n.classList.remove('next-hint'));
-    words.flatMap(w => w.cells)
-      .forEach((c,i) =>
-        setTimeout(() => c.classList.add('success'), i * 30)
-      );
-  }
+ if(playerSentence === PUZZLE.sentence && !done){
+  done = true;
+  undoBtn.disabled = true;
+
+  // --- Tier 3: lock + dim ---
+  document.body.classList.add('solved');
+
+  // --- Tier 1: board pulse ---
+  const frame = document.querySelector('.frame');
+  frame.style.animation = 'boardPulse 450ms ease-out';
+
+  // --- Tier 2: worm celebration ---
+  words.flatMap(w => w.cells)
+    .forEach((c,i) =>
+      setTimeout(() => c.classList.add('success'), i * 30)
+    );
+}
 }
 function adj(a,b){return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)==1}
 

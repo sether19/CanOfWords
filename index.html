@@ -193,6 +193,7 @@ function checkCompletion(){
   const playerSentence = words.map(w => w.text).join(' ');
  if(playerSentence === PUZZLE.sentence && !done){
   done = true;
+   drag.length = 0;
   undoBtn.disabled = true;
 
   // --- Tier 3: lock + dim ---

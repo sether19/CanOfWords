@@ -7,8 +7,6 @@
 <title>Can of Words</title>
 
 <style>
-/* ===== GLOBAL ===== */
-
 html, body {
   margin: 0;
   padding: 0;
@@ -22,13 +20,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px;
+  padding: 14px;
 }
 
 @media (max-width: 480px) {
-  body {
-    padding-top: 10px;
-  }
+  body { padding-top: 10px; }
 }
 
 :root { --ui-scale: 1; }
@@ -36,26 +32,24 @@ body {
 @media (max-width: 360px) { :root { --ui-scale: 1.35; } }
 
 /* ===== TITLE ===== */
-
 h1 {
   font-size: 22px;
-  margin: 6px 0 2px 0;
+  margin: 4px 0 2px 0;
 }
 
 #clue {
   font-size: 12px;
   opacity: 0.7;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 /* ===== CONTROLS ===== */
-
 .controls {
   margin-bottom: 6px;
 }
 
 button {
-  font-family: Chicago, Geneva, system-ui, sans-serif;
+  font-family: inherit;
   font-size: 13px;
   padding: 4px 10px;
   background: #e6e6e6;
@@ -65,12 +59,9 @@ button {
   border-bottom: 2px solid #7a7a7a;
 }
 
-button:disabled {
-  opacity: 0.5;
-}
+button:disabled { opacity: 0.5; }
 
 /* ===== GRID ===== */
-
 .frame {
   transform: scale(var(--ui-scale));
   transform-origin: top center;
@@ -101,7 +92,6 @@ button:disabled {
   position: relative;
 }
 
-/* Selected worm segment */
 .cell.selected {
   z-index: 3;
   box-shadow:
@@ -110,8 +100,13 @@ button:disabled {
     0 2px 2px rgba(0,0,0,.35);
 }
 
-/* ===== SENTENCE ===== */
+/* Next available letter hint */
+.cell.next-hint {
+  background: #dcdcdc;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.1);
+}
 
+/* ===== SENTENCE ===== */
 .sentence {
   margin-top: 18px;
   text-align: center;
@@ -136,7 +131,6 @@ button:disabled {
 }
 
 /* ===== WIN ===== */
-
 @keyframes successPop {
   0%   { transform: scale(1); }
   40%  { transform: scale(1.12); }
@@ -228,7 +222,6 @@ function genPath(len){
 
 const PATH = genPath(LETTERS.length);
 let grid = Array.from({length:7},()=>Array(7).fill(''));
-
 PATH.forEach((p,i)=>grid[p[0]][p[1]]=LETTERS[i]);
 
 const alpha='abcdefghijklmnopqrstuvwxyz', filler=rng(999);
@@ -270,7 +263,7 @@ function build(){
 }
 
 /* ================================
-   RENDER (CANONICAL — DO NOT TOUCH)
+   RENDER (LOCKED)
    ================================ */
 
 function redraw(){
@@ -284,13 +277,42 @@ function redraw(){
     cells.forEach((c,i)=>{
       c.classList.add('selected');
       c.style.background=color;
-      c.style.borderRadius='50%';
+
+      const prev = cells[i-1];
+      const next = cells[i+1];
+
+      if(!prev || !next){
+        c.style.borderRadius='50%';
+        return;
+      }
+
+      const dr1 = c.dataset.r - prev.dataset.r;
+      const dc1 = c.dataset.c - prev.dataset.c;
+      const dr2 = next.dataset.r - c.dataset.r;
+      const dc2 = next.dataset.c - c.dataset.c;
+
+      c.style.borderRadius = (dr1===dr2 || dc1===dc2)
+        ? '50%' : '50%';
     });
   }
 
   words.forEach((w,i)=>applyWorm(w.cells, COLORS[i%COLORS.length]));
   if(drag.length)
     applyWorm(drag, COLORS[words.length%COLORS.length]);
+
+  // Next letter hints
+  if(words.length && !done){
+    const last = words.at(-1).cells.at(-1);
+    const used = new Set(
+      words.flatMap(w => w.cells.map(
+        c => c.dataset.r+','+c.dataset.c))
+    );
+    document.querySelectorAll('.cell').forEach(c=>{
+      const key=c.dataset.r+','+c.dataset.c;
+      if(!used.has(key) && adj(c,last))
+        c.classList.add('next-hint');
+    });
+  }
 
   rowEl.innerHTML='';
   words.forEach((w,i)=>{
@@ -319,8 +341,7 @@ function adj(a,b){
 function start(e){
   if(done) return;
   const c=e.target;
-  if(words.length &&
-     !adj(c,words.at(-1).cells.at(-1))) return;
+  if(words.length && !adj(c, words.at(-1).cells.at(-1))) return;
   drag=[c];
   gridEl.onpointermove=move;
   document.onpointerup=end;

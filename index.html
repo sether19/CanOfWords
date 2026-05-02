@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 />
 
-<title>Can of Words</title>
+<title>Can of Words 🪱</title>
 
 <style>
 /* ===============================
@@ -66,8 +66,8 @@ body {
 }
 
 .subtitle {
-  font-size: 11px;
-  opacity: 0.7;
+  font-size: 14px;
+  opacity: 0.9;
   margin-top: 3px;
 }
 
@@ -135,8 +135,8 @@ button:disabled {
    =============================== */
 
 .sentence {
-  margin-top: 14px;
-  max-width: 360px;
+  margin-top: 22px;
+  max-width: 660px;
   text-align: center;
 }
 
@@ -322,8 +322,50 @@ function redraw(){
   document.querySelectorAll('.cell').forEach(c=>{
     c.className='cell';
     c.style.background='#e6e6e6';
-    c.style.borderRadius='50%';
+    c.style.borderRadius='0';
   });
+
+  function applyWorm(cells, color){
+    cells.forEach((c,i)=>{
+      c.classList.add('selected');
+      c.style.background=color;
+
+      if(cells.length === 1){
+        c.style.borderRadius = '50%';
+        return;
+      }
+
+      const prev = cells[i-1];
+      const next = cells[i+1];
+
+      if(!prev || !next){
+        // head or tail
+        c.style.borderRadius = '50%';
+        return;
+      }
+
+      const dr1 = c.dataset.r - prev.dataset.r;
+      const dc1 = c.dataset.c - prev.dataset.c;
+      const dr2 = next.dataset.r - c.dataset.r;
+      const dc2 = next.dataset.c - c.dataset.c;
+
+      // straight segment
+      if(dr1 === dr2 || dc1 === dc2){
+        c.style.borderRadius = '50%';
+      } else {
+        // corner segment
+        c.style.borderRadius = '50%';
+      }
+    });
+  }
+
+  words.forEach((w,i)=>applyWorm(w.cells, COLORS[i % COLORS.length]));
+  if(drag.length){
+    applyWorm(drag, COLORS[words.length % COLORS.length]);
+  }
+
+  // sentence row rendering unchanged
+}
 
   function applyWorm(cells, color){
     cells.forEach(c=>{

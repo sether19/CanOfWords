@@ -6,7 +6,7 @@
   name="viewport"
   content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 />
-<title>Can of Words — v3.0</title>
+<title>Can of Words</title>
 <style>
   html, body {
   margin: 0;
@@ -43,7 +43,7 @@
   @media (max-width: 480px) {
   body {
     padding-top: 2px;   /* was 20px */
-    padding-bottom: 20px;
+    padding-bottom: 10px;
   }
 }
 
@@ -68,7 +68,7 @@
     opacity:0;animation:hintFade 300ms ease-out forwards;z-index:-1}
   @keyframes hintFade{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 
-  .sentence{margin-top:14px;max-width:360px;text-align:center}
+  .sentence{margin-top:6px;max-width:560px;text-align:center}
   .sentence-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:6px}
   .word{display:inline-flex;white-space:nowrap;margin:0 4px 4px 4px}
   .sentence .cell{width:30px;height:30px;font-size:14px}
@@ -123,7 +123,7 @@ body.solved .cell:not(.selected) {
 const PUZZLE_MODE = 'random'; // 'daily' or 'random'
 
 const COLORS=['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
-const PUZZLE={clue:'Robin',sentence:'sidekick to the superhero batman'};
+const PUZZLE={clue:'Avocado',sentence:'creamy fruit required to make guacamole'};
 const LETTERS=PUZZLE.sentence.replaceAll(' ','');
 
 /***** SEEDED RNG *****/

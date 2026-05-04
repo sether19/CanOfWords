@@ -334,6 +334,23 @@ function end(){document.onpointerup=null;gridEl.onpointermove=null;
  if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});drag=[];redraw()}
 
 build();redraw();
+  const helpBtn = document.getElementById('helpBtn');
+const helpOverlay = document.getElementById('helpOverlay');
+const closeHelp = document.getElementById('closeHelp');
+
+helpBtn.onclick = () => {
+  helpOverlay.classList.remove('hidden');
+};
+
+closeHelp.onclick = () => {
+  helpOverlay.classList.add('hidden');
+};
+
+helpOverlay.onclick = (e) => {
+  if (e.target === helpOverlay) {
+    helpOverlay.classList.add('hidden');
+  }
+};
 </script>
   
 <div id="helpOverlay" class="overlay hidden">
@@ -353,21 +370,5 @@ build();redraw();
 </body>
 </html>
 
-const helpBtn = document.getElementById('helpBtn');
-const helpOverlay = document.getElementById('helpOverlay');
-const closeHelp = document.getElementById('closeHelp');
 
-helpBtn.onclick = () => {
-  helpOverlay.classList.remove('hidden');
-};
-
-closeHelp.onclick = () => {
-  helpOverlay.classList.add('hidden');
-};
-
-helpOverlay.onclick = (e) => {
-  if (e.target === helpOverlay) {
-    helpOverlay.classList.add('hidden');
-  }
-};
 

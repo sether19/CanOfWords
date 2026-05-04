@@ -72,6 +72,58 @@
     padding-bottom: 0px;
   }
 }
+  /* ===== Help Overlay ===== */
+
+.top-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-weight: bold;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.help-panel {
+  background: #e6e6e6;
+  padding: 16px;
+  width: 280px;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-right: 3px solid #7a7a7a;
+  border-bottom: 3px solid #7a7a7a;
+}
+
+.help-panel h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.help-panel ul {
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.help-panel button {
+  margin-top: 12px;
+}
+
 
   h1{margin-bottom:4px;font-size:20px}
   .clue{font-weight:bold;margin-bottom:8px}
@@ -139,14 +191,19 @@ body.solved .cell:not(.selected) {
 </head>
 <body>
 
-<div class="top-bar">
+
+div class="top-bar">
   <div class="title-group">
     <div class="game-title">Can of Words</div>
     <div id="clue" class="subtitle"></div>
   </div>
 
-  <button id="undoBtn">undo</button>
+  <div class="top-controls">
+    <button id="helpBtn" class="icon-btn">?</button>
+    <button id="undoBtn">undo</button>
+  </div>
 </div>
+
 
 <div class="frame"><div id="grid" class="grid"></div></div>
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceRow" class="sentence-row"></div></div>
@@ -278,5 +335,39 @@ function end(){document.onpointerup=null;gridEl.onpointermove=null;
 
 build();redraw();
 </script>
+  
+<div id="helpOverlay" class="overlay hidden">
+  <div class="help-panel">
+    <h2>How to Play</h2>
+    <ul>
+      <li>Drag across adjacent letters to form a word.</li>
+      <li>Each new word must start next to the last letter of the previous word.</li>
+      <li>You cannot reuse letters from earlier words.</li>
+      <li>Build all the words to match the answer sentence.</li>
+      <li>You can use <strong>undo</strong> to remove the last word.</li>
+    </ul>
+    <button id="closeHelp">Close</button>
+  </div>
+</div>
+
 </body>
 </html>
+
+const helpBtn = document.getElementById('helpBtn');
+const helpOverlay = document.getElementById('helpOverlay');
+const closeHelp = document.getElementById('closeHelp');
+
+helpBtn.onclick = () => {
+  helpOverlay.classList.remove('hidden');
+};
+
+closeHelp.onclick = () => {
+  helpOverlay.classList.add('hidden');
+};
+
+helpOverlay.onclick = (e) => {
+  if (e.target === helpOverlay) {
+    helpOverlay.classList.add('hidden');
+  }
+};
+

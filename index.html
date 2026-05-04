@@ -6,7 +6,7 @@
   name="viewport"
   content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 />
-<title>Can of Words🪱</title>
+<title>Can of Words⚠️</title>
 <style>
   html, body {
   margin: 0;
@@ -32,6 +32,32 @@
   :root {
     --ui-scale: 1.35;
   }
+}
+/* ===== Grid-aligned top bar (SAFE) ===== */
+
+.top-bar {
+  width: calc(7 * 44px + 16px); /* grid width + frame padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-title {
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 3px;
 }
 
 .frame {
@@ -112,9 +138,16 @@ body.solved .cell:not(.selected) {
 </style>
 </head>
 <body>
-<h1>Can of Words 🪱</h1>
-<div id="clue" class="clue"></div>
-<div class="controls"><button id="undoBtn">undo</button></div>
+
+<div class="top-bar">
+  <div class="title-group">
+    <div class="game-title">Can of Words</div>
+    <div id="clue" class="subtitle"></div>
+  </div>
+
+  <button id="undoBtn">undo</button>
+</div>
+
 <div class="frame"><div id="grid" class="grid"></div></div>
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceRow" class="sentence-row"></div></div>
 

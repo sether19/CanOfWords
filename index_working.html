@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+  <meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+/>
+<title>Can of Words</title>
+<style>
+  html, body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.cell {
+  touch-action: none;
+}
+  :root {
+  --ui-scale: 1;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --ui-scale: 1.25;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --ui-scale: 1.35;
+  }
+}
+
+.frame {
+  transform: scale(var(--ui-scale));
+  transform-origin: top center;
+}
+
+  body{font-family:Chicago,Geneva,system-ui,sans-serif;background:#d6d6d6;display:flex;flex-direction:column;align-items:center;padding:20px}
+  @media (max-width: 480px) {
+  body {
+    padding-top: 2px;   /* was 20px */
+    padding-bottom: 0px;
+  }
+}
+
+  h1{margin-bottom:4px;font-size:20px}
+  .clue{font-weight:bold;margin-bottom:8px}
+  .controls{margin-bottom:10px}
+
+  button{font-family:Chicago,Geneva,system-ui,sans-serif;font-size:13px;padding:4px 10px;background:#e6e6e6;
+    border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a}
+  button:disabled{opacity:.5}
+
+  .frame{padding:8px;background:#e6e6e6;border-top:3px solid #fff;border-left:3px solid #fff;
+         border-right:3px solid #7a7a7a;border-bottom:3px solid #7a7a7a}
+  .grid{display:grid;grid-template-columns:repeat(7,44px);grid-template-rows:repeat(7,44px);gap:0}
+
+  .cell{width:44px;height:44px;background:#e6e6e6;display:flex;align-items:center;justify-content:center;
+        font-size:18px;font-weight:bold;user-select:none;color:#000;position:relative;z-index:1}
+
+  .selected{z-index:3;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.35)}
+
+  .next-hint::after{content:'';position:absolute;inset:6px;border-radius:50%;background:rgba(120,120,120,0.35);
+    opacity:0;animation:hintFade 300ms ease-out forwards;z-index:-1}
+  @keyframes hintFade{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+
+  .sentence{margin-top:0px;max-width:device-width;text-align:center}
+  .sentence-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:2px}
+  .word{display:inline-flex;white-space:nowrap;margin:0 4px 4px 4px}
+  .sentence .cell{width:25px;height:25px;font-size:10px}
+/* ===== Win celebration animations ===== */
+
+@keyframes boardPulse {
+  0%   { transform: scale(var(--ui-scale)); }
+  40%  { transform: scale(calc(var(--ui-scale) * 1.03)); }
+  100% { transform: scale(var(--ui-scale)); }
+}
+
+@keyframes successPop {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  40% {
+    filter: brightness(1.25);
+    transform: scale(1.08);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* Dim background cells once solved */
+body.solved .cell:not(.selected) {
+  opacity: 0.35;
+}
+  .cell.success{animation:pop 450ms ease-out forwards}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  @media (max-width: 690px) {
+  .sentence {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 4px solid rgba(0,0,0,0.15);
+  }
+}
+
+</style>
+</head>
+<body>
+<h1>Can of Words 🪱</h1>
+<div id="clue" class="clue"></div>
+<div class="controls"><button id="undoBtn">undo</button></div>
+<div class="frame"><div id="grid" class="grid"></div></div>
+<div class="sentence"><strong>Your sentence:</strong><div id="sentenceRow" class="sentence-row"></div></div>
+
+<script>
+/***** CONFIG *****/
+const PUZZLE_MODE = 'random'; // 'daily' or 'random'
+
+const COLORS=['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
+const PUZZLE={clue:'G. Washington',sentence:'first president of the USA'};
+const LETTERS=PUZZLE.sentence.replaceAll(' ','');
+
+/***** SEEDED RNG *****/
+function hashString(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h}
+function rng(seed){return()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296)}
+
+function getSeed(){
+ if(PUZZLE_MODE==='daily'){
+  const d=new Date();
+  const key=`${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}-${PUZZLE.sentence}`;
+  return hashString(key);
+ }
+ return Math.floor(Math.random()*1e9);
+}
+
+/***** PATH GENERATION *****/
+function genPath(len,seed){const r=rng(seed);while(true){let used=new Set(),p=[];let x=r()*7|0,y=r()*7|0;
+ p.push([x,y]);used.add(x+','+y);let ok=true;
+ for(let i=1;i<len;i++){let opts=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>{let nx=x+d[0],ny=y+d[1];return nx>=0&&ny>=0&&nx<7&&ny<7&&!used.has(nx+','+ny)})
+  if(!opts.length){ok=false;break}
+  let [dx,dy]=opts[r()*opts.length|0];x+=dx;y+=dy;p.push([x,y]);used.add(x+','+y)}
+ if(ok)return p}}
+
+const SEED=getSeed();
+const PATH=genPath(LETTERS.length,SEED);
+
+let grid=Array.from({length:7},()=>Array(7).fill(''));
+PATH.forEach((p,i)=>grid[p[0]][p[1]]=LETTERS[i]);
+const alpha='abcdefghijklmnopqrstuvwxyz',r2=rng(SEED^0x9e3779b9);
+for(let r=0;r<7;r++)for(let c=0;c<7;c++)if(!grid[r][c])grid[r][c]=alpha[r2()*26|0];
+
+/***** GAME LOGIC (unchanged from v2.0) *****/
+const gridEl=document.getElementById('grid');
+const rowEl=document.getElementById('sentenceRow');
+const undoBtn=document.getElementById('undoBtn');
+document.getElementById('clue').textContent =
+  `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
+let words=[],drag=[],done=false;
+undoBtn.onclick=()=>{if(words.length&&!done){words.pop();redraw()}};
+
+function build(){gridEl.innerHTML='';grid.forEach((row,r)=>row.forEach((l,c)=>{
+ let d=document.createElement('div');d.className='cell';d.textContent=l.toUpperCase();
+ d.dataset.r=r;d.dataset.c=c;d.onpointerdown=start;gridEl.appendChild(d)}))}
+
+function clear(){document.querySelectorAll('.cell').forEach(c=>{c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0'})}
+
+const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
+function corner(a,b){const m={'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl','0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};return m[a+'|'+b]}
+
+function applyWorm(cells,color){cells.forEach((c,i)=>{
+ c.classList.add('selected');c.style.background=color;
+ if(cells.length===1){c.style.borderRadius='50%';return}
+ if(i===0||i===cells.length-1){let n=i===0?cells[1]:cells[cells.length-2];
+  let dr=n.dataset.r-c.dataset.r,dc=n.dataset.c-c.dataset.c;
+  if(dc==1)c.style.borderRadius='50% 0 0 50%';
+  if(dc==-1)c.style.borderRadius='0 50% 50% 0';
+  if(dr==1)c.style.borderRadius='50% 50% 0 0';
+  if(dr==-1)c.style.borderRadius='0 0 50% 50%';return}
+ let p=cells[i-1],n=cells[i+1];
+ let k=corner((c.dataset.c-p.dataset.c)+','+(c.dataset.r-p.dataset.r),(n.dataset.c-c.dataset.c)+','+(n.dataset.r-c.dataset.r));
+ if(k)c.style.borderRadius=RAD[k]})}
+
+function highlightNext(){if(!words.length||drag.length||done)return;const last=words.at(-1).cells.at(-1);
+ document.querySelectorAll('.cell').forEach(c=>{if(!c.classList.contains('selected')&&adj(c,last))c.classList.add('next-hint')})}
+
+function redraw(){clear();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS.length]));
+ if(drag.length)applyWorm(drag,COLORS[words.length%COLORS.length]);rowEl.innerHTML='';
+ words.forEach((w,i)=>{let we=document.createElement('div');we.className='word';w.text.split('').forEach((ch,j)=>{
+  let c=document.createElement('div');c.className='cell selected';c.textContent=ch.toUpperCase();
+  c.style.background=COLORS[i%COLORS.length];c.style.borderRadius=j==0?'50% 0 0 50%':j==w.text.length-1?'0 50% 50% 0':'0';we.appendChild(c)});rowEl.appendChild(we)});
+ highlightNext();checkCompletion()}
+
+function checkCompletion(){
+  
+
+const playerSentence = words
+  .map(w => w.text)
+  .join(' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .toLowerCase();
+
+const targetSentence = PUZZLE.sentence
+  .replace(/\s+/g, ' ')
+  .trim()
+  .toLowerCase();
+
+
+ if(playerSentence === targetSentence && !done){
+  done = true;
+   drag.length = 0;
+  undoBtn.disabled = true;
+
+  // --- Tier 3: lock + dim ---
+  document.body.classList.add('solved');
+
+  // --- Tier 1: board pulse ---
+  const frame = document.querySelector('.frame');
+  frame.style.animation = 'boardPulse 450ms ease-out';
+
+  // --- Tier 2: worm celebration ---
+  words.flatMap(w => w.cells)
+    .forEach((c,i) =>
+      setTimeout(() => c.classList.add('success'), i * 30)
+    );
+}
+}
+function adj(a,b){return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)==1}
+
+function start(e){if(done)return;const c=e.target;if(c.classList.contains('selected'))return;
+ if(words.length&&!adj(c,words.at(-1).cells.at(-1)))return;drag=[c];gridEl.onpointermove=move;document.onpointerup=end;redraw()}
+
+function move(e){const t=document.elementFromPoint(e.clientX,e.clientY);if(!t||!t.classList.contains('cell'))return;
+ if(drag.length>1&&t===drag[drag.length-2]){drag.pop();redraw();return}
+ if(t.classList.contains('selected'))return;if(drag.includes(t)||!adj(drag.at(-1),t))return;drag.push(t);redraw()}
+
+function end(){document.onpointerup=null;gridEl.onpointermove=null;
+ if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});drag=[];redraw()}
+
+build();redraw();
+</script>
+</body>
+</html>

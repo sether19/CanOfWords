@@ -8,15 +8,20 @@
   html, body {
     margin: 0; padding: 0;
     overscroll-behavior: none;
-    touch-action: none;
   }
-  .cell { touch-action: none; }
-  :root { --ui-scale: 1; }
-  @media (max-width: 480px) { :root { --ui-scale: 1.25; } }
-  @media (max-width: 360px) { :root { --ui-scale: 1.35; } }
+  /* Prevent double-tap zoom everywhere without blocking scroll */
+  * { touch-action: pan-x pan-y; }
+  /* Grid cells and chips need full pointer control */
+  .cell, .chip { touch-action: none; }
+
+  :root {
+    --cell: 44px;
+  }
+  @media (max-width: 480px) { :root { --cell: 55px; } }
+  @media (max-width: 360px) { :root { --cell: 50px; } }
 
   .top-bar {
-    width: calc(7 * 44px + 16px);
+    width: calc(7 * var(--cell) + 16px);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -28,10 +33,23 @@
   .puzzle-num { font-size: 11px; opacity: 0.5; margin-top: 2px; letter-spacing: 0.03em; }
 
   .frame {
-    transform: scale(var(--ui-scale));
-    transform-origin: top center;
+    padding: 8px; background: #e6e6e6;
+    border-top: 3px solid #fff; border-left: 3px solid #fff;
+    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
   }
-
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, var(--cell));
+    grid-template-rows: repeat(7, var(--cell));
+    gap: 0;
+  }
+  .cell {
+    width: var(--cell); height: var(--cell); background: #e6e6e6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: bold;
+    user-select: none; color: #000;
+    position: relative; z-index: 1;
+  }
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
     background: #d6d6d6;
@@ -40,7 +58,7 @@
     align-items: center;
     padding: 20px;
   }
-  @media (max-width: 480px) { body { padding-top: 2px; padding-bottom: 0px; } }
+  @media (max-width: 480px) { body { padding-top: 8px; padding-bottom: 20px; } }
 
   button {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -56,38 +74,15 @@
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
   }
 
-  /* ── Help button in top-right ── */
   #helpBtn {
-    font-size: 14px;
-    font-weight: bold;
-    width: 28px; height: 28px;
-    padding: 0;
+    font-size: 14px; font-weight: bold;
+    width: 28px; height: 28px; padding: 0;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    border-radius: 50%;
+    flex-shrink: 0; border-radius: 50%;
   }
   #helpBtn:active {
     border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  }
-
-  .frame {
-    padding: 8px; background: #e6e6e6;
-    border-top: 3px solid #fff; border-left: 3px solid #fff;
-    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(7, 44px);
-    grid-template-rows: repeat(7, 44px);
-    gap: 0;
-  }
-  .cell {
-    width: 44px; height: 44px; background: #e6e6e6;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: bold;
-    user-select: none; color: #000;
-    position: relative; z-index: 1;
   }
   .selected {
     z-index: 3;
@@ -101,7 +96,7 @@
   @keyframes hintFade { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
 
   .bottom-bar {
-    width: calc(7 * 44px + 16px);
+    width: calc(7 * var(--cell) + 16px);
     display: flex;
     gap: 6px;
     margin-top: 8px;
@@ -113,7 +108,7 @@
     text-align: center;
   }
 
-  .sentence { margin-top: 8px; text-align: center; width: calc(7 * 44px + 16px); }
+  .sentence { margin-top: 8px; text-align: center; width: calc(7 * var(--cell) + 16px); }
   .sentence-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; opacity: 0.6; }
   .sentence-row {
     display: flex; flex-wrap: wrap; justify-content: center;
@@ -147,20 +142,13 @@
   .sentence .cell { width: 25px; height: 25px; font-size: 10px; }
 
   @keyframes boardPulse {
-    0%   { transform: scale(var(--ui-scale)); }
-    40%  { transform: scale(calc(var(--ui-scale) * 1.03)); }
-    100% { transform: scale(var(--ui-scale)); }
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
   }
   body.solved .cell:not(.selected) { opacity: 0.35; }
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
-
-  @media (max-width: 480px) {
-    .sentence { margin-top: calc((7 * 44px) * 0.25 + 16px); }
-  }
-  @media (max-width: 360px) {
-    .sentence { margin-top: calc((7 * 44px) * 0.35 + 16px); }
-  }
 
   /* ── Trash zone on undo button during chip drag ── */
   #undoBtn.trash-mode {
@@ -234,7 +222,7 @@
 <!-- How to Play modal -->
 <div id="how-to-play" class="modal-overlay">
   <div class="modal-box">
-    <h2>How to Play 🪱🤷🏻‍♀️</h2>
+    <h2>How to Play 🪱</h2>
     <div class="how-step">
       <span class="how-step-num">1</span>
       <span>Read the <strong>answer clue</strong> at the top of the board.</span>

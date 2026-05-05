@@ -9,22 +9,16 @@
     margin: 0; padding: 0;
     overscroll-behavior: none;
   }
-  /* Prevent double-tap zoom everywhere without blocking scroll */
   * { touch-action: pan-x pan-y; }
-  /* Grid cells and chips need full pointer control */
   .cell, .chip { touch-action: none; }
 
-  :root {
-    --cell: 44px;
-  }
+  :root { --cell: 44px; }
   @media (max-width: 480px) { :root { --cell: 55px; } }
   @media (max-width: 360px) { :root { --cell: 50px; } }
 
   .top-bar {
     width: calc(7 * var(--cell) + 16px);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 6px;
   }
   .title-group { display: flex; flex-direction: column; }
@@ -32,41 +26,19 @@
   .subtitle { font-size: 12px; opacity: 0.7; margin-top: 3px; }
   .puzzle-num { font-size: 11px; opacity: 0.5; margin-top: 2px; letter-spacing: 0.03em; }
 
-  .frame {
-    padding: 8px; background: #e6e6e6;
-    border-top: 3px solid #fff; border-left: 3px solid #fff;
-    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(7, var(--cell));
-    grid-template-rows: repeat(7, var(--cell));
-    gap: 0;
-  }
-  .cell {
-    width: var(--cell); height: var(--cell); background: #e6e6e6;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: bold;
-    user-select: none; color: #000;
-    position: relative; z-index: 1;
-  }
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
-    background: #d6d6d6;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background: #AEA494;
+    display: flex; flex-direction: column; align-items: center;
     padding: 20px;
   }
   @media (max-width: 480px) {
     body { padding-top: 8px; padding-bottom: 20px; padding-left: 12px; padding-right: 12px; }
-    .top-bar, .bottom-bar, .sentence { max-width: 100%; box-sizing: border-box; }
   }
 
   button {
     font-family: Chicago, Geneva, system-ui, sans-serif;
-    font-size: 13px; padding: 4px 10px;
-    background: #e6e6e6;
+    font-size: 13px; padding: 4px 10px; background: #e6e6e6;
     border-top: 2px solid #fff; border-left: 2px solid #fff;
     border-right: 2px solid #7a7a7a; border-bottom: 2px solid #7a7a7a;
     cursor: pointer;
@@ -87,6 +59,25 @@
     border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
   }
+
+  .frame {
+    padding: 8px; background: #e6e6e6;
+    border-top: 3px solid #fff; border-left: 3px solid #fff;
+    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, var(--cell));
+    grid-template-rows: repeat(7, var(--cell));
+    gap: 0;
+  }
+  .cell {
+    width: var(--cell); height: var(--cell); background: #e6e6e6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: bold;
+    user-select: none; color: #000;
+    position: relative; z-index: 1;
+  }
   .selected {
     z-index: 3;
     box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35);
@@ -100,16 +91,9 @@
 
   .bottom-bar {
     width: calc(7 * var(--cell) + 16px);
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
+    display: flex; gap: 6px; margin-top: 8px;
   }
-  .bottom-bar button {
-    flex: 1;
-    font-size: 13px;
-    padding: 7px 0;
-    text-align: center;
-  }
+  .bottom-bar button { flex: 1; font-size: 13px; padding: 7px 0; text-align: center; }
 
   .sentence { margin-top: 8px; text-align: center; width: calc(7 * var(--cell) + 16px); }
   .sentence-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; opacity: 0.6; }
@@ -122,10 +106,9 @@
   }
   .chip {
     display: inline-flex; align-items: center;
-    padding: 3px 9px 3px 7px;
-    font-size: 13px; font-weight: bold;
+    padding: 3px 9px 3px 7px; font-size: 13px; font-weight: bold;
     border-radius: 20px; cursor: grab;
-    user-select: none; touch-action: none;
+    user-select: none; -webkit-user-select: none; touch-action: none;
     border-top: 2px solid rgba(255,255,255,0.6); border-left: 2px solid rgba(255,255,255,0.6);
     border-right: 2px solid rgba(0,0,0,0.15); border-bottom: 2px solid rgba(0,0,0,0.15);
   }
@@ -135,14 +118,14 @@
     position: fixed; pointer-events: none; z-index: 999;
     border-radius: 20px; padding: 3px 9px 3px 7px;
     font-size: 13px; font-weight: bold;
-    font-family: Chicago, Geneva, system-ui, sans-serif;
-    opacity: 0.9;
+    font-family: Chicago, Geneva, system-ui, sans-serif; opacity: 0.9;
     border-top: 2px solid rgba(255,255,255,0.6); border-left: 2px solid rgba(255,255,255,0.6);
     border-right: 2px solid rgba(0,0,0,0.15); border-bottom: 2px solid rgba(0,0,0,0.15);
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    user-select: none; -webkit-user-select: none;
   }
+  .sentence-row, .bottom-bar { user-select: none; -webkit-user-select: none; }
   .sentence-empty { font-size: 12px; opacity: 0.4; align-self: center; padding: 0 8px; pointer-events: none; }
-  .sentence .cell { width: 25px; height: 25px; font-size: 10px; }
 
   @keyframes boardPulse {
     0%   { transform: scale(1); }
@@ -153,22 +136,15 @@
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
-  /* Prevent text selection during drags */
-  .sentence-row, .bottom-bar, .chip, .chip-ghost {
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  #undoBtn.trash-mode {
-    font-size: 16px;
-  }
+  #undoBtn.trash-mode { font-size: 16px; }
   #undoBtn.trash-hover {
     border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
     background: #d0b0b0;
   }
+
   .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
+    display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.55);
     align-items: center; justify-content: center;
     z-index: 100;
@@ -178,47 +154,21 @@
     background: #e6e6e6;
     border-top: 3px solid #fff; border-left: 3px solid #fff;
     border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
-    padding: 20px 24px; max-width: 300px; width: 90%;
-    text-align: left;
+    padding: 20px 24px; max-width: 300px; width: 90%; text-align: left;
   }
-  .modal-box h2 {
-    margin: 0 0 12px;
-    font-size: 17px;
-    text-align: center;
-  }
-  .modal-close {
-    display: block;
-    margin: 16px auto 0;
-    padding: 5px 20px;
-  }
+  .modal-box h2 { margin: 0 0 12px; font-size: 17px; text-align: center; }
+  .modal-close { display: block; margin: 16px auto 0; padding: 5px 20px; }
 
-  /* ── How to play modal ── */
-  .how-step {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .how-step-num {
-    font-weight: bold;
-    font-size: 15px;
-    flex-shrink: 0;
-    width: 18px;
-    opacity: 0.5;
-  }
+  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; }
+  .how-step-num { font-weight: bold; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.5; }
   .how-example {
     background: #d0d0d0;
     border-top: 2px solid #b0b0b0; border-left: 2px solid #b0b0b0;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    padding: 8px 10px;
-    font-size: 12px;
-    margin: 8px 0 4px;
-    line-height: 1.6;
+    padding: 8px 10px; font-size: 12px; margin: 8px 0 4px; line-height: 1.6;
   }
   .how-example strong { font-size: 13px; }
 
-  /* ── Already-played modal ── */
   #already-played .modal-box { text-align: center; }
   #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
   .ap-answer { font-weight: bold; font-size: 15px; margin-bottom: 12px; }
@@ -253,7 +203,7 @@
     </div>
     <div class="how-step">
       <span class="how-step-num">5</span>
-      <span>Use <strong>Undo</strong> to release the last word back to the grid.</span>
+      <span>Use <strong>Undo</strong> to release the last word, or <strong>drag a chip onto Undo</strong> to remove any word.</span>
     </div>
     <button class="modal-close" onclick="document.getElementById('how-to-play').classList.remove('show')">Got it!</button>
   </div>
@@ -281,7 +231,6 @@
 
 <div class="frame"><div id="grid" class="grid"></div></div>
 
-<!-- Full-width bottom bar -->
 <div class="bottom-bar">
   <button id="undoBtn">↩ Undo</button>
 </div>
@@ -294,23 +243,28 @@
 <script>
 /* =====================================================================
    PUZZLE LIBRARY
+   Line 1 = today (05-05-2026). Each new line you add = the next day.
+   Just keep appending to the bottom!
    ===================================================================== */
+const PUZZLE_START_DATE = '2026-05-05'; // date of the first puzzle in the list
 const PUZZLES = [
-  { clue: 'G. Washington',  sentence: 'first president of the USA' },
-  { clue: 'Avocado',        sentence: 'creamy fruit required to make guacamole' },
-  { clue: 'Eiffel Tower',   sentence: 'tall iron landmark in Paris France' },
-  { clue: 'Shark',          sentence: 'apex ocean predator with many rows of teeth' },
+
+  { clue: 'Shakespeare',    sentence: 'english playwright who wrote hamlet and macbeth' }, 
+  { clue: 'Mount Everest',  sentence: 'tallest peak on earth' },              
+  { clue: 'Coffee',         sentence: 'hot morning drink brewed from roasted beans' },   
+  { clue: 'Solar Eclipse',  sentence: 'moon passes between earth and the sun' },           
   { clue: 'Chess',          sentence: 'strategy board game with kings and queens' },
-  { clue: 'Lightning',      sentence: 'electric sky flash before thunder rolls' },
   { clue: 'Penguin',        sentence: 'flightless bird native to the south pole' },
   { clue: 'Piano',          sentence: 'large keyboard instrument with black and white keys' },
   { clue: 'Volcano',        sentence: 'mountain that erupts molten lava and ash' },
-  { clue: 'Amazon River',   sentence: 'longest river flowing through the rainforest' },
-  { clue: 'Telescope',      sentence: 'optical tool used to observe distant stars' },
   { clue: 'Honey',          sentence: 'sweet golden syrup made by bees in a hive' },
   { clue: 'Marathon',       sentence: 'long running race of just over twenty six miles' },
-  { clue: 'Shakespeare',    sentence: 'english playwright who wrote hamlet and macbeth' },
+  { clue: 'G. Washington',  sentence: 'first president of the USA' },
+  { clue: 'Avocado',        sentence: 'creamy fruit required to make guacamole' },
+  { clue: ‘Tofu!‘,          sentence: ‘silken soft firm extra firm‘ },
+  { clue: ‘Sneeze‘,         sentence: ‘catalyst for saying bless you‘ },
 ];
+
 
 /* =====================================================================
    DAILY PUZZLE SELECTION
@@ -320,17 +274,17 @@ function getTodayKey() {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
 }
 function getDayIndex(dateKey) {
-  const epoch = new Date('2025-01-01T00:00:00Z');
+  const start = new Date(PUZZLE_START_DATE + 'T00:00:00Z');
   const parts = dateKey.split('-').map(Number);
   const today = new Date(Date.UTC(parts[0], parts[1]-1, parts[2]));
-  const days = Math.floor((today - epoch) / 86400000);
-  return ((days % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
+  return Math.floor((today - start) / 86400000);
 }
 
 const TODAY_KEY  = getTodayKey();
-const PUZZLE_IDX = getDayIndex(TODAY_KEY);
+const PUZZLE_IDX = Math.max(0, Math.min(getDayIndex(TODAY_KEY), PUZZLES.length - 1));
 const PUZZLE_NUM = PUZZLE_IDX + 1;
 const PUZZLE     = PUZZLES[PUZZLE_IDX];
+
 
 /* =====================================================================
    PERSISTENCE
@@ -349,12 +303,10 @@ if (alreadyPlayedToday) {
 }
 
 /* =====================================================================
-   HELP BUTTON — both the top ? and bottom bar button open the same modal
+   HELP & MODALS
    ===================================================================== */
 function openHelp() { document.getElementById('how-to-play').classList.add('show'); }
 document.getElementById('helpBtn').onclick = openHelp;
-
-// Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
 });
@@ -371,7 +323,7 @@ function hashString(str) {
   return h;
 }
 function rng(seed) { return () => ((seed = (seed*1664525+1013904223) >>> 0) / 4294967296); }
-function getSeed() { return hashString(`${TODAY_KEY}-${PUZZLE.sentence}`); }
+function getSeed()  { return hashString(`${TODAY_KEY}-${PUZZLE.sentence}`); }
 
 /* =====================================================================
    PATH GENERATION
@@ -406,10 +358,11 @@ for (let r=0; r<7; r++) for (let c=0; c<7; c++) if (!grid[r][c]) grid[r][c] = al
 /* =====================================================================
    UI SETUP
    ===================================================================== */
+const [ty, tm, td] = TODAY_KEY.split('-');
 document.getElementById('clue').textContent =
   `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
 document.getElementById('puzzle-num').textContent =
-  `Puzzle #${PUZZLE_NUM} · ${TODAY_KEY}`;
+  `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
 
 /* =====================================================================
    GAME LOGIC
@@ -418,8 +371,6 @@ const gridEl  = document.getElementById('grid');
 const rowEl   = document.getElementById('sentenceRow');
 const undoBtn = document.getElementById('undoBtn');
 
-// words: array of { cells, text, color }
-// Each word is an independent free snake — no connection between words required
 let words = [], drag = [], done = false, colorIdx = 0;
 
 undoBtn.onclick = () => {
@@ -431,7 +382,7 @@ undoBtn.onclick = () => {
 function build() {
   gridEl.innerHTML = '';
   grid.forEach((row,r) => row.forEach((l,c) => {
-    let d = document.createElement('div');
+    const d = document.createElement('div');
     d.className = 'cell'; d.textContent = l.toUpperCase();
     d.dataset.r = r; d.dataset.c = c;
     d.onpointerdown = startGrid;
@@ -482,7 +433,7 @@ function redraw() {
   checkCompletion();
 }
 
-/* ── Chip rendering & drag-to-reorder ── */
+/* ── Chip rendering ── */
 function renderChips() {
   rowEl.innerHTML = '';
   if (!words.length) {
@@ -500,8 +451,8 @@ function renderChips() {
   });
 }
 
-// Chip drag-to-reorder state
-let chipDrag = null; // { idx, ghost, startX, startY }
+/* ── Chip drag-to-reorder / trash ── */
+let chipDrag = null;
 
 function startChipDrag(e) {
   if (done) return;
@@ -523,13 +474,9 @@ function startChipDrag(e) {
   chip.classList.add('dragging');
   chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
 
-  // Block text selection for the duration of the drag
-  document.onselectstart = () => false;
-
-  // Switch undo button to trash mode
   undoBtn.textContent = '🗑';
   undoBtn.classList.add('trash-mode');
-
+  document.onselectstart = () => false;
   document.onpointermove = moveChipDrag;
   document.onpointerup   = endChipDrag;
 }
@@ -539,14 +486,10 @@ function moveChipDrag(e) {
   chipDrag.ghost.style.left = (e.clientX - chipDrag.offsetX) + 'px';
   chipDrag.ghost.style.top  = (e.clientY - chipDrag.offsetY) + 'px';
 
-  // Highlight target chip
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('drag-over'));
   const target = chipUnderPointer(e.clientX, e.clientY);
-  if (target && parseInt(target.dataset.idx) !== chipDrag.idx) {
-    target.classList.add('drag-over');
-  }
+  if (target && parseInt(target.dataset.idx) !== chipDrag.idx) target.classList.add('drag-over');
 
-  // Highlight trash if hovering over undo button
   const tr = undoBtn.getBoundingClientRect();
   const overTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
                     e.clientY >= tr.top  && e.clientY <= tr.bottom;
@@ -556,19 +499,17 @@ function moveChipDrag(e) {
 function endChipDrag(e) {
   document.onpointermove = null;
   document.onpointerup   = null;
+  document.onselectstart = null;
   if (!chipDrag) return;
 
-  // Restore undo button
   undoBtn.textContent = '↩ Undo';
   undoBtn.classList.remove('trash-mode', 'trash-hover');
 
-  // Check if dropped on trash
   const tr = undoBtn.getBoundingClientRect();
-  const droppedOnTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
-                         e.clientY >= tr.top  && e.clientY <= tr.bottom;
+  const onTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
+                  e.clientY >= tr.top  && e.clientY <= tr.bottom;
 
-  if (droppedOnTrash) {
-    // Remove the word entirely — frees its cells on the grid
+  if (onTrash) {
     words.splice(chipDrag.idx, 1);
   } else {
     const target = chipUnderPointer(e.clientX, e.clientY);
@@ -583,16 +524,11 @@ function endChipDrag(e) {
 
   chipDrag.ghost.remove();
   chipDrag = null;
-  document.onselectstart = null;
-  document.querySelectorAll('.chip').forEach(c => {
-    c.classList.remove('dragging');
-    c.classList.remove('drag-over');
-  });
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('dragging', 'drag-over'));
   redraw();
 }
 
 function chipUnderPointer(x, y) {
-  // Temporarily hide ghost to hit-test underneath
   const chips = Array.from(document.querySelectorAll('.chip:not(.dragging)'));
   for (const chip of chips) {
     const r = chip.getBoundingClientRect();
@@ -601,7 +537,7 @@ function chipUnderPointer(x, y) {
   return null;
 }
 
-/* ── Grid drag (free snake per word) ── */
+/* ── Grid drag ── */
 function adj(a,b) {
   return Math.abs(a.dataset.r-b.dataset.r) + Math.abs(a.dataset.c-b.dataset.c) == 1;
 }
@@ -626,8 +562,8 @@ function moveGrid(e) {
 }
 
 function endGrid() {
-  document.onpointerup  = null;
-  gridEl.onpointermove  = null;
+  document.onpointerup = null;
+  gridEl.onpointermove = null;
   if (drag.length) {
     const cells = [...drag];
     const text  = cells.map(c => c.textContent.toLowerCase()).join('');
@@ -650,7 +586,6 @@ function checkCompletion() {
   drag.length = 0;
   undoBtn.disabled = true;
 
-  // Save solved state including word paths so we can replay on return visits
   const savedWords = words.map(w => ({
     text:  w.text,
     color: w.color,
@@ -664,7 +599,7 @@ function checkCompletion() {
        .forEach((c,i) => setTimeout(() => c.classList.add('success'), i * 30));
 }
 
-/* ── Replay solved state for returning players ── */
+/* ── Replay solved state ── */
 function replaySolvedState() {
   const state = loadState();
   if (!state.solved || !state.words) return;
@@ -672,7 +607,6 @@ function replaySolvedState() {
   done = true;
   undoBtn.disabled = true;
 
-  // Reconstruct words from saved paths, mapping coordinates back to grid cell elements
   const cellEls = {};
   document.querySelectorAll('#grid .cell').forEach(el => {
     cellEls[el.dataset.r + ',' + el.dataset.c] = el;
@@ -684,22 +618,20 @@ function replaySolvedState() {
     cells: sw.path.map(p => cellEls[p.r + ',' + p.c]).filter(Boolean)
   }));
 
-  // Draw worms immediately, then animate the success pop with a short stagger
   redraw();
   document.body.classList.add('solved');
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
-       .forEach((c, i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
+       .forEach((c,i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
 }
 
-build();
-redraw();
-
-// Wire up already-played overlay button to dismiss + replay
 document.getElementById('ap-see-board').onclick = () => {
   document.getElementById('already-played').classList.remove('show');
   replaySolvedState();
 };
+
+build();
+redraw();
 </script>
 </body>
 </html>

@@ -13,8 +13,12 @@
   .cell, .chip { touch-action: none; }
 
   :root { --cell: 44px; }
-  @media (max-width: 480px) { :root { --cell: 55px; } }
-  @media (max-width: 360px) { :root { --cell: 50px; } }
+  @media (max-width: 480px) {
+    :root { --cell: min(55px, calc((100vw - 24px - 16px) / 7)); }
+  }
+  @media (max-width: 360px) {
+    :root { --cell: min(50px, calc((100vw - 24px - 16px) / 7)); }
+  }
 
   .top-bar {
     width: calc(7 * var(--cell) + 16px);
@@ -671,9 +675,6 @@ if (PUZZLE) {
 </script>
 </body>
 
-<!-- Temporary reset link for testing — remove before final publish -->
-<div style="text-align:center;margin:12px 0">
-  <a href="javascript:localStorage.removeItem('canofwords_state');location.reload();" style="font-size:11px;opacity:0.3;font-family:monospace">reset saved state</a>
-</div>
+
 
 </html>

@@ -659,7 +659,21 @@ document.getElementById('ap-see-board').onclick = () => {
   replaySolvedState();
 };
 
-if (PUZZLE) { build(); redraw(); }
+if (PUZZLE) {
+  build();
+  redraw();
+  // If already played today, replay the solved state after grid is built
+  if (alreadyPlayedToday) {
+    // Use requestAnimationFrame to ensure grid cells are fully in the DOM
+    requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
+  }
+}
 </script>
 </body>
+
+<!-- Temporary reset link for testing — remove before final publish -->
+<div style="text-align:center;margin:12px 0">
+  <a href="javascript:localStorage.removeItem('canofwords_state');location.reload();" style="font-size:11px;opacity:0.3;font-family:monospace">reset saved state</a>
+</div>
+
 </html>

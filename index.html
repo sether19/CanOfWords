@@ -150,7 +150,11 @@
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
-  /* ── Trash zone on undo button during chip drag ── */
+  /* Prevent text selection during drags */
+  .sentence-row, .bottom-bar, .chip, .chip-ghost {
+    user-select: none;
+    -webkit-user-select: none;
+  }
   #undoBtn.trash-mode {
     font-size: 16px;
   }
@@ -413,7 +417,7 @@ const undoBtn = document.getElementById('undoBtn');
 
 // words: array of { cells, text, color }
 // Each word is an independent free snake — no connection between words required
-let words = [], drag = [], done = false;
+let words = [], drag = [], done = false, colorIdx = 0;
 
 undoBtn.onclick = () => {
   if (!words.length || done) return;
@@ -470,7 +474,7 @@ function applyWorm(cells, color) {
 function redraw() {
   clear();
   words.forEach(w => applyWorm(w.cells, w.color));
-  if (drag.length) applyWorm(drag, COLORS[words.length % COLORS.length]);
+  if (drag.length) applyWorm(drag, COLORS[colorIdx % COLORS.length]);
   renderChips();
   checkCompletion();
 }
@@ -515,6 +519,9 @@ function startChipDrag(e) {
 
   chip.classList.add('dragging');
   chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
+
+  // Block text selection for the duration of the drag
+  document.onselectstart = () => false;
 
   // Switch undo button to trash mode
   undoBtn.textContent = '🗑';
@@ -573,6 +580,7 @@ function endChipDrag(e) {
 
   chipDrag.ghost.remove();
   chipDrag = null;
+  document.onselectstart = null;
   document.querySelectorAll('.chip').forEach(c => {
     c.classList.remove('dragging');
     c.classList.remove('drag-over');
@@ -620,7 +628,8 @@ function endGrid() {
   if (drag.length) {
     const cells = [...drag];
     const text  = cells.map(c => c.textContent.toLowerCase()).join('');
-    const color = COLORS[words.length % COLORS.length];
+    const color = COLORS[colorIdx % COLORS.length];
+    colorIdx++;
     words.push({ cells, text, color });
   }
   drag = [];

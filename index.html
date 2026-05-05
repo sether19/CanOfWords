@@ -155,8 +155,11 @@
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
-  @media (max-width: 690px) {
-    .sentence { margin-top: 10px; }
+  @media (max-width: 480px) {
+    .sentence { margin-top: calc((7 * 44px) * 0.25 + 16px); }
+  }
+  @media (max-width: 360px) {
+    .sentence { margin-top: calc((7 * 44px) * 0.35 + 16px); }
   }
 
   /* ── Shared modal base ── */
@@ -260,7 +263,7 @@
     <p>You completed today's puzzle.</p>
     <div class="ap-answer" id="ap-answer"></div>
     <p style="font-size:12px">Come back tomorrow for a new puzzle.</p>
-    <button class="modal-close" onclick="document.getElementById('already-played').classList.remove('show')">See the board anyway</button>
+    <button class="modal-close" id="ap-see-board">See the board anyway</button>
   </div>
 </div>
 
@@ -622,15 +625,57 @@ function checkCompletion() {
   done = true;
   drag.length = 0;
   undoBtn.disabled = true;
-  saveState({ dateKey: TODAY_KEY, solved: true });
+
+  // Save solved state including word paths so we can replay on return visits
+  const savedWords = words.map(w => ({
+    text:  w.text,
+    color: w.color,
+    path:  w.cells.map(c => ({ r: parseInt(c.dataset.r), c: parseInt(c.dataset.c) }))
+  }));
+  saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
+
   document.body.classList.add('solved');
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
        .forEach((c,i) => setTimeout(() => c.classList.add('success'), i * 30));
 }
 
+/* ── Replay solved state for returning players ── */
+function replaySolvedState() {
+  const state = loadState();
+  if (!state.solved || !state.words) return;
+
+  done = true;
+  undoBtn.disabled = true;
+
+  // Reconstruct words from saved paths, mapping coordinates back to grid cell elements
+  const cellEls = {};
+  document.querySelectorAll('#grid .cell').forEach(el => {
+    cellEls[el.dataset.r + ',' + el.dataset.c] = el;
+  });
+
+  words = state.words.map(sw => ({
+    text:  sw.text,
+    color: sw.color,
+    cells: sw.path.map(p => cellEls[p.r + ',' + p.c]).filter(Boolean)
+  }));
+
+  // Draw worms immediately, then animate the success pop with a short stagger
+  redraw();
+  document.body.classList.add('solved');
+  document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
+  words.flatMap(w => w.cells)
+       .forEach((c, i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
+}
+
 build();
 redraw();
+
+// Wire up already-played overlay button to dismiss + replay
+document.getElementById('ap-see-board').onclick = () => {
+  document.getElementById('already-played').classList.remove('show');
+  replaySolvedState();
+};
 </script>
 </body>
 </html>

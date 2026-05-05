@@ -162,7 +162,15 @@
     .sentence { margin-top: calc((7 * 44px) * 0.35 + 16px); }
   }
 
-  /* ── Shared modal base ── */
+  /* ── Trash zone on undo button during chip drag ── */
+  #undoBtn.trash-mode {
+    font-size: 16px;
+  }
+  #undoBtn.trash-hover {
+    border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    background: #d0b0b0;
+  }
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
@@ -226,7 +234,7 @@
 <!-- How to Play modal -->
 <div id="how-to-play" class="modal-overlay">
   <div class="modal-box">
-    <h2>How to Play 🪱</h2>
+    <h2>How to Play 🪱🤷🏻‍♀️</h2>
     <div class="how-step">
       <span class="how-step-num">1</span>
       <span>Read the <strong>answer clue</strong> at the top of the board.</span>
@@ -507,7 +515,6 @@ function startChipDrag(e) {
   const idx  = parseInt(chip.dataset.idx);
   const rect = chip.getBoundingClientRect();
 
-  // Create ghost
   const ghost = document.createElement('div');
   ghost.className = 'chip-ghost';
   ghost.textContent = chip.textContent;
@@ -519,12 +526,11 @@ function startChipDrag(e) {
   document.body.appendChild(ghost);
 
   chip.classList.add('dragging');
-  chipDrag = {
-    idx,
-    ghost,
-    offsetX: e.clientX - rect.left,
-    offsetY: e.clientY - rect.top,
-  };
+  chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
+
+  // Switch undo button to trash mode
+  undoBtn.textContent = '🗑';
+  undoBtn.classList.add('trash-mode');
 
   document.onpointermove = moveChipDrag;
   document.onpointerup   = endChipDrag;
@@ -541,6 +547,12 @@ function moveChipDrag(e) {
   if (target && parseInt(target.dataset.idx) !== chipDrag.idx) {
     target.classList.add('drag-over');
   }
+
+  // Highlight trash if hovering over undo button
+  const tr = undoBtn.getBoundingClientRect();
+  const overTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
+                    e.clientY >= tr.top  && e.clientY <= tr.bottom;
+  undoBtn.classList.toggle('trash-hover', overTrash);
 }
 
 function endChipDrag(e) {
@@ -548,13 +560,26 @@ function endChipDrag(e) {
   document.onpointerup   = null;
   if (!chipDrag) return;
 
-  const target = chipUnderPointer(e.clientX, e.clientY);
-  if (target) {
-    const toIdx = parseInt(target.dataset.idx);
-    if (toIdx !== chipDrag.idx) {
-      // Reorder: move dragged word to target position
-      const moved = words.splice(chipDrag.idx, 1)[0];
-      words.splice(toIdx, 0, moved);
+  // Restore undo button
+  undoBtn.textContent = '↩ Undo';
+  undoBtn.classList.remove('trash-mode', 'trash-hover');
+
+  // Check if dropped on trash
+  const tr = undoBtn.getBoundingClientRect();
+  const droppedOnTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
+                         e.clientY >= tr.top  && e.clientY <= tr.bottom;
+
+  if (droppedOnTrash) {
+    // Remove the word entirely — frees its cells on the grid
+    words.splice(chipDrag.idx, 1);
+  } else {
+    const target = chipUnderPointer(e.clientX, e.clientY);
+    if (target) {
+      const toIdx = parseInt(target.dataset.idx);
+      if (toIdx !== chipDrag.idx) {
+        const moved = words.splice(chipDrag.idx, 1)[0];
+        words.splice(toIdx, 0, moved);
+      }
     }
   }
 
@@ -564,8 +589,7 @@ function endChipDrag(e) {
     c.classList.remove('dragging');
     c.classList.remove('drag-over');
   });
-  renderChips();
-  checkCompletion();
+  redraw();
 }
 
 function chipUnderPointer(x, y) {

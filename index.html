@@ -316,7 +316,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
    CONFIG & SEEDED RNG
    ===================================================================== */
 const COLORS  = ['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
-const LETTERS = PUZZLE.sentence.replaceAll(' ','');
+const LETTERS = PUZZLE ? PUZZLE.sentence.replaceAll(' ','') : '';
 
 function hashString(str) {
   let h = 2166136261 >>> 0;
@@ -324,7 +324,7 @@ function hashString(str) {
   return h;
 }
 function rng(seed) { return () => ((seed = (seed*1664525+1013904223) >>> 0) / 4294967296); }
-function getSeed()  { return hashString(`${TODAY_KEY}-${PUZZLE.sentence}`); }
+function getSeed() { return PUZZLE ? hashString(`${TODAY_KEY}-${PUZZLE.sentence}`) : 0; }
 
 /* =====================================================================
    PATH GENERATION
@@ -359,11 +359,17 @@ for (let r=0; r<7; r++) for (let c=0; c<7; c++) if (!grid[r][c]) grid[r][c] = al
 /* =====================================================================
    UI SETUP
    ===================================================================== */
-const [ty, tm, td] = TODAY_KEY.split('-');
-document.getElementById('clue').textContent =
-  `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
-document.getElementById('puzzle-num').textContent =
-  `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
+const todayParts = TODAY_KEY.split('-');
+const ty = todayParts[0], tm = todayParts[1], td = todayParts[2];
+
+if (!PUZZLE) {
+  document.getElementById('clue').textContent = 'No puzzle available for today — check back soon!';
+} else {
+  document.getElementById('clue').textContent =
+    `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
+  document.getElementById('puzzle-num').textContent =
+    `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
+}
 
 /* =====================================================================
    GAME LOGIC
@@ -631,8 +637,7 @@ document.getElementById('ap-see-board').onclick = () => {
   replaySolvedState();
 };
 
-build();
-redraw();
+if (PUZZLE) { build(); redraw(); }
 </script>
 </body>
 </html>

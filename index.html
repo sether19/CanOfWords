@@ -58,7 +58,10 @@
     align-items: center;
     padding: 20px;
   }
-  @media (max-width: 480px) { body { padding-top: 8px; padding-bottom: 20px; } }
+  @media (max-width: 480px) {
+    body { padding-top: 8px; padding-bottom: 20px; padding-left: 12px; padding-right: 12px; }
+    .top-bar, .bottom-bar, .sentence { max-width: 100%; box-sizing: border-box; }
+  }
 
   button {
     font-family: Chicago, Geneva, system-ui, sans-serif;

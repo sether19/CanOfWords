@@ -2,149 +2,151 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-  <meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-/>
-<title>Can of Words⚠️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Can of Words🪱⚠️</title>
 <style>
   html, body {
-  margin: 0;
-  padding: 0;
-  overscroll-behavior: none;
-  touch-action: none;
-}
-
-.cell {
-  touch-action: none;
-}
-  :root {
-  --ui-scale: 1;
-}
-
-@media (max-width: 480px) {
-  :root {
-    --ui-scale: 1.25;
+    margin: 0; padding: 0;
+    overscroll-behavior: none;
+    touch-action: none;
   }
-}
+  .cell { touch-action: none; }
+  :root { --ui-scale: 1; }
+  @media (max-width: 480px) { :root { --ui-scale: 1.25; } }
+  @media (max-width: 360px) { :root { --ui-scale: 1.35; } }
 
-@media (max-width: 360px) {
-  :root {
-    --ui-scale: 1.35;
+  .top-bar {
+    width: calc(7 * 44px + 16px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
   }
-}
-/* ===== Grid-aligned top bar (SAFE) ===== */
+  .title-group { display: flex; flex-direction: column; }
+  .game-title { font-size: 22px; font-weight: bold; line-height: 1; }
+  .subtitle { font-size: 12px; opacity: 0.7; margin-top: 3px; }
+  .puzzle-num { font-size: 11px; opacity: 0.5; margin-top: 2px; letter-spacing: 0.03em; }
 
-.top-bar {
-  width: calc(7 * 44px + 16px); /* grid width + frame padding */
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
-}
+  .frame {
+    transform: scale(var(--ui-scale));
+    transform-origin: top center;
+  }
 
-.title-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.game-title {
-  font-size: 22px;
-  font-weight: bold;
-  line-height: 1;
-}
-
-.subtitle {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-top: 3px;
-}
-
-.frame {
-  transform: scale(var(--ui-scale));
-  transform-origin: top center;
-}
-
-  body{font-family:Chicago,Geneva,system-ui,sans-serif;background:#d6d6d6;display:flex;flex-direction:column;align-items:center;padding:20px}
-  @media (max-width: 480px) {
   body {
-    padding-top: 2px;   /* was 20px */
-    padding-bottom: 0px;
+    font-family: Chicago, Geneva, system-ui, sans-serif;
+    background: #d6d6d6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
   }
-}
+  @media (max-width: 480px) { body { padding-top: 2px; padding-bottom: 0px; } }
 
-  h1{margin-bottom:4px;font-size:20px}
-  .clue{font-weight:bold;margin-bottom:8px}
-  .controls{margin-bottom:10px}
+  .clue { font-weight: bold; margin-bottom: 8px; }
+  .controls { margin-bottom: 10px; }
 
-  button{font-family:Chicago,Geneva,system-ui,sans-serif;font-size:13px;padding:4px 10px;background:#e6e6e6;
-    border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a}
-  button:disabled{opacity:.5}
-
-  .frame{padding:8px;background:#e6e6e6;border-top:3px solid #fff;border-left:3px solid #fff;
-         border-right:3px solid #7a7a7a;border-bottom:3px solid #7a7a7a}
-  .grid{display:grid;grid-template-columns:repeat(7,44px);grid-template-rows:repeat(7,44px);gap:0}
-
-  .cell{width:44px;height:44px;background:#e6e6e6;display:flex;align-items:center;justify-content:center;
-        font-size:18px;font-weight:bold;user-select:none;color:#000;position:relative;z-index:1}
-
-  .selected{z-index:3;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.35)}
-
-  .next-hint::after{content:'';position:absolute;inset:6px;border-radius:50%;background:rgba(120,120,120,0.35);
-    opacity:0;animation:hintFade 300ms ease-out forwards;z-index:-1}
-  @keyframes hintFade{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-
-  .sentence{margin-top:0px;max-width:device-width;text-align:center}
-  .sentence-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:2px}
-  .word{display:inline-flex;white-space:nowrap;margin:0 4px 4px 4px}
-  .sentence .cell{width:25px;height:25px;font-size:10px}
-/* ===== Win celebration animations ===== */
-
-@keyframes boardPulse {
-  0%   { transform: scale(var(--ui-scale)); }
-  40%  { transform: scale(calc(var(--ui-scale) * 1.03)); }
-  100% { transform: scale(var(--ui-scale)); }
-}
-
-@keyframes successPop {
-  0% {
-    filter: brightness(1);
-    transform: scale(1);
+  button {
+    font-family: Chicago, Geneva, system-ui, sans-serif;
+    font-size: 13px; padding: 4px 10px;
+    background: #e6e6e6;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #7a7a7a; border-bottom: 2px solid #7a7a7a;
+    cursor: pointer;
   }
-  40% {
-    filter: brightness(1.25);
-    transform: scale(1.08);
-  }
-  100% {
-    filter: brightness(1);
-    transform: scale(1);
-  }
-}
+  button:disabled { opacity: .5; }
 
-/* Dim background cells once solved */
-body.solved .cell:not(.selected) {
-  opacity: 0.35;
-}
-  .cell.success{animation:pop 450ms ease-out forwards}
-  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  .frame {
+    padding: 8px; background: #e6e6e6;
+    border-top: 3px solid #fff; border-left: 3px solid #fff;
+    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, 44px);
+    grid-template-rows: repeat(7, 44px);
+    gap: 0;
+  }
+  .cell {
+    width: 44px; height: 44px; background: #e6e6e6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: bold;
+    user-select: none; color: #000;
+    position: relative; z-index: 1;
+  }
+  .selected {
+    z-index: 3;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35);
+  }
+  .next-hint::after {
+    content: ''; position: absolute; inset: 6px;
+    border-radius: 50%; background: rgba(120,120,120,0.35);
+    opacity: 0; animation: hintFade 300ms ease-out forwards; z-index: -1;
+  }
+  @keyframes hintFade { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
+
+  .sentence { margin-top: 0px; max-width: device-width; text-align: center; }
+  .sentence-row { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 2px; }
+  .word { display: inline-flex; white-space: nowrap; margin: 0 4px 4px 4px; }
+  .sentence .cell { width: 25px; height: 25px; font-size: 10px; }
+
+  @keyframes boardPulse {
+    0%   { transform: scale(var(--ui-scale)); }
+    40%  { transform: scale(calc(var(--ui-scale) * 1.03)); }
+    100% { transform: scale(var(--ui-scale)); }
+  }
+  @keyframes successPop {
+    0%   { filter: brightness(1); transform: scale(1); }
+    40%  { filter: brightness(1.25); transform: scale(1.08); }
+    100% { filter: brightness(1); transform: scale(1); }
+  }
+  body.solved .cell:not(.selected) { opacity: 0.35; }
+  .cell.success { animation: pop 450ms ease-out forwards; }
+  @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
+
   @media (max-width: 690px) {
-  .sentence {
-    margin-top: 64px;
-    padding-top: 24px;
-    border-top: 4px solid rgba(0,0,0,0.15);
+    .sentence { margin-top: 64px; padding-top: 24px; border-top: 4px solid rgba(0,0,0,0.15); }
   }
-}
 
+  /* ── Already-played overlay ── */
+  #already-played {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  #already-played.show { display: flex; }
+  .ap-box {
+    background: #e6e6e6;
+    border-top: 3px solid #fff; border-left: 3px solid #fff;
+    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
+    padding: 24px 28px; max-width: 280px; text-align: center;
+  }
+  .ap-box h2 { margin: 0 0 8px; font-size: 17px; }
+  .ap-box p  { margin: 0 0 16px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
+  .ap-answer { font-weight: bold; font-size: 15px; margin-bottom: 16px; }
+  .ap-box button { margin-top: 4px; }
 </style>
 </head>
 <body>
+
+<!-- Already-played overlay -->
+<div id="already-played">
+  <div class="ap-box">
+    <h2>Already solved! 🪱</h2>
+    <p>You completed today's puzzle.</p>
+    <div class="ap-answer" id="ap-answer"></div>
+    <p style="font-size:12px">Come back tomorrow for a new puzzle.</p>
+    <button onclick="document.getElementById('already-played').classList.remove('show')">See the board anyway</button>
+  </div>
+</div>
 
 <div class="top-bar">
   <div class="title-group">
     <div class="game-title">Can of Words 🪱</div>
     <div id="clue" class="subtitle"></div>
+    <div id="puzzle-num" class="puzzle-num"></div>
   </div>
-
   <button id="undoBtn">undo</button>
 </div>
 
@@ -152,131 +154,264 @@ body.solved .cell:not(.selected) {
 <div class="sentence"><strong>Your sentence:</strong><div id="sentenceRow" class="sentence-row"></div></div>
 
 <script>
-/***** CONFIG *****/
-const PUZZLE_MODE = 'random'; // 'daily' or 'random'
+/* =====================================================================
+   PUZZLE LIBRARY
+   Add new puzzles here. The daily rotation cycles through them in order.
+   Format: { clue: string, sentence: string }
+   Sentence must be 5–49 letters (fits a 7×7 grid = 49 cells max).
+   ===================================================================== */
+const PUZZLES = [
+  { clue: 'G. Washington',  sentence: 'first president of the USA' },
+  { clue: 'Avocado',        sentence: 'creamy fruit required to make guacamole' },
+  { clue: 'Eiffel Tower',   sentence: 'tall iron landmark in Paris France' },
+  { clue: 'Shark',          sentence: 'apex ocean predator with many rows of teeth' },
+  { clue: 'Chess',          sentence: 'strategy board game with kings and queens' },
+  { clue: 'Lightning',      sentence: 'electric sky flash before thunder rolls' },
+  { clue: 'Penguin',        sentence: 'flightless bird native to the south pole' },
+  { clue: 'Piano',          sentence: 'large keyboard instrument with black and white keys' },
+  { clue: 'Volcano',        sentence: 'mountain that erupts molten lava and ash' },
+  { clue: 'Amazon River',   sentence: 'longest river flowing through the rainforest' },
+  { clue: 'Telescope',      sentence: 'optical tool used to observe distant stars' },
+  { clue: 'Honey',          sentence: 'sweet golden syrup made by bees in a hive' },
+  { clue: 'Marathon',       sentence: 'long running race of just over twenty six miles' },
+  { clue: 'Shakespeare',    sentence: 'english playwright who wrote hamlet and macbeth' },
+];
 
-const COLORS=['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
-const PUZZLE={clue:'G. Washington',sentence:'first president of the USA'};
-const LETTERS=PUZZLE.sentence.replaceAll(' ','');
-
-/***** SEEDED RNG *****/
-function hashString(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h}
-function rng(seed){return()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296)}
-
-function getSeed(){
- if(PUZZLE_MODE==='daily'){
-  const d=new Date();
-  const key=`${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}-${PUZZLE.sentence}`;
-  return hashString(key);
- }
- return Math.floor(Math.random()*1e9);
+/* =====================================================================
+   DAILY PUZZLE SELECTION
+   Picks a puzzle based on today's UTC date, cycling through the library.
+   ===================================================================== */
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
 }
 
-/***** PATH GENERATION *****/
-function genPath(len,seed){const r=rng(seed);while(true){let used=new Set(),p=[];let x=r()*7|0,y=r()*7|0;
- p.push([x,y]);used.add(x+','+y);let ok=true;
- for(let i=1;i<len;i++){let opts=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>{let nx=x+d[0],ny=y+d[1];return nx>=0&&ny>=0&&nx<7&&ny<7&&!used.has(nx+','+ny)})
-  if(!opts.length){ok=false;break}
-  let [dx,dy]=opts[r()*opts.length|0];x+=dx;y+=dy;p.push([x,y]);used.add(x+','+y)}
- if(ok)return p}}
+function getDayIndex(dateKey) {
+  // Count days since a fixed epoch (2025-01-01) and mod by puzzle count
+  const epoch = new Date('2025-01-01T00:00:00Z');
+  const parts = dateKey.split('-').map(Number);
+  const today = new Date(Date.UTC(parts[0], parts[1]-1, parts[2]));
+  const days = Math.floor((today - epoch) / 86400000);
+  return ((days % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
+}
 
-const SEED=getSeed();
-const PATH=genPath(LETTERS.length,SEED);
+const TODAY_KEY  = getTodayKey();
+const PUZZLE_IDX = getDayIndex(TODAY_KEY);
+const PUZZLE_NUM = PUZZLE_IDX + 1; // 1-based display
+const PUZZLE     = PUZZLES[PUZZLE_IDX];
 
-let grid=Array.from({length:7},()=>Array(7).fill(''));
-PATH.forEach((p,i)=>grid[p[0]][p[1]]=LETTERS[i]);
-const alpha='abcdefghijklmnopqrstuvwxyz',r2=rng(SEED^0x9e3779b9);
-for(let r=0;r<7;r++)for(let c=0;c<7;c++)if(!grid[r][c])grid[r][c]=alpha[r2()*26|0];
+/* =====================================================================
+   ALREADY-PLAYED CHECK
+   Stores { dateKey, solved } in localStorage.
+   ===================================================================== */
+const STORAGE_KEY = 'canofwords_state';
 
-/***** GAME LOGIC (unchanged from v2.0) *****/
-const gridEl=document.getElementById('grid');
-const rowEl=document.getElementById('sentenceRow');
-const undoBtn=document.getElementById('undoBtn');
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveState(obj) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch(e) {}
+}
+
+const savedState = loadState();
+const alreadyPlayedToday = savedState.dateKey === TODAY_KEY && savedState.solved === true;
+
+if (alreadyPlayedToday) {
+  const overlay = document.getElementById('already-played');
+  document.getElementById('ap-answer').textContent =
+    `"${PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}"`;
+  overlay.classList.add('show');
+}
+
+/* =====================================================================
+   CONFIG & SEEDED RNG
+   ===================================================================== */
+const COLORS = ['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
+const LETTERS = PUZZLE.sentence.replaceAll(' ','');
+
+function hashString(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h;
+}
+function rng(seed) { return () => ((seed = (seed*1664525+1013904223) >>> 0) / 4294967296); }
+
+function getSeed() {
+  const key = `${TODAY_KEY}-${PUZZLE.sentence}`;
+  return hashString(key);
+}
+
+/* =====================================================================
+   PATH GENERATION
+   ===================================================================== */
+function genPath(len, seed) {
+  const r = rng(seed);
+  while (true) {
+    let used = new Set(), p = [];
+    let x = r()*7|0, y = r()*7|0;
+    p.push([x,y]); used.add(x+','+y); let ok = true;
+    for (let i = 1; i < len; i++) {
+      let opts = [[1,0],[-1,0],[0,1],[0,-1]].filter(d => {
+        let nx=x+d[0], ny=y+d[1];
+        return nx>=0&&ny>=0&&nx<7&&ny<7&&!used.has(nx+','+ny);
+      });
+      if (!opts.length) { ok = false; break; }
+      let [dx,dy] = opts[r()*opts.length|0];
+      x+=dx; y+=dy; p.push([x,y]); used.add(x+','+y);
+    }
+    if (ok) return p;
+  }
+}
+
+const SEED = getSeed();
+const PATH = genPath(LETTERS.length, SEED);
+
+let grid = Array.from({length:7}, () => Array(7).fill(''));
+PATH.forEach((p,i) => grid[p[0]][p[1]] = LETTERS[i]);
+const alpha = 'abcdefghijklmnopqrstuvwxyz', r2 = rng(SEED ^ 0x9e3779b9);
+for (let r=0; r<7; r++) for (let c=0; c<7; c++) if (!grid[r][c]) grid[r][c] = alpha[r2()*26|0];
+
+/* =====================================================================
+   UI SETUP
+   ===================================================================== */
 document.getElementById('clue').textContent =
   `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
-let words=[],drag=[],done=false;
-undoBtn.onclick=()=>{if(words.length&&!done){words.pop();redraw()}};
+document.getElementById('puzzle-num').textContent =
+  `Puzzle #${PUZZLE_NUM} · ${TODAY_KEY}`;
 
-function build(){gridEl.innerHTML='';grid.forEach((row,r)=>row.forEach((l,c)=>{
- let d=document.createElement('div');d.className='cell';d.textContent=l.toUpperCase();
- d.dataset.r=r;d.dataset.c=c;d.onpointerdown=start;gridEl.appendChild(d)}))}
+/* =====================================================================
+   GAME LOGIC
+   ===================================================================== */
+const gridEl  = document.getElementById('grid');
+const rowEl   = document.getElementById('sentenceRow');
+const undoBtn = document.getElementById('undoBtn');
 
-function clear(){document.querySelectorAll('.cell').forEach(c=>{c.className='cell';c.style.background='#e6e6e6';c.style.borderRadius='0'})}
+let words = [], drag = [], done = false;
+undoBtn.onclick = () => { if (words.length && !done) { words.pop(); redraw(); } };
 
-const RAD={tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
-function corner(a,b){const m={'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl','0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};return m[a+'|'+b]}
+function build() {
+  gridEl.innerHTML = '';
+  grid.forEach((row,r) => row.forEach((l,c) => {
+    let d = document.createElement('div');
+    d.className = 'cell'; d.textContent = l.toUpperCase();
+    d.dataset.r = r; d.dataset.c = c;
+    d.onpointerdown = start;
+    gridEl.appendChild(d);
+  }));
+}
 
-function applyWorm(cells,color){cells.forEach((c,i)=>{
- c.classList.add('selected');c.style.background=color;
- if(cells.length===1){c.style.borderRadius='50%';return}
- if(i===0||i===cells.length-1){let n=i===0?cells[1]:cells[cells.length-2];
-  let dr=n.dataset.r-c.dataset.r,dc=n.dataset.c-c.dataset.c;
-  if(dc==1)c.style.borderRadius='50% 0 0 50%';
-  if(dc==-1)c.style.borderRadius='0 50% 50% 0';
-  if(dr==1)c.style.borderRadius='50% 50% 0 0';
-  if(dr==-1)c.style.borderRadius='0 0 50% 50%';return}
- let p=cells[i-1],n=cells[i+1];
- let k=corner((c.dataset.c-p.dataset.c)+','+(c.dataset.r-p.dataset.r),(n.dataset.c-c.dataset.c)+','+(n.dataset.r-c.dataset.r));
- if(k)c.style.borderRadius=RAD[k]})}
+function clear() {
+  document.querySelectorAll('.cell').forEach(c => {
+    c.className = 'cell'; c.style.background = '#e6e6e6'; c.style.borderRadius = '0';
+  });
+}
 
-function highlightNext(){if(!words.length||drag.length||done)return;const last=words.at(-1).cells.at(-1);
- document.querySelectorAll('.cell').forEach(c=>{if(!c.classList.contains('selected')&&adj(c,last))c.classList.add('next-hint')})}
+const RAD = {tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
+function corner(a,b) {
+  const m = {'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl',
+             '0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};
+  return m[a+'|'+b];
+}
 
-function redraw(){clear();words.forEach((w,i)=>applyWorm(w.cells,COLORS[i%COLORS.length]));
- if(drag.length)applyWorm(drag,COLORS[words.length%COLORS.length]);rowEl.innerHTML='';
- words.forEach((w,i)=>{let we=document.createElement('div');we.className='word';w.text.split('').forEach((ch,j)=>{
-  let c=document.createElement('div');c.className='cell selected';c.textContent=ch.toUpperCase();
-  c.style.background=COLORS[i%COLORS.length];c.style.borderRadius=j==0?'50% 0 0 50%':j==w.text.length-1?'0 50% 50% 0':'0';we.appendChild(c)});rowEl.appendChild(we)});
- highlightNext();checkCompletion()}
-
-function checkCompletion(){
-  
-
-const playerSentence = words
-  .map(w => w.text)
-  .join(' ')
-  .replace(/\s+/g, ' ')
-  .trim()
-  .toLowerCase();
-
-const targetSentence = PUZZLE.sentence
-  .replace(/\s+/g, ' ')
-  .trim()
-  .toLowerCase();
-
-
- if(playerSentence === targetSentence && !done){
-  done = true;
-   drag.length = 0;
-  undoBtn.disabled = true;
-
-  // --- Tier 3: lock + dim ---
-  document.body.classList.add('solved');
-
-  // --- Tier 1: board pulse ---
-  const frame = document.querySelector('.frame');
-  frame.style.animation = 'boardPulse 450ms ease-out';
-
-  // --- Tier 2: worm celebration ---
-  words.flatMap(w => w.cells)
-    .forEach((c,i) =>
-      setTimeout(() => c.classList.add('success'), i * 30)
+function applyWorm(cells, color) {
+  cells.forEach((c,i) => {
+    c.classList.add('selected'); c.style.background = color;
+    if (cells.length === 1) { c.style.borderRadius = '50%'; return; }
+    if (i === 0 || i === cells.length-1) {
+      let n = i===0 ? cells[1] : cells[cells.length-2];
+      let dr = n.dataset.r - c.dataset.r, dc = n.dataset.c - c.dataset.c;
+      if (dc== 1) c.style.borderRadius = '50% 0 0 50%';
+      if (dc==-1) c.style.borderRadius = '0 50% 50% 0';
+      if (dr== 1) c.style.borderRadius = '50% 50% 0 0';
+      if (dr==-1) c.style.borderRadius = '0 0 50% 50%';
+      return;
+    }
+    let p = cells[i-1], n = cells[i+1];
+    let k = corner(
+      (c.dataset.c-p.dataset.c)+','+(c.dataset.r-p.dataset.r),
+      (n.dataset.c-c.dataset.c)+','+(n.dataset.r-c.dataset.r)
     );
+    if (k) c.style.borderRadius = RAD[k];
+  });
 }
+
+function highlightNext() {
+  if (!words.length || drag.length || done) return;
+  const last = words.at(-1).cells.at(-1);
+  document.querySelectorAll('.cell').forEach(c => {
+    if (!c.classList.contains('selected') && adj(c,last)) c.classList.add('next-hint');
+  });
 }
-function adj(a,b){return Math.abs(a.dataset.r-b.dataset.r)+Math.abs(a.dataset.c-b.dataset.c)==1}
 
-function start(e){if(done)return;const c=e.target;if(c.classList.contains('selected'))return;
- if(words.length&&!adj(c,words.at(-1).cells.at(-1)))return;drag=[c];gridEl.onpointermove=move;document.onpointerup=end;redraw()}
+function redraw() {
+  clear();
+  words.forEach((w,i) => applyWorm(w.cells, COLORS[i%COLORS.length]));
+  if (drag.length) applyWorm(drag, COLORS[words.length%COLORS.length]);
+  rowEl.innerHTML = '';
+  words.forEach((w,i) => {
+    let we = document.createElement('div'); we.className = 'word';
+    w.text.split('').forEach((ch,j) => {
+      let c = document.createElement('div');
+      c.className = 'cell selected'; c.textContent = ch.toUpperCase();
+      c.style.background = COLORS[i%COLORS.length];
+      c.style.borderRadius = j==0 ? '50% 0 0 50%' : j==w.text.length-1 ? '0 50% 50% 0' : '0';
+      we.appendChild(c);
+    });
+    rowEl.appendChild(we);
+  });
+  highlightNext();
+  checkCompletion();
+}
 
-function move(e){const t=document.elementFromPoint(e.clientX,e.clientY);if(!t||!t.classList.contains('cell'))return;
- if(drag.length>1&&t===drag[drag.length-2]){drag.pop();redraw();return}
- if(t.classList.contains('selected'))return;if(drag.includes(t)||!adj(drag.at(-1),t))return;drag.push(t);redraw()}
+function checkCompletion() {
+  const playerSentence = words.map(w => w.text).join(' ').replace(/\s+/g,' ').trim().toLowerCase();
+  const targetSentence = PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
 
-function end(){document.onpointerup=null;gridEl.onpointermove=null;
- if(drag.length)words.push({cells:[...drag],text:drag.map(c=>c.textContent.toLowerCase()).join('')});drag=[];redraw()}
+  if (playerSentence === targetSentence && !done) {
+    done = true;
+    drag.length = 0;
+    undoBtn.disabled = true;
 
-build();redraw();
+    // Save solved state
+    saveState({ dateKey: TODAY_KEY, solved: true });
+
+    document.body.classList.add('solved');
+    const frame = document.querySelector('.frame');
+    frame.style.animation = 'boardPulse 450ms ease-out';
+    words.flatMap(w => w.cells)
+         .forEach((c,i) => setTimeout(() => c.classList.add('success'), i * 30));
+  }
+}
+
+function adj(a,b) {
+  return Math.abs(a.dataset.r-b.dataset.r) + Math.abs(a.dataset.c-b.dataset.c) == 1;
+}
+
+function start(e) {
+  if (done) return;
+  const c = e.target;
+  if (c.classList.contains('selected')) return;
+  if (words.length && !adj(c, words.at(-1).cells.at(-1))) return;
+  drag = [c]; gridEl.onpointermove = move; document.onpointerup = end; redraw();
+}
+
+function move(e) {
+  const t = document.elementFromPoint(e.clientX, e.clientY);
+  if (!t || !t.classList.contains('cell')) return;
+  if (drag.length > 1 && t === drag[drag.length-2]) { drag.pop(); redraw(); return; }
+  if (t.classList.contains('selected')) return;
+  if (drag.includes(t) || !adj(drag.at(-1), t)) return;
+  drag.push(t); redraw();
+}
+
+function end() {
+  document.onpointerup = null; gridEl.onpointermove = null;
+  if (drag.length) words.push({cells:[...drag], text: drag.map(c=>c.textContent.toLowerCase()).join('')});
+  drag = []; redraw();
+}
+
+build();
+redraw();
 </script>
 </body>
 </html>

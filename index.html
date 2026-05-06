@@ -39,8 +39,24 @@
     font-size: 22px; line-height: 1;
   }
   .subtitle { font-size: 12px; opacity: 0.7; }
-  .puzzle-num { font-size: 11px; opacity: 0.5; margin-top: 2px; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; }
+  .puzzle-num-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+  .puzzle-num { font-size: 11px; opacity: 0.5; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; }
   .puzzle-num.solved { opacity: 1; color: #2a7a2a; }
+
+  /* Hint circles inline with puzzle number */
+  .hint-circles { display: flex; gap: 4px; align-items: center; }
+  .hint-circle {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #e6e6e6;
+    border-top: 1px solid #7a7a7a; border-left: 1px solid #7a7a7a;
+    border-right: 1px solid #fff; border-bottom: 1px solid #fff;
+    flex-shrink: 0;
+    transition: background 400ms ease, border-color 400ms ease;
+  }
+  .hint-circle.filled {
+    border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);
+    border-right: 1px solid rgba(255,255,255,0.6); border-bottom: 1px solid rgba(255,255,255,0.6);
+  }
 
   body {
     font-family: Chicago, Geneva, system-ui, sans-serif;
@@ -79,8 +95,8 @@
 
   .frame {
     padding: 8px; background: #e6e6e6;
-    border-top: 3px solid #fff; border-left: 3px solid #fff;
-    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
+    border-top: 3px solid #7a7a7a; border-left: 3px solid #7a7a7a;
+    border-right: 3px solid #fff; border-bottom: 3px solid #fff;
   }
   .grid {
     display: grid;
@@ -95,6 +111,8 @@
     user-select: none; color: #000;
     position: relative; z-index: 1;
   }
+  .cell.hint4-circle { color: #000; }
+  .cell.hint4-circle::after { z-index: -1; }
   .selected {
     z-index: 3;
     box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35);
@@ -111,15 +129,90 @@
     display: flex; gap: 6px; margin-top: 8px;
   }
   .bottom-bar button { flex: 1; font-size: 13px; padding: 7px 0; text-align: center; }
+  #hintsBtn { position: relative; background: #fff9c4; }
+  #trashBtn { flex: 1; font-size: 16px; background: #ffd0d0; }
+  #submitBtn { font-weight: bold; background: #d0ead0; }
+  #submitBtn.ready {
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #4a7a4a; border-bottom: 2px solid #4a7a4a;
+    background: #b8ddb8;
+  }
+
+  /* Hint counter badge on hints button */
+  .hint-badge {
+    position: absolute; top: 3px; right: 4px;
+    font-size: 9px; opacity: 0.6; font-weight: bold;
+  }
+
+  /* Hint 3 — faded letters in purple tint */
+  .cell.hint3-fade {
+    opacity: 0.2;
+    pointer-events: none;
+    color: #9c7bb5;
+  }
+
+  /* Hint 4 — raised circle under first letters in tan tint */
+  .cell.hint4-circle::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: #d7c4a0;
+    border-top: 2px solid #ede0c8; border-left: 2px solid #ede0c8;
+    border-right: 2px solid #a08c6a; border-bottom: 2px solid #a08c6a;
+    z-index: 1;
+  }
+
+  /* Hints dropdown */
+  .hints-menu {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    width: 180px;
+    background: #e6e6e6;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #7a7a7a; border-bottom: 2px solid #7a7a7a;
+    z-index: 200;
+  }
+  .hints-menu.show { display: block; }
+  .hint-item {
+    padding: 8px 12px; font-size: 12px; cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center;
+  }
+  .hint-item:last-child { border-bottom: none; }
+  .hint-item:hover { filter: brightness(0.95); }
+  .hint-item.used { opacity: 0.4; pointer-events: none; }
+  .hint-item-num { opacity: 0.5; font-weight: bold; margin-right: 8px; flex-shrink: 0; }
+  #hint1Item { background: #9bdcff; }
+  #hint2Item { background: #ffcc80; }
+  #hint3Item { background: #d1c4e9; }
+  #hint4Item { background: #d7c4a0; }
 
   .sentence { margin-top: 8px; text-align: center; width: calc(7 * var(--cell) + 16px); }
-  .sentence-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; opacity: 0.6; }
+  .sentence-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .sentence-label { font-size: 12px; font-weight: bold; opacity: 0.6; text-align: left; }
+  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: bold; }
   .sentence-row {
     display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 5px; min-height: 36px; padding: 5px 4px;
-    background: #d0d0d0;
+    gap: 5px; min-height: 44px; padding: 5px 4px;
+    background: repeating-linear-gradient(
+      45deg,
+      #c8c8c8,
+      #c8c8c8 1px,
+      #d0d0d0 1px,
+      #d0d0d0 8px
+    );
     border-top: 2px solid #b8b8b8; border-left: 2px solid #b8b8b8;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+  }
+  .sentence-instruction {
+    font-size: 11px; opacity: 0.5; text-align: center;
+    margin-top: 6px; letter-spacing: 0.01em;
   }
   .chip {
     display: inline-flex; align-items: center;
@@ -153,8 +246,7 @@
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
-  #undoBtn.trash-mode { font-size: 16px; }
-  #undoBtn.trash-hover {
+  #trashBtn.trash-hover {
     border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
     background: #d0b0b0;
@@ -207,7 +299,7 @@
     </div>
     <div class="how-step">
       <span class="how-step-num">3</span>
-      <span>Selected <strong>words</strong> appear in the section below the grid. <strong>Drag</strong> them around to rearrange the sentence into the correct order. <strong>All words will begin/end near adjacent words in the grid.</strong>    </ span>
+      <span>Selected <strong>words</strong> appear in the section below the grid. <strong>Drag</strong> them around to rearrange the sentence into the correct order. All words will begin/end near adjacent words in the grid.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">4</span>
@@ -226,6 +318,18 @@
   </div>
 </div>
 
+<!-- Win popup -->
+<div id="win-popup" class="modal-overlay">
+  <div class="modal-box" style="text-align:center">
+    <h2>You solved it! 🪱✅</h2>
+    <p style="font-size:13px;margin:0 0 6px">Today's answer:</p>
+    <div class="ap-answer" id="win-clue"></div>
+    <div id="win-hints" style="font-size:18px;letter-spacing:3px;margin:10px 0 14px"></div>
+    <button class="modal-close" id="win-share-btn" style="margin-top:0;background:#d0ead0;border-right-color:#4a7a4a;border-bottom-color:#4a7a4a">📤 Share result</button>
+    <button class="modal-close" onclick="document.getElementById('win-popup').classList.remove('show')" style="margin-top:8px;opacity:0.6;font-size:12px">See the board</button>
+  </div>
+</div>
+
 <!-- Already-played overlay -->
 <div id="already-played" class="modal-overlay">
   <div class="modal-box">
@@ -233,7 +337,8 @@
     <p>You completed today's puzzle.</p>
     <div class="ap-answer" id="ap-answer"></div>
     <p style="font-size:12px">Come back tomorrow for a new puzzle.</p>
-    <button class="modal-close" id="ap-see-board">See the board anyway</button>
+    <button class="modal-close" id="ap-share-btn" style="margin-top:0">📤 Share result</button>
+    <button class="modal-close" id="ap-see-board" style="margin-top:8px;opacity:0.6;font-size:12px">See the board anyway</button>
   </div>
 </div>
 
@@ -244,7 +349,15 @@
       <div id="statusSquare" class="status-square"></div>
       <div>
         <div id="clue" class="subtitle"></div>
-        <div id="puzzle-num" class="puzzle-num"></div>
+        <div class="puzzle-num-row">
+          <div id="puzzle-num" class="puzzle-num"></div>
+          <div class="hint-circles">
+            <div class="hint-circle" id="hintCircle1"></div>
+            <div class="hint-circle" id="hintCircle2"></div>
+            <div class="hint-circle" id="hintCircle3"></div>
+            <div class="hint-circle" id="hintCircle4"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -254,12 +367,29 @@
 <div class="frame"><div id="grid" class="grid"></div></div>
 
 <div class="bottom-bar">
-  <button id="undoBtn">↩ Undo</button>
+  <button id="hintsBtn">Hints<span class="hint-badge" id="hintBadge">4</span>
+    <div class="hints-menu" id="hintsMenu">
+      <div class="hint-item" id="hint1Item" onclick="useHint(1)"><span class="hint-item-num">1</span>Word count</div>
+      <div class="hint-item" id="hint2Item" onclick="useHint(2)"><span class="hint-item-num">2</span>Word lengths</div>
+      <div class="hint-item" id="hint3Item" onclick="useHint(3)"><span class="hint-item-num">3</span>Remove unused letters</div>
+      <div class="hint-item" id="hint4Item" onclick="useHint(4)"><span class="hint-item-num">4</span>Reveal first letters</div>
+    </div>
+  </button>
+  <button id="trashBtn">🗑️</button>
+  <button id="submitBtn">Submit</button>
 </div>
 
 <div class="sentence">
-  <div class="sentence-label">Your sentence — drag to reorder</div>
-  <div id="sentenceRow" class="sentence-row"><span class="sentence-empty">Drag words from the grid to build your sentence</span></div>
+  <div class="sentence-header">
+    <div class="sentence-label">Your sentence:</div>
+    <div class="sentence-hint2" id="hint2Text"></div>
+  </div>
+  <div id="sentenceRow" class="sentence-row"></div>
+  <div class="sentence-instruction">Drag to arrange words &bull; Drag to 🗑️ to delete</div>
+  <div id="shareArea" style="display:none;text-align:center;margin-top:10px">
+    <button id="shareBtn" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:13px;padding:7px 20px;background:#d0ead0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #4a7a4a;border-bottom:2px solid #4a7a4a;cursor:pointer;">📤 Share result</button>
+    <div id="shareCopied" style="font-size:11px;opacity:0;margin-top:5px;transition:opacity 400ms">Copied to clipboard!</div>
+  </div>
 </div>
 
 <script>
@@ -314,6 +444,12 @@ const STORAGE_KEY = 'canofwords_state';
 function loadState()    { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; } }
 function saveState(obj) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch(e) {} }
 
+// Allow ?reset in the URL to clear state — works in any browser/webview
+if (window.location.search.includes('reset')) {
+  localStorage.removeItem(STORAGE_KEY);
+  window.history.replaceState({}, '', window.location.pathname);
+}
+
 const savedState = loadState();
 const alreadyPlayedToday = savedState.dateKey === TODAY_KEY && savedState.solved === true;
 
@@ -335,7 +471,27 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 /* =====================================================================
    CONFIG & SEEDED RNG
    ===================================================================== */
-const COLORS  = ['#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0'];
+/* =====================================================================
+   COLOR SYSTEM
+   Always uses the 7 original colors in order, skipping any currently
+   in use. Freed colors (from deletions) become available again.
+   Beyond 7 simultaneous words, golden ratio generates extras.
+   ===================================================================== */
+const COLORS = [
+  '#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0', // original 7
+  '#ffccbc','#d7ccc8','#f0f4c3','#ffe0b2','#b0bec5','#fff59d','#e1bee7','#ef9a9a', // extended 8
+];
+
+function getNextColor() {
+  const usedColors = new Set(words.map(w => w.color));
+  for (const color of COLORS) {
+    if (!usedColors.has(color)) return color;
+  }
+  // All 7 in use — generate a unique one via golden ratio
+  const GOLDEN = 0.618033988749895;
+  const hue = ((words.length * GOLDEN) % 1) * 360;
+  return `hsl(${hue.toFixed(1)}, 60%, 82%)`;
+}
 const LETTERS = PUZZLE ? PUZZLE.sentence.replaceAll(' ','') : '';
 
 function hashString(str) {
@@ -386,7 +542,7 @@ if (!PUZZLE) {
   document.getElementById('clue').textContent = 'No puzzle available for today — check back soon!';
 } else {
   document.getElementById('clue').textContent =
-    `Today's answer: ${PUZZLE.clue} (${PUZZLE.sentence.trim().split(/\s+/).length})`;
+    `Today's answer: ${PUZZLE.clue}`;
   document.getElementById('puzzle-num').textContent =
     `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
 }
@@ -394,25 +550,115 @@ if (!PUZZLE) {
 /* =====================================================================
    GAME LOGIC
    ===================================================================== */
-const gridEl  = document.getElementById('grid');
-const rowEl   = document.getElementById('sentenceRow');
-const undoBtn = document.getElementById('undoBtn');
+const gridEl    = document.getElementById('grid');
+const rowEl     = document.getElementById('sentenceRow');
+const trashBtn  = document.getElementById('trashBtn');
+const submitBtn = document.getElementById('submitBtn');
+const hintsBtn  = document.getElementById('hintsBtn');
+const hintsMenu = document.getElementById('hintsMenu');
 
-let words = [], drag = [], done = false, colorIdx = 0;
+let words = [], drag = [], done = false;
+let hintsUsed = new Set();
+let wordHistory = []; // tracks word ids in draw order for undo
 
-undoBtn.onclick = () => {
-  if (!words.length || done) return;
-  words.pop();
+// Trash button — removes the most recently DRAWN word regardless of tray order
+trashBtn.onclick = () => {
+  if (!wordHistory.length || done) return;
+  const lastId = wordHistory.pop();
+  words = words.filter(w => w.id !== lastId);
   redraw();
 };
+
+// Submit button — manual win check
+submitBtn.onclick = () => {
+  if (done) return;
+  checkCompletion(true);
+};
+
+// Hints button — toggle menu
+hintsBtn.onclick = (e) => {
+  e.stopPropagation();
+  hintsMenu.classList.toggle('show');
+};
+document.addEventListener('click', () => hintsMenu.classList.remove('show'));
+
+/* ── Hint system ── */
+const HINT_COLORS = { 1: '#9bdcff', 2: '#ffcc80', 3: '#d1c4e9', 4: '#d7c4a0' };
+
+function useHint(n) {
+  if (hintsUsed.has(n) || done) return;
+  hintsUsed.add(n);
+  hintsMenu.classList.remove('show');
+  document.getElementById(`hint${n}Item`).classList.add('used');
+
+  const remaining = 4 - hintsUsed.size;
+  document.getElementById('hintBadge').textContent = remaining || '';
+
+  // Fill the hint circle with fade-in
+  const circle = document.getElementById(`hintCircle${n}`);
+  circle.style.background = HINT_COLORS[n];
+  circle.classList.add('filled');
+
+  if (n === 1) applyHint1();
+  if (n === 2) applyHint2();
+  if (n === 3) applyHint3();
+  if (n === 4) applyHint4();
+}
+
+function applyHint1() {
+  const wordCount = PUZZLE.sentence.trim().split(/\s+/).length;
+  const clueEl = document.getElementById('clue');
+  clueEl.innerHTML = `Today's answer: ${PUZZLE.clue} <span style="color:#2980b9;font-weight:bold">(${wordCount})</span>`;
+}
+
+function applyHint2() {
+  // Show word lengths in sentence header
+  const lengths = PUZZLE.sentence.trim().split(/\s+/).map(w => w.length);
+  document.getElementById('hint2Text').textContent =
+    `Lengths: ${lengths.join(' · ')}`;
+}
+
+function applyHint3() {
+  // Build a set of cells that are physically on the answer path
+  const pathCells = new Set(PATH.map(pos => pos[0] + ',' + pos[1]));
+  document.querySelectorAll('#grid .cell').forEach(cell => {
+    if (cell.classList.contains('selected')) return;
+    const key = cell.dataset.r + ',' + cell.dataset.c;
+    if (!pathCells.has(key)) cell.classList.add('hint3-fade');
+  });
+}
+
+function applyHint4() {
+  // Place raised circle indicator under first letters of each word in the path
+  const words_in_sentence = PUZZLE.sentence.trim().split(/\s+/);
+  let letterIdx = 0;
+  const firstLetterIndices = new Set();
+  words_in_sentence.forEach(word => {
+    firstLetterIndices.add(letterIdx);
+    letterIdx += word.length;
+  });
+
+  // Mark the path cells that are first letters
+  PATH.forEach((pos, i) => {
+    if (!firstLetterIndices.has(i)) return;
+    const cell = document.querySelector(`#grid .cell[data-r="${pos[0]}"][data-c="${pos[1]}"]`);
+    if (cell && !cell.classList.contains('selected')) {
+      cell.classList.add('hint4-circle');
+    }
+  });
+}
 
 function build() {
   gridEl.innerHTML = '';
   grid.forEach((row,r) => row.forEach((l,c) => {
     const d = document.createElement('div');
-    d.className = 'cell'; d.textContent = l.toUpperCase();
+    d.className = 'cell';
     d.dataset.r = r; d.dataset.c = c;
     d.onpointerdown = startGrid;
+    const span = document.createElement('span');
+    span.textContent = l.toUpperCase();
+    span.style.cssText = 'position:relative;z-index:2;pointer-events:none';
+    d.appendChild(span);
     gridEl.appendChild(d);
   }));
 }
@@ -455,18 +701,18 @@ function applyWorm(cells, color) {
 function redraw() {
   clear();
   words.forEach(w => applyWorm(w.cells, w.color));
-  if (drag.length) applyWorm(drag, COLORS[colorIdx % COLORS.length]);
+  if (drag.length) applyWorm(drag, getNextColor());
   renderChips();
-  checkCompletion();
+  // Re-apply hints after redraw
+  if (hintsUsed.has(3)) applyHint3();
+  if (hintsUsed.has(4)) applyHint4();
+  // Light up submit if words exist
+  submitBtn.classList.toggle('ready', words.length > 0 && !done);
 }
 
 /* ── Chip rendering ── */
 function renderChips() {
   rowEl.innerHTML = '';
-  if (!words.length) {
-    rowEl.innerHTML = '<span class="sentence-empty">Drag words from the grid to build your sentence</span>';
-    return;
-  }
   words.forEach((w, i) => {
     const chip = document.createElement('div');
     chip.className = 'chip';
@@ -501,8 +747,7 @@ function startChipDrag(e) {
   chip.classList.add('dragging');
   chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
 
-  undoBtn.textContent = '🗑';
-  undoBtn.classList.add('trash-mode');
+  trashBtn.classList.add('trash-mode');
   document.onselectstart = () => false;
   document.onpointermove = moveChipDrag;
   document.onpointerup   = endChipDrag;
@@ -517,10 +762,10 @@ function moveChipDrag(e) {
   const target = chipUnderPointer(e.clientX, e.clientY);
   if (target && parseInt(target.dataset.idx) !== chipDrag.idx) target.classList.add('drag-over');
 
-  const tr = undoBtn.getBoundingClientRect();
+  const tr = trashBtn.getBoundingClientRect();
   const overTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
                     e.clientY >= tr.top  && e.clientY <= tr.bottom;
-  undoBtn.classList.toggle('trash-hover', overTrash);
+  trashBtn.classList.toggle('trash-hover', overTrash);
 }
 
 function endChipDrag(e) {
@@ -529,15 +774,15 @@ function endChipDrag(e) {
   document.onselectstart = null;
   if (!chipDrag) return;
 
-  undoBtn.textContent = '↩ Undo';
-  undoBtn.classList.remove('trash-mode', 'trash-hover');
+  trashBtn.classList.remove('trash-mode', 'trash-hover');
 
-  const tr = undoBtn.getBoundingClientRect();
+  const tr = trashBtn.getBoundingClientRect();
   const onTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
                   e.clientY >= tr.top  && e.clientY <= tr.bottom;
 
   if (onTrash) {
-    words.splice(chipDrag.idx, 1);
+    const removed = words.splice(chipDrag.idx, 1)[0];
+    wordHistory = wordHistory.filter(id => id !== removed.id);
   } else {
     const target = chipUnderPointer(e.clientX, e.clientY);
     if (target) {
@@ -594,9 +839,10 @@ function endGrid() {
   if (drag.length) {
     const cells = [...drag];
     const text  = cells.map(c => c.textContent.toLowerCase()).join('');
-    const color = COLORS[colorIdx % COLORS.length];
-    colorIdx++;
-    words.push({ cells, text, color });
+    const color = getNextColor();
+    const id    = Date.now() + Math.random(); // unique id
+    words.push({ cells, text, color, id });
+    wordHistory.push(id);
   }
   drag = [];
   redraw();
@@ -608,16 +854,78 @@ function showWinIcon() {
   document.getElementById('puzzle-num').classList.add('solved');
 }
 
-/* ── Win detection ── */
-function checkCompletion() {
+/* ── Share ── */
+const HINT_EMOJIS = { 1: '🔵', 2: '🟠', 3: '🟣', 4: '🟤' };
+
+function buildShareText() {
+  const todayParts = TODAY_KEY.split('-');
+  const tm = todayParts[1], td = todayParts[2], ty = todayParts[0].slice(2);
+  const dateStr = `${tm}-${td}-${ty}`;
+
+  const hintStr = [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('');
+
+  return [
+    `Can of Words! 🪱`,
+    `${PUZZLE.clue} ${hintStr}`,
+    `${dateStr} • canofwords.xyz`,
+  ].join('\n');
+}
+
+async function shareResult() {
+  const text = buildShareText();
+  const copied = document.getElementById('shareCopied');
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return;
+    } catch(e) { /* fell through to clipboard */ }
+  }
+
+  // Clipboard fallback
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e) {
+    // Last resort — legacy copy
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+
+  copied.style.opacity = '1';
+  setTimeout(() => copied.style.opacity = '0', 2000);
+}
+
+// Wire up already-played share button
+document.getElementById('ap-share-btn').onclick = shareResult;
+
+/* ── Win detection (manual) ── */
+function checkCompletion(manual) {
   if (done) return;
+  if (!manual) return;
+
   const playerSentence = words.map(w => w.text).join(' ').trim().toLowerCase();
   const targetSentence = PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
-  if (playerSentence !== targetSentence) return;
+
+  if (playerSentence !== targetSentence) {
+    // Wrong — flash submit button red briefly
+    submitBtn.style.background = '#e8b0b0';
+    submitBtn.textContent = 'Not quite!';
+    setTimeout(() => {
+      submitBtn.style.background = '';
+      submitBtn.textContent = 'Submit';
+    }, 1200);
+    return;
+  }
 
   done = true;
   drag.length = 0;
-  undoBtn.disabled = true;
+  submitBtn.disabled = true;
+  hintsBtn.disabled = true;
 
   const savedWords = words.map(w => ({
     text:  w.text,
@@ -630,7 +938,20 @@ function checkCompletion() {
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
        .forEach((c,i) => setTimeout(() => c.classList.add('success'), i * 30));
-  setTimeout(showWinIcon, words.flatMap(w => w.cells).length * 30 + 400);
+
+  const delay = words.flatMap(w => w.cells).length * 30 + 500;
+  setTimeout(() => {
+    showWinIcon();
+    document.getElementById('shareArea').style.display = 'block';
+    document.getElementById('shareBtn').onclick = shareResult;
+    // Populate and show win popup
+    document.getElementById('win-clue').textContent =
+      `${PUZZLE.clue}: ${PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
+    document.getElementById('win-hints').textContent =
+      [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('');
+    document.getElementById('win-share-btn').onclick = shareResult;
+    document.getElementById('win-popup').classList.add('show');
+  }, delay);
 }
 
 /* ── Replay solved state ── */
@@ -639,7 +960,8 @@ function replaySolvedState() {
   if (!state.solved || !state.words) return;
 
   done = true;
-  undoBtn.disabled = true;
+  submitBtn.disabled = true;
+  hintsBtn.disabled = true;
 
   const cellEls = {};
   document.querySelectorAll('#grid .cell').forEach(el => {
@@ -658,6 +980,8 @@ function replaySolvedState() {
   words.flatMap(w => w.cells)
        .forEach((c,i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
   showWinIcon();
+  document.getElementById('shareArea').style.display = 'block';
+  document.getElementById('shareBtn').onclick = shareResult;
 }
 
 document.getElementById('ap-see-board').onclick = () => {
@@ -677,9 +1001,9 @@ if (PUZZLE) {
 </script>
 </body>
 
-<!-- Temporary reset link for testing — remove before final publish -->
-<div style="text-align:center;margin:12px 0">
-  <a href="javascript:localStorage.removeItem('canofwords_state');location.reload();" style="font-size:11px;opacity:0.3;font-family:monospace">reset saved state</a>
+<!-- Temporary reset button for testing — remove before final publish -->
+<div style="text-align:center;margin:16px 0 8px">
+  <button onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
 </div>
 
 </html>

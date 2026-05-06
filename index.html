@@ -1037,7 +1037,7 @@ function buildShareText() {
   const hintStr = usedAny ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
 
   return [
-    `Can of Words! 🪱`,
+    `Can of Words #${PUZZLE_NUM}`,
     `${PUZZLE.clue} ${hintStr}`,
     `${dateStr} • canofwords.xyz`,
   ].join('\n');

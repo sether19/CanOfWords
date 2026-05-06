@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -13,274 +14,298 @@
   * { touch-action: pan-x pan-y; }
   .cell, .chip { touch-action: none; }
 
-  :root { --cell: 44px; }
-  @media (max-width: 480px) {
-    :root { --cell: min(55px, calc((100vw - 24px - 16px) / 7)); }
-  }
-  @media (max-width: 360px) {
-    :root { --cell: min(50px, calc((100vw - 24px - 16px) / 7)); }
-  }
+:root { –cell: 44px; }
+@media (max-width: 480px) {
+:root { –cell: min(55px, calc((100vw - 24px - 16px) / 7)); }
+}
+@media (max-width: 360px) {
+:root { –cell: min(50px, calc((100vw - 24px - 16px) / 7)); }
+}
 
-  .top-bar {
-    width: calc(7 * var(--cell) + 16px);
-    display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 6px;
-  }
-  .top-bar-left { display: flex; flex-direction: column; }
-  .title-group { display: flex; flex-direction: column; }
-  .game-title { font-size: 22px; font-weight: 700; line-height: 1; color: #2d1f0e; }
-  .subtitle-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
-  .status-square {
-    width: 28px; height: 28px; flex-shrink: 0;
-    background: #ede8de; border-radius: 6px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; line-height: 1;
-  }
-  .subtitle { font-size: 12px; opacity: 0.6; color: #2d1f0e; }
-  .puzzle-num-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  .puzzle-num { font-size: 11px; opacity: 0.45; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; color: #2d1f0e; }
-  .puzzle-num.solved { opacity: 1; color: #2a7a2a; }
+.top-bar {
+width: calc(7 * var(–cell) + 16px);
+display: flex; justify-content: space-between; align-items: flex-start;
+margin-bottom: 6px;
+}
+.top-bar-left { display: flex; flex-direction: column; }
+.title-group { display: flex; flex-direction: column; }
+.game-title { font-size: 22px; font-weight: 700; line-height: 1; color: #2d1f0e; }
+.subtitle-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.status-square {
+width: 28px; height: 28px; flex-shrink: 0;
+background: #ede8de; border-radius: 6px;
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+display: flex; align-items: center; justify-content: center;
+font-size: 20px; line-height: 1;
+}
+.subtitle { font-size: 12px; opacity: 0.6; color: #2d1f0e; }
+.puzzle-num-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.puzzle-num { font-size: 11px; opacity: 0.45; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; color: #2d1f0e; }
+.puzzle-num.solved { opacity: 1; color: #2a7a2a; }
 
-  /* Hint circles inline with puzzle number */
-  .hint-circles { display: flex; gap: 4px; align-items: center; }
-  .hint-circle {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: #ede8de;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
-    flex-shrink: 0;
-    transition: background 400ms ease, box-shadow 400ms ease;
-  }
-  .hint-circle.filled { box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+/* Hint circles below hints button */
+.hint-circles { display: flex; gap: 5px; align-items: center; justify-content: center; }
+.hint-circle {
+width: 10px; height: 10px; border-radius: 50%;
+background: #ede8de;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+flex-shrink: 0;
+transition: background 400ms ease, box-shadow 400ms ease;
+display: flex; align-items: center; justify-content: center;
+font-size: 7px; line-height: 1; overflow: hidden;
+}
+.hint-circle.filled { box-shadow: 0 1px 3px rgba(0,0,0,0.2); font-size: 0; }
 
-  body {
-    font-family: 'Quicksand', system-ui, sans-serif;
-    font-weight: 600;
-    background: #FAF6EF;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 20px;
-  }
-  @media (max-width: 480px) {
-    body { padding-top: 8px; padding-bottom: 20px; padding-left: 12px; padding-right: 12px; }
-    .top-bar, .bottom-bar, .sentence, .frame { max-width: calc(100vw - 24px); box-sizing: border-box; }
-  }
+body {
+font-family: ‘Quicksand’, system-ui, sans-serif;
+font-weight: 600;
+background: #FAF6EF;
+display: flex; flex-direction: column; align-items: center;
+padding: 20px;
+}
+@media (max-width: 480px) {
+body { padding-top: 8px; padding-bottom: 20px; padding-left: 12px; padding-right: 12px; }
+.top-bar, .bottom-bar, .sentence, .frame { max-width: calc(100vw - 24px); box-sizing: border-box; }
+:root { –cell: min(55px, calc((100vw - 24px - 20px - 18px) / 7)); }
+}
+@media (max-width: 360px) {
+:root { –cell: min(50px, calc((100vw - 24px - 20px - 18px) / 7)); }
+}
 
-  button {
-    font-family: 'Quicksand', system-ui, sans-serif;
-    font-size: 13px; font-weight: 600;
-    padding: 4px 10px; background: #f0ebe0;
-    border: none; border-radius: 10px;
-    box-shadow: 0 2px 0 #c9b99a, 0 3px 6px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: box-shadow 80ms, transform 80ms;
-  }
-  button:disabled { opacity: .5; cursor: default; }
-  button:active:not(:disabled) {
-    box-shadow: 0 0px 0 #c9b99a, 0 1px 3px rgba(0,0,0,0.08);
-    transform: translateY(2px);
-  }
+button {
+font-family: ‘Quicksand’, system-ui, sans-serif;
+font-size: 13px; font-weight: 600;
+padding: 4px 10px; background: #f0ebe0;
+border: none; border-radius: 10px;
+box-shadow: 0 2px 0 #c9b99a, 0 3px 6px rgba(0,0,0,0.1);
+cursor: pointer;
+transition: box-shadow 80ms, transform 80ms;
+}
+button:disabled { opacity: .5; cursor: default; }
+button:active:not(:disabled) {
+box-shadow: 0 0px 0 #c9b99a, 0 1px 3px rgba(0,0,0,0.08);
+transform: translateY(2px);
+}
 
-  #helpBtn {
-    font-size: 14px; font-weight: 700;
-    width: 30px; height: 30px; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; border-radius: 50%;
-  }
+#helpBtn {
+font-size: 14px; font-weight: 700;
+width: 30px; height: 30px; padding: 0;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0; border-radius: 50%;
+}
 
-  .frame {
-    padding: 10px;
-    background-color: #d4cbb8;
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px,
-      transparent 1px, transparent 8px
-    );
-    border-radius: 16px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.08);
-    position: relative; z-index: 1;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(7, var(--cell));
-    grid-template-rows: repeat(7, var(--cell));
-    gap: 3px;
-  }
-  .cell {
-    width: var(--cell); height: var(--cell); background: #fdf8f0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; font-weight: 700;
-    user-select: none; color: #2d1f0e;
-    position: relative; z-index: 1;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-  .cell.hint4-circle { color: #2d1f0e; }
-  .selected {
-    z-index: 3;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.28);
-  }
-  .next-hint::after {
-    content: ''; position: absolute; inset: 6px;
-    border-radius: 50%; background: rgba(120,120,120,0.35);
-    opacity: 0; animation: hintFade 300ms ease-out forwards; z-index: -1;
-  }
-  @keyframes hintFade { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
+.frame {
+padding: 10px;
+background-color: #d4cbb8;
+background-image: repeating-linear-gradient(
+45deg,
+rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px,
+transparent 1px, transparent 8px
+);
+border-radius: 16px;
+box-shadow: inset 0 2px 8px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.08);
+position: relative; z-index: 1;
+}
+.grid {
+display: grid;
+grid-template-columns: repeat(7, var(–cell));
+grid-template-rows: repeat(7, var(–cell));
+gap: 3px;
+}
+.cell {
+width: var(–cell); height: var(–cell); background: #fdf8f0;
+display: flex; align-items: center; justify-content: center;
+font-size: 17px; font-weight: 700;
+user-select: none; color: #2d1f0e;
+position: relative; z-index: 1;
+border-radius: 6px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+}
+.cell.hint4-circle { color: #2d1f0e; }
+.selected {
+z-index: 3;
+box-shadow: 0 2px 5px rgba(0,0,0,0.28);
+}
+.next-hint::after {
+content: ‘’; position: absolute; inset: 6px;
+border-radius: 50%; background: rgba(120,120,120,0.35);
+opacity: 0; animation: hintFade 300ms ease-out forwards; z-index: -1;
+}
+@keyframes hintFade { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
 
-  .bottom-bar {
-    width: calc(7 * var(--cell) + 16px);
-    display: flex; gap: 8px; margin-top: 10px;
-    position: relative; overflow: visible;
-  }
-  .bottom-bar button { flex: 1; font-size: 13px; padding: 9px 0; text-align: center; border-radius: 12px; }
-  #hintsBtn { position: relative; background: #fef3b0; box-shadow: 0 2px 0 #d4b800, 0 3px 6px rgba(0,0,0,0.1); overflow: visible; }
-  #hintsBtn:active { box-shadow: 0 0px 0 #d4b800; transform: translateY(2px); }
-  #trashBtn { flex: 1; font-size: 16px; background: #ffd0d0; box-shadow: 0 2px 0 #d48080, 0 3px 6px rgba(0,0,0,0.1); }
-  #trashBtn:active { box-shadow: 0 0px 0 #d48080; transform: translateY(2px); }
-  #submitBtn { background: #d0eacc; box-shadow: 0 2px 0 #7ab870, 0 3px 6px rgba(0,0,0,0.1); }
-  #submitBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
-  #submitBtn.ready { background: #b8ddb4; }
+.bottom-bar {
+width: calc(7 * var(–cell) + 16px);
+display: flex; gap: 8px; margin-top: 10px;
+position: relative; overflow: visible;
+}
+.bottom-bar button { flex: 1; font-size: 13px; padding: 9px 0; text-align: center; border-radius: 12px; }
+#hintsBtn { position: relative; background: #fef3b0; box-shadow: 0 2px 0 #d4b800, 0 3px 6px rgba(0,0,0,0.1); overflow: visible; }
+#hintsBtn:active { box-shadow: 0 0px 0 #d4b800; transform: translateY(2px); }
+#trashBtn { flex: 1; font-size: 16px; background: #ffd0d0; box-shadow: 0 2px 0 #d48080, 0 3px 6px rgba(0,0,0,0.1); }
+#trashBtn:active { box-shadow: 0 0px 0 #d48080; transform: translateY(2px); }
+#submitBtn { background: #d0eacc; box-shadow: 0 2px 0 #7ab870, 0 3px 6px rgba(0,0,0,0.1); }
+#submitBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+#submitBtn.ready { background: #b8ddb4; }
 
-  /* Hint counter badge on hints button */
-  .hint-badge {
-    position: absolute; top: 3px; right: 4px;
-    font-size: 9px; opacity: 0.6; font-weight: bold;
-  }
+/* SVG worm overlay */
+.grid-wrap { position: relative; display: inline-block; }
+#wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
 
-  /* Hint 3 — faded letters in purple tint */
-  .cell.hint3-fade {
-    opacity: 0.2;
-    pointer-events: none;
-    color: #9c7bb5;
-  }
+/* Hint counter badge on hints button */
+.hint-badge {
+position: absolute; top: 3px; right: 4px;
+font-size: 9px; opacity: 0.6; font-weight: bold;
+}
 
-  /* Hint 4 — raised circle under first letters in tan tint */
-  .cell.hint4-circle::before {
-    content: '';
-    position: absolute;
-    inset: 5px;
-    border-radius: 50%;
-    background: #d7c4a0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 0;
-  }
+/* Hint 3 — faded letters in purple tint */
+.cell.hint3-fade {
+opacity: 0.2;
+pointer-events: none;
+color: #9c7bb5;
+}
 
-  /* Hints dropdown */
-  .hints-menu {
-    display: none; position: absolute;
-    bottom: calc(100% + 6px); left: 0;
-    width: 190px; background: #faf6ef;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    z-index: 500; overflow: hidden;
-  }
-  .hints-menu.show { display: block; }
-  .hint-item {
-    padding: 9px 14px; font-size: 12px; font-weight: 600;
-    cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);
-    display: flex; align-items: center;
-  }
-  .hint-item:last-child { border-bottom: none; }
-  .hint-item:hover { filter: brightness(0.95); }
-  .hint-item.used { opacity: 0.35; pointer-events: none; }
-  .hint-item-num { opacity: 0.4; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
-  #hint1Item { background: #9bdcff; }
-  #hint2Item { background: #ffcc80; }
-  #hint3Item { background: #d1c4e9; }
-  #hint4Item { background: #d7c4a0; }
+/* Hint 4 — raised circle under first letters in tan tint */
+.cell.hint4-circle::before {
+content: ‘’;
+position: absolute;
+inset: 5px;
+border-radius: 50%;
+background: #d7c4a0;
+box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+z-index: 0;
+}
 
-  .sentence { margin-top: 10px; text-align: center; width: calc(7 * var(--cell) + 20px); }
-  .sentence-header {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 5px;
-  }
-  .sentence-label { font-size: 12px; font-weight: 700; opacity: 0.5; text-align: left; color: #2d1f0e; }
-  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: 700; }
-  .sentence-row {
-    display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 6px; min-height: 48px; padding: 8px 6px;
-    background-color: #d4cbb8;
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
-      transparent 1px, transparent 8px
-    );
-    border-radius: 12px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .sentence-instruction {
-    font-size: 11px; opacity: 0.4; text-align: center;
-    margin-top: 6px; color: #2d1f0e;
-  }
-  .chip {
-    display: inline-flex; align-items: center;
-    padding: 5px 12px; font-size: 13px; font-weight: 700;
-    border-radius: 20px; cursor: grab;
-    user-select: none; -webkit-user-select: none; touch-action: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.28);
-    color: #2d1f0e;
-  }
-  .chip.dragging { opacity: 0.35; }
-  .chip.drag-over { outline: 2px dashed rgba(0,0,0,0.3); outline-offset: 2px; }
-  .chip-ghost {
-    position: fixed; pointer-events: none; z-index: 999;
-    border-radius: 20px;
-    font-size: 13px; font-weight: 700;
-    font-family: 'Quicksand', system-ui, sans-serif; opacity: 0.9;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
-    user-select: none; -webkit-user-select: none;
-    color: #2d1f0e;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sentence-row, .bottom-bar { user-select: none; -webkit-user-select: none; }
-  .sentence-empty { font-size: 12px; opacity: 0.35; align-self: center; padding: 0 8px; pointer-events: none; color: #2d1f0e; }
+/* Hints dropdown */
+.hints-menu {
+display: none; position: absolute;
+bottom: calc(100% + 6px); left: 0;
+width: 190px; background: #faf6ef;
+border-radius: 12px;
+box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+z-index: 500; overflow: hidden;
+}
+.hints-menu.show { display: block; }
+.hint-item {
+padding: 9px 14px; font-size: 12px; font-weight: 600;
+cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);
+display: flex; align-items: center;
+}
+.hint-item:last-child { border-bottom: none; }
+.hint-item:hover { filter: brightness(0.95); }
+.hint-item.used { opacity: 0.35; pointer-events: none; }
+.hint-item-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-right: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+#hint1Item { background: #9bdcff; }
+#hint2Item { background: #ffcc80; }
+#hint3Item { background: #d1c4e9; }
+#hint4Item { background: #d7c4a0; }
 
-  @keyframes boardPulse {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(1.03); }
-    100% { transform: scale(1); }
-  }
-  body.solved .cell:not(.selected) { opacity: 0.35; }
-  .cell.success { animation: pop 450ms ease-out forwards; }
-  @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
+.sentence { margin-top: 10px; text-align: center; width: calc(7 * var(–cell) + 20px); }
+.sentence-header {
+display: flex; justify-content: space-between; align-items: baseline;
+margin-bottom: 5px;
+}
+.sentence-label { font-size: 12px; font-weight: 700; opacity: 0.5; text-align: left; color: #2d1f0e; }
+.sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: 700; }
+.sentence-row {
+display: flex; flex-wrap: wrap; justify-content: center;
+gap: 6px; min-height: 48px; padding: 8px 6px;
+background-color: #d4cbb8;
+background-image: repeating-linear-gradient(
+45deg,
+rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
+transparent 1px, transparent 8px
+);
+border-radius: 12px;
+box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+position: relative;
+}
+.sentence-row.has-chips::before { display: none; }
+.sentence-row::before {
+content: ‘YOUR SENTENCE WILL BE ARRANGED HERE’;
+position: absolute;
+inset: 0;
+display: flex; align-items: center; justify-content: center;
+font-size: 12px; font-weight: 600;
+color: #2d1f0e; opacity: 0.18;
+pointer-events: none;
+letter-spacing: 0.02em;
+}
+.sentence-instruction {
+font-size: 11px; opacity: 0.4; text-align: center;
+margin-top: 6px; color: #2d1f0e;
+}
+.chip {
+display: inline-flex; align-items: center;
+padding: 5px 12px; font-size: 13px; font-weight: 700;
+border-radius: 20px; cursor: grab;
+user-select: none; -webkit-user-select: none; touch-action: none;
+box-shadow: 0 2px 5px rgba(0,0,0,0.28);
+color: #2d1f0e;
+}
+.chip.dragging { opacity: 0.35; }
+.chip.drag-over { outline: 2px dashed rgba(0,0,0,0.3); outline-offset: 2px; }
+.chip-ghost {
+position: fixed; pointer-events: none; z-index: 999;
+border-radius: 20px;
+font-size: 13px; font-weight: 700;
+font-family: ‘Quicksand’, system-ui, sans-serif; opacity: 0.9;
+box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+user-select: none; -webkit-user-select: none;
+color: #2d1f0e;
+display: flex; align-items: center; justify-content: center;
+}
+.sentence-row, .bottom-bar { user-select: none; -webkit-user-select: none; }
+.sentence-empty { font-size: 12px; opacity: 0.35; align-self: center; padding: 0 8px; pointer-events: none; color: #2d1f0e; }
 
-  #trashBtn.trash-hover {
-    border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    background: #d0b0b0;
-  }
+@keyframes boardPulse {
+0%   { transform: scale(1); }
+40%  { transform: scale(1.03); }
+100% { transform: scale(1); }
+}
+body.solved .cell:not(.selected) { opacity: 0.35; }
+.cell.success { animation: pop 450ms ease-out forwards; }
+@keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(45,31,14,0.45);
-    align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal-box {
-    background: #fdf8f0;
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    padding: 24px 26px; max-width: 300px; width: 90%; text-align: left;
-  }
-  .modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: #2d1f0e; }
-  .modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; }
+#trashBtn.trash-hover {
+border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
+border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+background: #d0b0b0;
+}
 
-  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #2d1f0e; }
-  .how-step-num { font-weight: 700; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.4; }
-  .how-example {
-    background: #ede8de; border-radius: 10px;
-    padding: 10px 12px; font-size: 12px; margin: 8px 0 10px; line-height: 1.7; color: #2d1f0e;
-  }
-  .how-example strong { font-size: 13px; }
+.modal-overlay {
+display: none; position: fixed; inset: 0;
+background: rgba(45,31,14,0.45);
+align-items: center; justify-content: center;
+z-index: 100;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+background: #fdf8f0;
+border-radius: 20px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+padding: 24px 26px; max-width: 300px; width: 90%; text-align: left;
+}
+.modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: #2d1f0e; }
+.modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; }
 
-  #already-played .modal-box { text-align: center; }
-  #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.7; color: #2d1f0e; }
-  .ap-answer { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: #2d1f0e; }
+.how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #2d1f0e; }
+.how-step-num { font-weight: 700; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.4; }
+.how-example {
+background: #ede8de; border-radius: 10px;
+padding: 10px 12px; font-size: 12px; margin: 8px 0 10px; line-height: 1.7; color: #2d1f0e;
+}
+.how-example strong { font-size: 13px; }
+
+#already-played .modal-box { text-align: center; }
+#already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.7; color: #2d1f0e; }
+.ap-answer { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: #2d1f0e; }
 </style>
+
 </head>
 <body>
 
 <!-- How to Play modal -->
+
 <div id="how-to-play" class="modal-overlay">
   <div class="modal-box">
     <h2>How to Play 🪱</h2>
@@ -314,6 +339,7 @@
 </div>
 
 <!-- Win popup -->
+
 <div id="win-popup" class="modal-overlay">
   <div class="modal-box" style="text-align:center">
     <h2>You solved it! 🪱✅</h2>
@@ -326,6 +352,7 @@
 </div>
 
 <!-- Already-played overlay -->
+
 <div id="already-played" class="modal-overlay">
   <div class="modal-box">
     <h2>Already solved! 🪱✅</h2>
@@ -346,12 +373,6 @@
         <div id="clue" class="subtitle"></div>
         <div class="puzzle-num-row">
           <div id="puzzle-num" class="puzzle-num"></div>
-          <div class="hint-circles">
-            <div class="hint-circle" id="hintCircle1"></div>
-            <div class="hint-circle" id="hintCircle2"></div>
-            <div class="hint-circle" id="hintCircle3"></div>
-            <div class="hint-circle" id="hintCircle4"></div>
-          </div>
         </div>
       </div>
     </div>
@@ -359,25 +380,32 @@
   <button id="helpBtn">?</button>
 </div>
 
-<div class="frame"><div id="grid" class="grid"></div></div>
+<div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg></div></div>
 
 <div class="bottom-bar">
   <div style="position:relative;flex:1;display:flex">
-    <button id="hintsBtn" style="flex:1">Hints<span class="hint-badge" id="hintBadge">4</span></button>
+    <button id="hintsBtn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 0">
+      <span>Hints</span>
+      <div class="hint-circles">
+        <div class="hint-circle" id="hintCircle1">🪱</div>
+        <div class="hint-circle" id="hintCircle2">🪱</div>
+        <div class="hint-circle" id="hintCircle3">🪱</div>
+        <div class="hint-circle" id="hintCircle4">🪱</div>
+      </div>
+    </button>
     <div class="hints-menu" id="hintsMenu">
-      <div class="hint-item" id="hint1Item"><span class="hint-item-num">1</span>Word count</div>
-      <div class="hint-item" id="hint2Item"><span class="hint-item-num">2</span>Word lengths</div>
-      <div class="hint-item" id="hint3Item"><span class="hint-item-num">3</span>Remove unused letters</div>
-      <div class="hint-item" id="hint4Item"><span class="hint-item-num">4</span>Reveal first letters</div>
+      <div class="hint-item" id="hint1Item"><span class="hint-item-dot" style="background:#9bdcff"></span>Word count</div>
+      <div class="hint-item" id="hint2Item"><span class="hint-item-dot" style="background:#ffcc80"></span>Word lengths</div>
+      <div class="hint-item" id="hint3Item"><span class="hint-item-dot" style="background:#d1c4e9"></span>Remove unused letters</div>
+      <div class="hint-item" id="hint4Item"><span class="hint-item-dot" style="background:#d7c4a0"></span>Reveal first letters</div>
     </div>
   </div>
-  <button id="trashBtn">🗑️</button>
-  <button id="submitBtn">Submit</button>
+  <button id="trashBtn" style="display:flex;align-items:center;justify-content:center;">🗑️</button>
+  <button id="submitBtn" style="display:flex;align-items:center;justify-content:center;">Submit</button>
 </div>
 
 <div class="sentence">
   <div class="sentence-header">
-    <div class="sentence-label">Your sentence:</div>
     <div class="sentence-hint2" id="hint2Text"></div>
   </div>
   <div id="sentenceRow" class="sentence-row"></div>
@@ -386,7 +414,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 3.0
+   PUZZLE LIBRARY — VERSION 3.3
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -601,9 +629,6 @@ function useHint(n) {
   hintsMenu.classList.remove('show');
   document.getElementById(`hint${n}Item`).classList.add('used');
 
-  const remaining = 4 - hintsUsed.size;
-  document.getElementById('hintBadge').textContent = remaining || '';
-
   // Fill the hint circle with fade-in
   const circle = document.getElementById(`hintCircle${n}`);
   circle.style.background = HINT_COLORS[n];
@@ -705,6 +730,7 @@ function applyWorm(cells, color) {
       (n.dataset.c-c.dataset.c)+','+(n.dataset.r-c.dataset.r)
     );
     if (k) c.style.borderRadius = RAD[k];
+    else c.style.borderRadius = '0';
   });
 }
 
@@ -712,16 +738,150 @@ function redraw() {
   clear();
   words.forEach(w => applyWorm(w.cells, w.color));
   if (drag.length) applyWorm(drag, getNextColor());
+  drawWormsSvg();
   renderChips();
-  // Re-apply hints after redraw
   if (hintsUsed.has(3)) applyHint3();
   if (hintsUsed.has(4)) applyHint4();
-  // Light up submit if words exist
   submitBtn.classList.toggle('ready', words.length > 0 && !done);
+}
+
+/* ── SVG worm overlay ── */
+function drawWormsSvg() {
+  const svg = document.getElementById('wormSvg');
+  const gridRect = document.getElementById('grid').getBoundingClientRect();
+  const W = gridRect.width, H = gridRect.height;
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = '';
+
+  const allWorms = [...words.map(w => ({cells: w.cells, color: w.color}))];
+  if (drag.length) allWorms.push({cells: drag, color: getNextColor()});
+
+  allWorms.forEach(({cells, color}) => {
+    if (!cells.length) return;
+
+    const pts = cells.map(cell => {
+      const r = cell.getBoundingClientRect();
+      return {
+        x: r.left - gridRect.left + r.width / 2,
+        y: r.top  - gridRect.top  + r.height / 2,
+        w: r.width
+      };
+    });
+
+    const R = pts[0].w / 2 - 1;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', buildWormPath(pts, R));
+    path.setAttribute('fill', color);
+    svg.appendChild(path);
+  });
+}
+
+function buildWormPath(pts, R) {
+  const INDENT = R * 0.22; // how deep the concave pinch goes inward
+
+  function norm(a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    return { x: -dy/len, y: dx/len };
+  }
+
+  function avgNorm(i) {
+    if (pts.length === 1) return norm(pts[0], {x: pts[0].x+1, y: pts[0].y});
+    if (i === 0) return norm(pts[0], pts[1]);
+    if (i === pts.length-1) return norm(pts[pts.length-2], pts[pts.length-1]);
+    const n1 = norm(pts[i-1], pts[i]);
+    const n2 = norm(pts[i], pts[i+1]);
+    const nx = (n1.x+n2.x)/2, ny = (n1.y+n2.y)/2;
+    const len = Math.sqrt(nx*nx+ny*ny);
+    return {x: nx/len, y: ny/len};
+  }
+
+  if (pts.length === 1) {
+    const p = pts[0];
+    return `M ${p.x-R} ${p.y} A ${R} ${R} 0 1 1 ${p.x+R} ${p.y} A ${R} ${R} 0 1 1 ${p.x-R} ${p.y} Z`;
+  }
+
+  // Build top and bottom edge points
+  // At each cell center: offset by R (full width)
+  // At each segment midpoint: offset by (R - INDENT) — this creates the concave pinch
+  const topPts = [], botPts = [];
+
+  for (let i = 0; i < pts.length; i++) {
+    const n = avgNorm(i);
+    topPts.push({x: pts[i].x + n.x*R,      y: pts[i].y + n.y*R});
+    botPts.push({x: pts[i].x - n.x*R,      y: pts[i].y - n.y*R});
+
+    if (i < pts.length - 1) {
+      const mx = (pts[i].x + pts[i+1].x) / 2;
+      const my = (pts[i].y + pts[i+1].y) / 2;
+      const mn = norm(pts[i], pts[i+1]);
+      const pinchR = R - INDENT;
+      topPts.push({x: mx + mn.x*pinchR, y: my + mn.y*pinchR, mid: true});
+      botPts.push({x: mx - mn.x*pinchR, y: my - mn.y*pinchR, mid: true});
+    }
+  }
+
+  // First end cap direction
+  const firstN = norm(pts[0], pts[1]);
+  const firstDir = {x: pts[0].x - pts[1].x, y: pts[0].y - pts[1].y};
+  const fd = Math.sqrt(firstDir.x**2 + firstDir.y**2);
+  const fu = {x: firstDir.x/fd, y: firstDir.y/fd};
+
+  // Last end cap direction
+  const lastN = norm(pts[pts.length-2], pts[pts.length-1]);
+  const lastDir = {x: pts[pts.length-1].x - pts[pts.length-2].x, y: pts[pts.length-1].y - pts[pts.length-2].y};
+  const ld = Math.sqrt(lastDir.x**2 + lastDir.y**2);
+  const lu = {x: lastDir.x/ld, y: lastDir.y/ld};
+
+  let d = `M ${topPts[0].x} ${topPts[0].y} `;
+
+  // Top side — use quadratic bezier through midpoints for smooth concave curves
+  for (let i = 1; i < topPts.length; i++) {
+    const p = topPts[i];
+    const prev = topPts[i-1];
+    if (p.mid) {
+      // Curve inward to pinch point
+      const cpx = (prev.x + p.x) / 2;
+      const cpy = (prev.y + p.y) / 2;
+      d += `Q ${cpx} ${cpy} ${p.x} ${p.y} `;
+    } else if (prev.mid) {
+      const cpx = (prev.x + p.x) / 2;
+      const cpy = (prev.y + p.y) / 2;
+      d += `Q ${cpx} ${cpy} ${p.x} ${p.y} `;
+    } else {
+      d += `L ${p.x} ${p.y} `;
+    }
+  }
+
+  // End cap — arc around last point
+  const lTop = topPts[topPts.length-1];
+  const lBot = botPts[botPts.length-1];
+  d += `A ${R} ${R} 0 0 1 ${lBot.x} ${lBot.y} `;
+
+  // Bottom side — reversed
+  for (let i = botPts.length - 2; i >= 0; i--) {
+    const p = botPts[i];
+    const prev = botPts[i+1];
+    if (p.mid || prev.mid) {
+      const cpx = (prev.x + p.x) / 2;
+      const cpy = (prev.y + p.y) / 2;
+      d += `Q ${cpx} ${cpy} ${p.x} ${p.y} `;
+    } else {
+      d += `L ${p.x} ${p.y} `;
+    }
+  }
+
+  // Start cap — arc around first point
+  d += `A ${R} ${R} 0 0 1 ${topPts[0].x} ${topPts[0].y} Z`;
+
+  return d;
 }
 
 /* ── Chip rendering ── */
 function renderChips() {
+  document.getElementById('sentenceRow').classList.toggle('has-chips', words.length > 0);
   rowEl.innerHTML = '';
   words.forEach((w, i) => {
     const chip = document.createElement('div');
@@ -878,7 +1038,8 @@ function buildShareText() {
   const tm = todayParts[1], td = todayParts[2], ty = todayParts[0].slice(2);
   const dateStr = `${tm}-${td}-${ty}`;
 
-  const hintStr = [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('');
+  const usedAny = hintsUsed.size > 0;
+  const hintStr = usedAny ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
 
   return [
     `Can of Words! 🪱`,
@@ -964,7 +1125,7 @@ function checkCompletion(manual) {
     document.getElementById('win-clue').textContent =
       `${PUZZLE.clue}: ${PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
     document.getElementById('win-hints').textContent =
-      [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('');
+      hintsUsed.size > 0 ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
     document.getElementById('win-share-btn').onclick = shareResult;
     document.getElementById('win-popup').classList.add('show');
   }, delay);
@@ -1008,16 +1169,21 @@ document.getElementById('ap-see-board').onclick = () => {
 if (PUZZLE) {
   build();
   redraw();
-  // If already played today, replay the solved state after grid is built
+  requestAnimationFrame(() => {
+    const g = document.getElementById('grid');
+    const svg = document.getElementById('wormSvg');
+    if (svg) { svg.style.width = g.offsetWidth+'px'; svg.style.height = g.offsetHeight+'px'; }
+  });
   if (alreadyPlayedToday) {
-    // Use requestAnimationFrame to ensure grid cells are fully in the DOM
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
   }
 }
 </script>
+
 </body>
 
 <!-- Temporary reset button for testing — remove before final publish -->
+
 <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:16px 0 2px">
   <div id="shareArea" style="display:none">
     <button id="shareBtn" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;padding:6px 14px;cursor:pointer;background:#d0ead0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #4a7a4a;border-bottom:2px solid #4a7a4a;">📤 Share</button>

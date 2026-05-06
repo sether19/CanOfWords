@@ -200,11 +200,10 @@
 
   .sentence { margin-top: 10px; text-align: center; width: calc(7 * var(--cell) + 20px); }
   .sentence-header {
-    display: flex; justify-content: space-between; align-items: baseline;
+    display: flex; justify-content: center; align-items: baseline;
     margin-bottom: 5px;
   }
-  .sentence-label { font-size: 12px; font-weight: 700; opacity: 0.5; text-align: left; color: #2d1f0e; }
-  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: 700; }
+  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: center; letter-spacing: 0.02em; color: #c07800; font-weight: 700; }
   .sentence-row {
     display: flex; flex-wrap: wrap; justify-content: center;
     gap: 6px; min-height: 48px; padding: 8px 6px;
@@ -389,8 +388,8 @@
       </div>
     </button>
     <div class="hints-menu" id="hintsMenu">
-      <div class="hint-item" id="hint1Item"><span class="hint-item-dot" style="background:#9bdcff"></span>Word count</div>
-      <div class="hint-item" id="hint2Item"><span class="hint-item-dot" style="background:#ffcc80"></span>Word lengths</div>
+      <div class="hint-item" id="hint1Item"><span class="hint-item-dot" style="background:#9bdcff"></span>Show word count</div>
+      <div class="hint-item" id="hint2Item"><span class="hint-item-dot" style="background:#ffcc80"></span>Show word lengths</div>
       <div class="hint-item" id="hint3Item"><span class="hint-item-dot" style="background:#d1c4e9"></span>Remove unused letters</div>
       <div class="hint-item" id="hint4Item"><span class="hint-item-dot" style="background:#d7c4a0"></span>Reveal first letters</div>
     </div>

@@ -291,7 +291,12 @@
     <h2>How to Play 🪱</h2>
     <div class="how-step">
       <span class="how-step-num">1</span>
-      <span>Read the <strong>answer clue</strong> at the top of the board Your goal is to make a sentence describing the answer.</span>
+      <span>Read the <strong>answer clue</strong> at the top of the board. Your goal is to create a sentence describing the answer.</span>
+    </div>
+    <div class="how-example">
+      <strong>Example</strong><br>
+      Answer: <em>Robin</em><br>
+      Question: <em>Sidekick to the superhero Batman</em>
     </div>
     <div class="how-step">
       <span class="how-step-num">2</span>
@@ -303,16 +308,11 @@
     </div>
     <div class="how-step">
       <span class="how-step-num">4</span>
-      <span>The number in brackets tells you <strong>how many words</strong> are in the sentence.</span>
-    </div>
-    <div class="how-example">
-      <strong>Example</strong><br>
-      Clue: <em>Robin (5)</em><br>
-      Answer: <em>Sidekick to the superhero Batman</em>
+      <span><strong>Tap</strong> or <strong>Drag</strong> words to 🗑️ to remove any words from the sentence.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">5</span>
-      <span><strong>Tap</strong> or <strong>Drag</strong> onto Undo to remove any words from the sentence.</span>
+      <span>Tap the <strong>Hints</strong> button if you need a nudge in the right direction.</span>
     </div>
     <button class="modal-close" onclick="document.getElementById('how-to-play').classList.remove('show')">Got it!</button>
   </div>
@@ -398,9 +398,9 @@ const PUZZLE_START_DATE = '2026-05-05';
 const PUZZLES = [
   { clue: 'Shakespeare',   sentence: 'english playwright who wrote hamlet and macbeth' },
   { clue: 'Coffee',        sentence: 'hot morning drink brewed from roasted beans' },
-  { clue: 'Solar Eclipse', sentence: 'moon passes between earth and the sun' },
+  { clue: 'Solar Eclipse', sentence: 'when the moon passes between earth and the sun' },
   { clue: 'Chess',         sentence: 'strategy board game with kings and queens' },
-  { clue: 'Calm?',         sentence: 'usually comes before the storm' },
+  { clue: 'Calm?',         sentence: 'known to come before the storm' },
   { clue: 'Penguin',       sentence: 'flightless bird native to the south pole' },
   { clue: 'Piano',         sentence: 'large keyboard instrument with black and white keys' },
   { clue: 'Tofu!',         sentence: 'silken soft firm extra firm' },

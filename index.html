@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <title>Can of Words🪱</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0; padding: 0;
@@ -27,40 +28,35 @@
   }
   .top-bar-left { display: flex; flex-direction: column; }
   .title-group { display: flex; flex-direction: column; }
-  .game-title { font-size: 22px; font-weight: bold; line-height: 1; }
+  .game-title { font-size: 22px; font-weight: 700; line-height: 1; color: #2d1f0e; }
   .subtitle-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
   .status-square {
-    width: 28px; height: 28px;
-    flex-shrink: 0;
-    background: #e6e6e6;
-    border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: #ede8de; border-radius: 6px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; line-height: 1;
+    font-size: 20px; line-height: 1;
   }
-  .subtitle { font-size: 12px; opacity: 0.7; }
+  .subtitle { font-size: 12px; opacity: 0.6; color: #2d1f0e; }
   .puzzle-num-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  .puzzle-num { font-size: 11px; opacity: 0.5; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; }
+  .puzzle-num { font-size: 11px; opacity: 0.45; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; color: #2d1f0e; }
   .puzzle-num.solved { opacity: 1; color: #2a7a2a; }
 
   /* Hint circles inline with puzzle number */
   .hint-circles { display: flex; gap: 4px; align-items: center; }
   .hint-circle {
     width: 10px; height: 10px; border-radius: 50%;
-    background: #e6e6e6;
-    border-top: 1px solid #7a7a7a; border-left: 1px solid #7a7a7a;
-    border-right: 1px solid #fff; border-bottom: 1px solid #fff;
+    background: #ede8de;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
     flex-shrink: 0;
-    transition: background 400ms ease, border-color 400ms ease;
+    transition: background 400ms ease, box-shadow 400ms ease;
   }
-  .hint-circle.filled {
-    border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);
-    border-right: 1px solid rgba(255,255,255,0.6); border-bottom: 1px solid rgba(255,255,255,0.6);
-  }
+  .hint-circle.filled { box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
   body {
-    font-family: Chicago, Geneva, system-ui, sans-serif;
-    background: #d6d6d6;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-weight: 600;
+    background: #FAF6EF;
     display: flex; flex-direction: column; align-items: center;
     padding: 20px;
   }
@@ -70,52 +66,58 @@
   }
 
   button {
-    font-family: Chicago, Geneva, system-ui, sans-serif;
-    font-size: 13px; padding: 4px 10px; background: #e6e6e6;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #7a7a7a; border-bottom: 2px solid #7a7a7a;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 4px 10px; background: #f0ebe0;
+    border: none; border-radius: 10px;
+    box-shadow: 0 2px 0 #c9b99a, 0 3px 6px rgba(0,0,0,0.1);
     cursor: pointer;
+    transition: box-shadow 80ms, transform 80ms;
   }
   button:disabled { opacity: .5; cursor: default; }
   button:active:not(:disabled) {
-    border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    box-shadow: 0 0px 0 #c9b99a, 0 1px 3px rgba(0,0,0,0.08);
+    transform: translateY(2px);
   }
 
   #helpBtn {
-    font-size: 14px; font-weight: bold;
-    width: 28px; height: 28px; padding: 0;
+    font-size: 14px; font-weight: 700;
+    width: 30px; height: 30px; padding: 0;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; border-radius: 50%;
   }
-  #helpBtn:active {
-    border-top: 2px solid #7a7a7a; border-left: 2px solid #7a7a7a;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  }
 
   .frame {
-    padding: 8px; background: #e6e6e6;
-    border-top: 3px solid #7a7a7a; border-left: 3px solid #7a7a7a;
-    border-right: 3px solid #fff; border-bottom: 3px solid #fff;
+    padding: 10px;
+    background-color: #d4cbb8;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px,
+      transparent 1px, transparent 8px
+    );
+    border-radius: 16px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.08);
+    position: relative; z-index: 1;
   }
   .grid {
     display: grid;
     grid-template-columns: repeat(7, var(--cell));
     grid-template-rows: repeat(7, var(--cell));
-    gap: 0;
+    gap: 3px;
   }
   .cell {
-    width: var(--cell); height: var(--cell); background: #e6e6e6;
+    width: var(--cell); height: var(--cell); background: #fdf8f0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: bold;
-    user-select: none; color: #000;
+    font-size: 17px; font-weight: 700;
+    user-select: none; color: #2d1f0e;
     position: relative; z-index: 1;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
   }
-  .cell.hint4-circle { color: #000; }
-  .cell.hint4-circle::after { z-index: -1; }
+  .cell.hint4-circle { color: #2d1f0e; }
   .selected {
     z-index: 3;
-    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.28);
   }
   .next-hint::after {
     content: ''; position: absolute; inset: 6px;
@@ -126,17 +128,17 @@
 
   .bottom-bar {
     width: calc(7 * var(--cell) + 16px);
-    display: flex; gap: 6px; margin-top: 8px;
+    display: flex; gap: 8px; margin-top: 10px;
+    position: relative; overflow: visible;
   }
-  .bottom-bar button { flex: 1; font-size: 13px; padding: 7px 0; text-align: center; }
-  #hintsBtn { position: relative; background: #fff9c4; }
-  #trashBtn { flex: 1; font-size: 16px; background: #ffd0d0; }
-  #submitBtn { background: #d0ead0; }
-  #submitBtn.ready {
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #4a7a4a; border-bottom: 2px solid #4a7a4a;
-    background: #b8ddb8;
-  }
+  .bottom-bar button { flex: 1; font-size: 13px; padding: 9px 0; text-align: center; border-radius: 12px; }
+  #hintsBtn { position: relative; background: #fef3b0; box-shadow: 0 2px 0 #d4b800, 0 3px 6px rgba(0,0,0,0.1); overflow: visible; }
+  #hintsBtn:active { box-shadow: 0 0px 0 #d4b800; transform: translateY(2px); }
+  #trashBtn { flex: 1; font-size: 16px; background: #ffd0d0; box-shadow: 0 2px 0 #d48080, 0 3px 6px rgba(0,0,0,0.1); }
+  #trashBtn:active { box-shadow: 0 0px 0 #d48080; transform: translateY(2px); }
+  #submitBtn { background: #d0eacc; box-shadow: 0 2px 0 #7ab870, 0 3px 6px rgba(0,0,0,0.1); }
+  #submitBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+  #submitBtn.ready { background: #b8ddb4; }
 
   /* Hint counter badge on hints button */
   .hint-badge {
@@ -152,90 +154,85 @@
   }
 
   /* Hint 4 — raised circle under first letters in tan tint */
-  .cell.hint4-circle::after {
+  .cell.hint4-circle::before {
     content: '';
     position: absolute;
     inset: 5px;
     border-radius: 50%;
     background: #d7c4a0;
-    border-top: 2px solid #ede0c8; border-left: 2px solid #ede0c8;
-    border-right: 2px solid #a08c6a; border-bottom: 2px solid #a08c6a;
-    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 0;
   }
 
   /* Hints dropdown */
   .hints-menu {
-    display: none;
-    position: absolute;
-    bottom: calc(100% + 4px);
-    left: 0;
-    width: 180px;
-    background: #e6e6e6;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #7a7a7a; border-bottom: 2px solid #7a7a7a;
-    z-index: 200;
+    display: none; position: absolute;
+    bottom: calc(100% + 6px); left: 0;
+    width: 190px; background: #faf6ef;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 500; overflow: hidden;
   }
   .hints-menu.show { display: block; }
   .hint-item {
-    padding: 8px 12px; font-size: 12px; cursor: pointer;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 9px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);
     display: flex; align-items: center;
   }
   .hint-item:last-child { border-bottom: none; }
   .hint-item:hover { filter: brightness(0.95); }
-  .hint-item.used { opacity: 0.4; pointer-events: none; }
-  .hint-item-num { opacity: 0.5; font-weight: bold; margin-right: 8px; flex-shrink: 0; }
+  .hint-item.used { opacity: 0.35; pointer-events: none; }
+  .hint-item-num { opacity: 0.4; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
   #hint1Item { background: #9bdcff; }
   #hint2Item { background: #ffcc80; }
   #hint3Item { background: #d1c4e9; }
   #hint4Item { background: #d7c4a0; }
 
-  .sentence { margin-top: 8px; text-align: center; width: calc(7 * var(--cell) + 16px); }
+  .sentence { margin-top: 10px; text-align: center; width: calc(7 * var(--cell) + 20px); }
   .sentence-header {
     display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
-  .sentence-label { font-size: 12px; font-weight: bold; opacity: 0.6; text-align: left; }
-  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: bold; }
+  .sentence-label { font-size: 12px; font-weight: 700; opacity: 0.5; text-align: left; color: #2d1f0e; }
+  .sentence-hint2 { font-size: 11px; opacity: 0.9; text-align: right; letter-spacing: 0.02em; color: #c07800; font-weight: 700; }
   .sentence-row {
     display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 5px; min-height: 44px; padding: 5px 4px;
-    background: repeating-linear-gradient(
+    gap: 6px; min-height: 48px; padding: 8px 6px;
+    background-color: #d4cbb8;
+    background-image: repeating-linear-gradient(
       45deg,
-      #c8c8c8,
-      #c8c8c8 1px,
-      #d0d0d0 1px,
-      #d0d0d0 8px
+      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
+      transparent 1px, transparent 8px
     );
-    border-top: 2px solid #b8b8b8; border-left: 2px solid #b8b8b8;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
   }
   .sentence-instruction {
-    font-size: 11px; opacity: 0.5; text-align: center;
-    margin-top: 6px; letter-spacing: 0.01em;
+    font-size: 11px; opacity: 0.4; text-align: center;
+    margin-top: 6px; color: #2d1f0e;
   }
   .chip {
     display: inline-flex; align-items: center;
-    padding: 3px 9px 3px 7px; font-size: 13px; font-weight: bold;
+    padding: 5px 12px; font-size: 13px; font-weight: 700;
     border-radius: 20px; cursor: grab;
     user-select: none; -webkit-user-select: none; touch-action: none;
-    border-top: 2px solid rgba(255,255,255,0.6); border-left: 2px solid rgba(255,255,255,0.6);
-    border-right: 2px solid rgba(0,0,0,0.15); border-bottom: 2px solid rgba(0,0,0,0.15);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.28);
+    color: #2d1f0e;
   }
   .chip.dragging { opacity: 0.35; }
   .chip.drag-over { outline: 2px dashed rgba(0,0,0,0.3); outline-offset: 2px; }
   .chip-ghost {
     position: fixed; pointer-events: none; z-index: 999;
-    border-radius: 20px; padding: 3px 9px 3px 7px;
-    font-size: 13px; font-weight: bold;
-    font-family: Chicago, Geneva, system-ui, sans-serif; opacity: 0.9;
-    border-top: 2px solid rgba(255,255,255,0.6); border-left: 2px solid rgba(255,255,255,0.6);
-    border-right: 2px solid rgba(0,0,0,0.15); border-bottom: 2px solid rgba(0,0,0,0.15);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-radius: 20px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Quicksand', system-ui, sans-serif; opacity: 0.9;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
     user-select: none; -webkit-user-select: none;
+    color: #2d1f0e;
+    display: flex; align-items: center; justify-content: center;
   }
   .sentence-row, .bottom-bar { user-select: none; -webkit-user-select: none; }
-  .sentence-empty { font-size: 12px; opacity: 0.4; align-self: center; padding: 0 8px; pointer-events: none; }
+  .sentence-empty { font-size: 12px; opacity: 0.35; align-self: center; padding: 0 8px; pointer-events: none; color: #2d1f0e; }
 
   @keyframes boardPulse {
     0%   { transform: scale(1); }
@@ -254,33 +251,31 @@
 
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.55);
+    background: rgba(45,31,14,0.45);
     align-items: center; justify-content: center;
     z-index: 100;
   }
   .modal-overlay.show { display: flex; }
   .modal-box {
-    background: #e6e6e6;
-    border-top: 3px solid #fff; border-left: 3px solid #fff;
-    border-right: 3px solid #7a7a7a; border-bottom: 3px solid #7a7a7a;
-    padding: 20px 24px; max-width: 300px; width: 90%; text-align: left;
+    background: #fdf8f0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 24px 26px; max-width: 300px; width: 90%; text-align: left;
   }
-  .modal-box h2 { margin: 0 0 12px; font-size: 17px; text-align: center; }
-  .modal-close { display: block; margin: 16px auto 0; padding: 5px 20px; }
+  .modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: #2d1f0e; }
+  .modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; }
 
-  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; }
-  .how-step-num { font-weight: bold; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.5; }
+  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #2d1f0e; }
+  .how-step-num { font-weight: 700; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.4; }
   .how-example {
-    background: #d0d0d0;
-    border-top: 2px solid #b0b0b0; border-left: 2px solid #b0b0b0;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    padding: 8px 10px; font-size: 12px; margin: 8px 0 4px; line-height: 1.6;
+    background: #ede8de; border-radius: 10px;
+    padding: 10px 12px; font-size: 12px; margin: 8px 0 10px; line-height: 1.7; color: #2d1f0e;
   }
   .how-example strong { font-size: 13px; }
 
   #already-played .modal-box { text-align: center; }
-  #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
-  .ap-answer { font-weight: bold; font-size: 15px; margin-bottom: 12px; }
+  #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.7; color: #2d1f0e; }
+  .ap-answer { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: #2d1f0e; }
 </style>
 </head>
 <body>
@@ -367,14 +362,15 @@
 <div class="frame"><div id="grid" class="grid"></div></div>
 
 <div class="bottom-bar">
-  <button id="hintsBtn">Hints<span class="hint-badge" id="hintBadge">4</span>
+  <div style="position:relative;flex:1;display:flex">
+    <button id="hintsBtn" style="flex:1">Hints<span class="hint-badge" id="hintBadge">4</span></button>
     <div class="hints-menu" id="hintsMenu">
-      <div class="hint-item" id="hint1Item" onclick="useHint(1)"><span class="hint-item-num">1</span>Word count</div>
-      <div class="hint-item" id="hint2Item" onclick="useHint(2)"><span class="hint-item-num">2</span>Word lengths</div>
-      <div class="hint-item" id="hint3Item" onclick="useHint(3)"><span class="hint-item-num">3</span>Remove unused letters</div>
-      <div class="hint-item" id="hint4Item" onclick="useHint(4)"><span class="hint-item-num">4</span>Reveal first letters</div>
+      <div class="hint-item" id="hint1Item"><span class="hint-item-num">1</span>Word count</div>
+      <div class="hint-item" id="hint2Item"><span class="hint-item-num">2</span>Word lengths</div>
+      <div class="hint-item" id="hint3Item"><span class="hint-item-num">3</span>Remove unused letters</div>
+      <div class="hint-item" id="hint4Item"><span class="hint-item-num">4</span>Reveal first letters</div>
     </div>
-  </button>
+  </div>
   <button id="trashBtn">🗑️</button>
   <button id="submitBtn">Submit</button>
 </div>
@@ -390,7 +386,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 2.0
+   PUZZLE LIBRARY — VERSION 3.0
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -586,7 +582,15 @@ hintsBtn.onclick = (e) => {
   e.stopPropagation();
   hintsMenu.classList.toggle('show');
 };
-document.addEventListener('click', () => hintsMenu.classList.remove('show'));
+document.addEventListener('click', (e) => {
+  if (!hintsMenu.contains(e.target) && e.target !== hintsBtn) {
+    hintsMenu.classList.remove('show');
+  }
+});
+document.getElementById('hint1Item').onclick = (e) => { e.stopPropagation(); useHint(1); };
+document.getElementById('hint2Item').onclick = (e) => { e.stopPropagation(); useHint(2); };
+document.getElementById('hint3Item').onclick = (e) => { e.stopPropagation(); useHint(3); };
+document.getElementById('hint4Item').onclick = (e) => { e.stopPropagation(); useHint(4); };
 
 /* ── Hint system ── */
 const HINT_COLORS = { 1: '#9bdcff', 2: '#ffcc80', 3: '#d1c4e9', 4: '#d7c4a0' };
@@ -671,7 +675,7 @@ function build() {
 
 function clear() {
   document.querySelectorAll('#grid .cell').forEach(c => {
-    c.className = 'cell'; c.style.background = '#e6e6e6'; c.style.borderRadius = '0';
+    c.className = 'cell'; c.style.background = '#fdf8f0'; c.style.borderRadius = '6px';
   });
 }
 
@@ -748,6 +752,9 @@ function startChipDrag(e) {
   ghost.style.height = rect.height + 'px';
   ghost.style.left   = rect.left   + 'px';
   ghost.style.top    = rect.top    + 'px';
+  ghost.style.display = 'flex';
+  ghost.style.alignItems = 'center';
+  ghost.style.justifyContent = 'center';
   document.body.appendChild(ghost);
 
   chip.classList.add('dragging');
@@ -822,7 +829,8 @@ function adj(a,b) {
 
 function startGrid(e) {
   if (done) return;
-  const c = e.target;
+  const c = e.target.closest('.cell');
+  if (!c) return;
   if (c.classList.contains('selected')) return;
   drag = [c];
   gridEl.onpointermove = moveGrid;
@@ -832,11 +840,13 @@ function startGrid(e) {
 
 function moveGrid(e) {
   const t = document.elementFromPoint(e.clientX, e.clientY);
-  if (!t || !t.classList.contains('cell')) return;
-  if (drag.length > 1 && t === drag[drag.length-2]) { drag.pop(); redraw(); return; }
-  if (t.classList.contains('selected')) return;
-  if (drag.includes(t) || !adj(drag.at(-1), t)) return;
-  drag.push(t); redraw();
+  if (!t) return;
+  const cell = t.closest('.cell');
+  if (!cell) return;
+  if (drag.length > 1 && cell === drag[drag.length-2]) { drag.pop(); redraw(); return; }
+  if (cell.classList.contains('selected')) return;
+  if (drag.includes(cell) || !adj(drag.at(-1), cell)) return;
+  drag.push(cell); redraw();
 }
 
 function endGrid() {

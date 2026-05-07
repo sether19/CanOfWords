@@ -146,6 +146,66 @@
   #submitBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
   #submitBtn.ready { background: #b8ddb4; }
 
+
+  /* ── First-time tutorial overlay ── */
+  #tutorialOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  #tutorialTooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d1f0e;
+    color: #fdf8f0;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: opacity 300ms;
+    pointer-events: none;
+  }
+  #tutorialTooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #2d1f0e;
+  }
+  #tutorialTooltip.show { opacity: 1; }
+
+  /* Animated drag finger */
+  #tutorialFinger {
+    position: absolute;
+    width: 28px; height: 28px;
+    background: rgba(45,31,14,0.75);
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 300ms;
+    z-index: 11;
+  }
+  #tutorialFinger.show { opacity: 1; }
+
+  @keyframes tutorialDrag {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    10%  { transform: translate(-50%, -50%) scale(0.85); }
+    90%  { transform: translate(-50%, -50%) scale(0.85); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+  }
+  #tutorialFinger.dragging { animation: tutorialDrag 1.8s ease-in-out; }
+
   /* SVG worm overlay */
   .grid-wrap { position: relative; display: inline-block; }
   #wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
@@ -374,7 +434,7 @@
   <button id="helpBtn">?</button>
 </div>
 
-<div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg></div></div>
+<div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg><div id="tutorialOverlay"><div id="tutorialTooltip">Drag across letters to spell a word 🪱</div></div></div></div>
 
 <div class="bottom-bar">
   <div style="position:relative;flex:1;display:flex">
@@ -1018,7 +1078,84 @@ function endGrid() {
   redraw();
 }
 
-/* ── Win icon ── */
+/* ── First-time tutorial ── */
+function runTutorial() {
+  if (localStorage.getItem('canofwords_tutorial_seen')) return;
+  if (done) return;
+
+  const tooltip = document.getElementById('tutorialTooltip');
+  const finger  = document.getElementById('tutorialFinger');
+  const grid    = document.getElementById('grid');
+
+  // Pick 4 horizontally adjacent cells in row 3 for the demo drag
+  const cells = [...grid.querySelectorAll('.cell')]
+    .filter(c => +c.dataset.r === 3)
+    .slice(1, 5);
+
+  if (cells.length < 4) return;
+
+  // Position tooltip above grid
+  const gridRect = grid.getBoundingClientRect();
+  const overlay  = document.getElementById('tutorialOverlay');
+  tooltip.style.left = '50%';
+  tooltip.style.bottom = 'calc(100% + 10px)';
+
+  // Show tooltip
+  setTimeout(() => tooltip.classList.add('show'), 400);
+
+  // Animate finger dragging across the 4 cells
+  setTimeout(() => {
+    finger.classList.add('show');
+
+    const startRect = cells[0].getBoundingClientRect();
+    const endRect   = cells[3].getBoundingClientRect();
+
+    finger.style.left = (startRect.left + startRect.width/2) + 'px';
+    finger.style.top  = (startRect.top  + startRect.height/2) + 'px';
+
+    // Animate across cells
+    setTimeout(() => finger.classList.add('dragging'), 100);
+
+    const totalDist = endRect.left - startRect.left;
+    const duration  = 1600;
+    const start     = performance.now();
+
+    function animateFinger(now) {
+      const t = Math.min((now - start) / duration, 1);
+      // ease in-out
+      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      finger.style.left = (startRect.left + startRect.width/2 + totalDist * ease) + 'px';
+      finger.style.top  = (startRect.top  + startRect.height/2) + 'px';
+      if (t < 1) requestAnimationFrame(animateFinger);
+    }
+    requestAnimationFrame(animateFinger);
+
+    // Repeat once more then fade out
+    setTimeout(() => {
+      finger.style.transition = 'left 1.6s ease-in-out, top 1.6s ease-in-out';
+      finger.style.left = (startRect.left + startRect.width/2) + 'px';
+      setTimeout(() => {
+        finger.style.left = (endRect.left + endRect.width/2) + 'px';
+      }, 400);
+      setTimeout(() => {
+        finger.classList.remove('show');
+        tooltip.style.transition = 'opacity 600ms';
+        setTimeout(() => tooltip.classList.remove('show'), 200);
+        localStorage.setItem('canofwords_tutorial_seen', '1');
+      }, 2400);
+    }, 2200);
+
+  }, 900);
+}
+
+// Dismiss tutorial immediately on first drag
+const _origStartGrid = startGrid;
+function startGrid(e) {
+  localStorage.setItem('canofwords_tutorial_seen', '1');
+  document.getElementById('tutorialTooltip')?.classList.remove('show');
+  document.getElementById('tutorialFinger')?.classList.remove('show');
+  _origStartGrid(e);
+}
 function showWinIcon() {
   document.getElementById('statusSquare').textContent = '✅';
   document.getElementById('puzzle-num').classList.add('solved');
@@ -1170,9 +1307,12 @@ if (PUZZLE) {
   });
   if (alreadyPlayedToday) {
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
+  } else {
+    setTimeout(runTutorial, 600);
   }
 }
 </script>
+<div id="tutorialFinger"></div>
 </body>
 
 <!-- Temporary reset button for testing — remove before final publish -->

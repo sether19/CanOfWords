@@ -147,66 +147,75 @@
   #submitBtn.ready { background: #b8ddb4; }
 
 
-  /* ── First-time tutorial overlay ── */
-  #tutorialOverlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  #tutorialTooltip {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: #2d1f0e;
-    color: #fdf8f0;
+/* ── Onboarding overlay ── */
+  #onboardingOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,31,14,0.6);
+    align-items: center; justify-content: center;
+    z-index: 200;
     font-family: 'Quicksand', system-ui, sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 10px;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    opacity: 0;
-    transition: opacity 300ms;
-    pointer-events: none;
   }
-  #tutorialTooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%; left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: #2d1f0e;
+  #onboardingOverlay.show { display: flex; }
+  #onboardingBox {
+    background: #fdf8f0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 24px 24px 20px;
+    max-width: 300px; width: 90%;
+    text-align: center;
   }
-  #tutorialTooltip.show { opacity: 1; }
+  #onboardingBox h2 { margin: 0 0 4px; font-size: 20px; color: #2d1f0e; }
+  #onboardingBox p { margin: 0 0 16px; font-size: 13px; color: #2d1f0e; opacity: 0.7; line-height: 1.5; }
+  #onboardingDemo {
+    background: #ede8de;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  #onboardingDemo svg { display: block; margin: 0 auto; }
+  #onboardingPlayBtn {
+    background: #d0eacc;
+    box-shadow: 0 2px 0 #7ab870;
+    border: none; border-radius: 12px;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: #2d1f0e;
+    padding: 10px 28px;
+    cursor: pointer;
+    transition: box-shadow 80ms, transform 80ms;
+  }
+  #onboardingPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
 
-  /* Animated drag finger */
-  #tutorialFinger {
-    position: absolute;
-    width: 28px; height: 28px;
-    background: rgba(45,31,14,0.75);
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.6);
-    pointer-events: none;
-    opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: opacity 300ms;
-    z-index: 11;
+  /* finger dot animation */
+  @keyframes fingerMove {
+    0%   { cx: 30;  opacity: 0; }
+    8%   { cx: 30;  opacity: 1; }
+    80%  { cx: 210; opacity: 1; }
+    92%  { cx: 210; opacity: 0; }
+    100% { cx: 210; opacity: 0; }
   }
-  #tutorialFinger.show { opacity: 1; }
-
-  @keyframes tutorialDrag {
-    0%   { transform: translate(-50%, -50%) scale(1); }
-    10%  { transform: translate(-50%, -50%) scale(0.85); }
-    90%  { transform: translate(-50%, -50%) scale(0.85); }
-    100% { transform: translate(-50%, -50%) scale(1); }
+  @keyframes fingerMoveY {
+    0%, 100% { cy: 30; }
   }
-  #tutorialFinger.dragging { animation: tutorialDrag 1.8s ease-in-out; }
-
-  /* SVG worm overlay */
+  @keyframes chipAppear {
+    0%, 72%  { opacity: 0; transform: translateY(6px); }
+    85%      { opacity: 1; transform: translateY(0); }
+    100%     { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cellHighlight {
+    0%, 10%  { fill: #fdf8f0; }
+    20%, 75% { fill: var(--hi); }
+    85%,100% { fill: #fdf8f0; }
+  }
+  .demo-cell { animation: cellHighlight 2.8s ease-in-out infinite; }
+  .demo-cell:nth-child(1) { animation-delay: 0.22s; }
+  .demo-cell:nth-child(2) { animation-delay: 0.44s; }
+  .demo-cell:nth-child(3) { animation-delay: 0.66s; }
+  .demo-cell:nth-child(4) { animation-delay: 0.88s; }
+  .demo-finger { animation: fingerMove 2.8s ease-in-out infinite; }
+  .demo-chip   { animation: chipAppear 2.8s ease-in-out infinite; }
   .grid-wrap { position: relative; display: inline-block; }
   #wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
 
@@ -434,7 +443,7 @@
   <button id="helpBtn">?</button>
 </div>
 
-<div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg><div id="tutorialOverlay"><div id="tutorialTooltip">Drag across letters to spell a word 🪱</div></div></div></div>
+<div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg></div></div>
 
 <div class="bottom-bar">
   <div style="position:relative;flex:1;display:flex">
@@ -1078,84 +1087,19 @@ function endGrid() {
   redraw();
 }
 
-/* ── First-time tutorial ── */
-function runTutorial() {
+
+/* ── Onboarding overlay ── */
+function showOnboarding() {
   if (localStorage.getItem('canofwords_tutorial_seen')) return;
   if (done) return;
-
-  const tooltip = document.getElementById('tutorialTooltip');
-  const finger  = document.getElementById('tutorialFinger');
-  const grid    = document.getElementById('grid');
-
-  // Pick 4 horizontally adjacent cells in row 3 for the demo drag
-  const cells = [...grid.querySelectorAll('.cell')]
-    .filter(c => +c.dataset.r === 3)
-    .slice(1, 5);
-
-  if (cells.length < 4) return;
-
-  // Position tooltip above grid
-  const gridRect = grid.getBoundingClientRect();
-  const overlay  = document.getElementById('tutorialOverlay');
-  tooltip.style.left = '50%';
-  tooltip.style.bottom = 'calc(100% + 10px)';
-
-  // Show tooltip
-  setTimeout(() => tooltip.classList.add('show'), 400);
-
-  // Animate finger dragging across the 4 cells
-  setTimeout(() => {
-    finger.classList.add('show');
-
-    const startRect = cells[0].getBoundingClientRect();
-    const endRect   = cells[3].getBoundingClientRect();
-
-    finger.style.left = (startRect.left + startRect.width/2) + 'px';
-    finger.style.top  = (startRect.top  + startRect.height/2) + 'px';
-
-    // Animate across cells
-    setTimeout(() => finger.classList.add('dragging'), 100);
-
-    const totalDist = endRect.left - startRect.left;
-    const duration  = 1600;
-    const start     = performance.now();
-
-    function animateFinger(now) {
-      const t = Math.min((now - start) / duration, 1);
-      // ease in-out
-      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
-      finger.style.left = (startRect.left + startRect.width/2 + totalDist * ease) + 'px';
-      finger.style.top  = (startRect.top  + startRect.height/2) + 'px';
-      if (t < 1) requestAnimationFrame(animateFinger);
-    }
-    requestAnimationFrame(animateFinger);
-
-    // Repeat once more then fade out
-    setTimeout(() => {
-      finger.style.transition = 'left 1.6s ease-in-out, top 1.6s ease-in-out';
-      finger.style.left = (startRect.left + startRect.width/2) + 'px';
-      setTimeout(() => {
-        finger.style.left = (endRect.left + endRect.width/2) + 'px';
-      }, 400);
-      setTimeout(() => {
-        finger.classList.remove('show');
-        tooltip.style.transition = 'opacity 600ms';
-        setTimeout(() => tooltip.classList.remove('show'), 200);
-        localStorage.setItem('canofwords_tutorial_seen', '1');
-      }, 2400);
-    }, 2200);
-
-  }, 900);
+  document.getElementById('onboardingOverlay').classList.add('show');
 }
 
-// Dismiss tutorial immediately on first drag
-const _origStartGrid = startGrid;
-function startGrid(e) {
+function dismissOnboarding() {
+  document.getElementById('onboardingOverlay').classList.remove('show');
   localStorage.setItem('canofwords_tutorial_seen', '1');
-  document.getElementById('tutorialTooltip')?.classList.remove('show');
-  document.getElementById('tutorialFinger')?.classList.remove('show');
-  _origStartGrid(e);
 }
+
 function showWinIcon() {
   document.getElementById('statusSquare').textContent = '✅';
   document.getElementById('puzzle-num').classList.add('solved');
@@ -1308,11 +1252,37 @@ if (PUZZLE) {
   if (alreadyPlayedToday) {
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
   } else {
-    setTimeout(runTutorial, 600);
+    setTimeout(showOnboarding, 400);
   }
 }
 </script>
-<div id="tutorialFinger"></div>
+<!-- Onboarding overlay -->
+<div id="onboardingOverlay">
+  <div id="onboardingBox">
+    <h2>Can of Words 🪱</h2>
+    <p>Drag across letters in the grid to spell out words that form a sentence describing the answer.</p>
+    <div id="onboardingDemo">
+      <svg width="240" height="70" viewBox="0 0 240 70">
+        <!-- 4 cells -->
+        <rect class="demo-cell" x="5"  y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+        <rect class="demo-cell" x="65" y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+        <rect class="demo-cell" x="125" y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+        <rect class="demo-cell" x="185" y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+        <!-- Letters -->
+        <text x="30"  y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">W</text>
+        <text x="90"  y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">O</text>
+        <text x="150" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">R</text>
+        <text x="210" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">D</text>
+        <!-- Animated finger -->
+        <circle class="demo-finger" cy="30" r="12" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      </svg>
+      <!-- Chip that appears after drag -->
+      <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:#2d1f0e;box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
+    </div>
+    <button id="onboardingPlayBtn" onclick="dismissOnboarding()">Let's Play! 🪱</button>
+  </div>
+</div>
+
 </body>
 
 <!-- Temporary reset button for testing — remove before final publish -->

@@ -531,7 +531,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 3.3
+   PUZZLE LIBRARY — VERSION 3.5
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -558,11 +558,11 @@ const PUZZLES = [
   { clue: 'Sushi',         sentence: 'japanese dish of rice and raw fish wrapped in seaweed' },
   { clue: 'Umbrella',      sentence: 'folding canopy carried to stay dry in the rain' },
   { clue: 'Nostalgia',     sentence: 'bittersweet longing for a time that has passed' },
-  { clue: 'James Bond',   sentence: 'british spy who prefers his martini shaken not stirred' },
-  { clue: 'Bread?',       sentence: 'greatest thing since itself according to the saying' },
-  { clue: 'Sunglasses',   sentence: 'tinted lenses worn to shield eyes from bright light' },
-  { clue: 'Thermos',      sentence: 'insulated flask that keeps drinks hot or cold' },
-  { clue: "Murphy's Law", sentence: 'anything that can go wrong will go wrong' },
+  { clue: 'James Bond',    sentence: 'british spy who prefers his martini shaken not stirred' },
+  { clue: 'Bread?',        sentence: 'greatest thing since itself according to the saying' },
+  { clue: 'Sunglasses',    sentence: 'tinted lenses worn to shield eyes from bright light' },
+  { clue: 'Thermos',       sentence: 'insulated flask that keeps drinks hot or cold' },
+  { clue: "Murphy's Law",  sentence: 'anything that can go wrong will go wrong' },
 ];
 
 /* =====================================================================
@@ -1487,13 +1487,21 @@ if (PUZZLE) {
 </body>
 
 <!-- Temporary reset button for testing — remove before final publish -->
-<div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:16px 0 2px">
-  <div id="shareArea" style="display:none">
-    <button id="shareBtn" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;padding:6px 14px;cursor:pointer;background:#d0ead0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #4a7a4a;border-bottom:2px solid #4a7a4a;">📤 Share</button>
-  </div>
-  <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
-</div>
 <div id="shareCopied" style="font-size:11px;opacity:0;text-align:center;margin-bottom:4px;transition:opacity 400ms">Copied to clipboard!</div>
-<div style="text-align:center;margin-bottom:12px;font-size:10px;opacity:0.3;letter-spacing:0.05em">a game by seth s. scott</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;width:calc(7 * var(--cell) + 20px)">
+  <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+    <img src="PHAT2026.png" style="width:28px;height:28px;mix-blend-mode:multiply;opacity:0.7"/>
+    <span style="font-size:10px;opacity:0.3;letter-spacing:0.05em;font-weight:600">a game by seth s. scott</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+    <div style="display:flex;gap:6px;align-items:center">
+      <div id="shareArea" style="display:none">
+        <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
+      </div>
+      <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');location.reload();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
+    </div>
+    <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
+  </div>
+</div>
 
 </html>

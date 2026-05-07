@@ -211,6 +211,40 @@
   .demo-cell:nth-child(2) { animation-delay: 0.44s; }
   .demo-cell:nth-child(3) { animation-delay: 0.66s; }
   .demo-cell:nth-child(4) { animation-delay: 0.88s; }
+
+  /* ── Tray tutorial overlay ── */
+  #trayTutorialOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,31,14,0.6);
+    align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  #trayTutorialOverlay.show { display: flex; }
+  #trayTutorialBox {
+    background: #fdf8f0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 24px 24px 20px;
+    max-width: 300px; width: 90%;
+    text-align: center;
+    font-family: 'Quicksand', system-ui, sans-serif;
+  }
+  #trayTutorialBox h3 { margin: 0 0 8px; font-size: 16px; color: #2d1f0e; font-weight: 700; }
+  #trayTutorialBox p { margin: 0 0 14px; font-size: 13px; color: #2d1f0e; opacity: 0.7; line-height: 1.5; }
+  #trayTutorialDemo {
+    background: #ede8de; border-radius: 12px;
+    padding: 12px; margin-bottom: 14px;
+  }
+  #trayTutorialDismiss {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
+    border: none; border-radius: 12px;
+    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms;
+  }
+  #trayTutorialDismiss:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+
   /* finger driven by JS */
   .demo-chip   { animation: chipAppear 2.8s ease-in-out infinite; }
   .grid-wrap { position: relative; display: inline-block; }
@@ -473,6 +507,25 @@
     <div class="sentence-hint2" id="hint2Text"></div>
   </div>
   <div id="sentenceRow" class="sentence-row"></div>
+
+<!-- Tray tutorial overlay -->
+<div id="trayTutorialOverlay">
+  <div id="trayTutorialBox">
+    <h3>Rearrange your words</h3>
+    <p>Drag words to rearrange them into the right order.</p>
+    <div id="trayTutorialDemo">
+      <svg id="trayTutorialSvg" width="220" height="44" viewBox="0 0 220 44">
+        <rect id="trayChip1" x="4" y="7" width="70" height="30" rx="15" fill="#b9f6ca"/>
+        <text id="trayChipText1" x="39" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">word</text>
+        <rect id="trayChip2" x="84" y="7" width="86" height="30" rx="15" fill="#ffe082"/>
+        <text id="trayChipText2" x="127" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">another</text>
+        <circle id="trayFinger" cx="39" cy="22" r="11" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+      </svg>
+    </div>
+    <p style="font-size:12px;margin:0 0 14px;opacity:0.6"><em><strong>Hint:</strong> Each word in the grid will touch other<br>words it sits between in the sentence.</em></p>
+    <button id="trayTutorialDismiss" onclick="dismissTrayTutorial()">Got it! 🪱</button>
+  </div>
+</div>
   <div class="sentence-instruction">Drag to arrange words &bull; Drag to 🗑️ to delete</div>
 </div>
 
@@ -486,6 +539,7 @@ const PUZZLE_START_DATE = '2026-05-05';
 const PUZZLES = [
   { clue: 'Shakespeare',   sentence: 'english playwright who wrote hamlet and macbeth' },
   { clue: 'Coffee',        sentence: 'hot morning drink brewed from roasted beans' },
+  { clue: 'Avocado',       sentence: 'creamy fruit required to make guacamole' },
   { clue: 'Solar Eclipse', sentence: 'when the moon passes between earth and the sun' },
   { clue: 'Chess',         sentence: 'strategy board game with kings and queens' },
   { clue: 'Calm?',         sentence: 'known to come before the storm' },
@@ -497,7 +551,6 @@ const PUZZLES = [
   { clue: 'Mount Everest', sentence: 'tallest peak on earth' },
   { clue: 'Marathon',      sentence: 'long running race of just over twenty six miles' },
   { clue: 'G. Washington', sentence: 'first president of the USA' },
-  { clue: 'Avocado',       sentence: 'creamy fruit required to make guacamole' },
   { clue: 'Sneeze',        sentence: 'catalyst for saying bless you' },
   { clue: 'T-Shirt!',      sentence: 'small medium large XL XXL XXXL' },
   { clue: 'Titanic',       sentence: 'unsinkable ship that sank on its maiden voyage' },
@@ -946,6 +999,7 @@ function buildWormPath(pts, R) {
 /* ── Chip rendering ── */
 function renderChips() {
   document.getElementById('sentenceRow').classList.toggle('has-chips', words.length > 0);
+  if (words.length === 2 && !trayTutorialShown) setTimeout(showTrayTutorial, 600);
   rowEl.innerHTML = '';
   words.forEach((w, i) => {
     const chip = document.createElement('div');
@@ -1151,6 +1205,100 @@ function dismissOnboarding() {
   localStorage.setItem('canofwords_tutorial_seen', '1');
 }
 
+/* ── Tray tutorial ── */
+let trayTutorialShown = false;
+let trayFingerRunning = false;
+
+function showTrayTutorial() {
+  if (trayTutorialShown) return;
+  if (localStorage.getItem('canofwords_tray_tutorial_seen')) return;
+  trayTutorialShown = true;
+  document.getElementById('trayTutorialOverlay').classList.add('show');
+  startTrayFingerAnimation();
+}
+
+function dismissTrayTutorial() {
+  document.getElementById('trayTutorialOverlay').classList.remove('show');
+  localStorage.setItem('canofwords_tray_tutorial_seen', '1');
+  trayFingerRunning = false;
+}
+
+function startTrayFingerAnimation() {
+  const finger = document.getElementById('trayFinger');
+  const chip1  = document.getElementById('trayChip1');
+  const text1  = document.getElementById('trayChipText1');
+  const chip2  = document.getElementById('trayChip2');
+  const text2  = document.getElementById('trayChipText2');
+  if (!finger || !chip1) return;
+  trayFingerRunning = true;
+
+  // Chip 1 (green "word"):    starts x=4,  center=39,  width=70
+  // Chip 2 (yellow "another"): starts x=84, center=127, width=86
+  // After swap: chip1 goes to x=130 (right), chip2 goes to x=4 (left)
+  const DURATION = 3200;
+
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  // Phases (as fraction of DURATION):
+  // 0.00-0.10: finger fades in on chip1
+  // 0.10-0.55: finger + chip1 slide right; chip2 slides left (swap)
+  // 0.55-0.70: finger fades out on chip2
+  // 0.70-0.85: pause showing swapped state
+  // 0.85-1.00: snap back to original positions
+
+  const c1StartX = 4,  c1EndX = 130; // chip1 slides right
+  const c2StartX = 84, c2EndX = 4;   // chip2 slides left
+  const fStartX = 39, fEndX = 165;   // finger follows chip1 center
+
+  let startTime = null;
+
+  function frame(ts) {
+    if (!trayFingerRunning) { finger.setAttribute('opacity', 0); return; }
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % DURATION) / DURATION;
+
+    let fingerOpacity = 0, fingerX = fStartX;
+    let c1x = c1StartX, c2x = c2StartX;
+
+    if (t < 0.10) {
+      // Fade in finger on chip1
+      fingerOpacity = t / 0.10;
+      fingerX = fStartX;
+      c1x = c1StartX; c2x = c2StartX;
+    } else if (t < 0.55) {
+      // Swap in progress
+      const p = easeInOut((t - 0.10) / 0.45);
+      fingerOpacity = 1;
+      c1x = c1StartX + (c1EndX - c1StartX) * p;
+      c2x = c2StartX + (c2EndX - c2StartX) * p;
+      fingerX = fStartX + (fEndX - fStartX) * p;
+    } else if (t < 0.70) {
+      // Finger fades out
+      fingerOpacity = 1 - (t - 0.55) / 0.15;
+      fingerX = fEndX;
+      c1x = c1EndX; c2x = c2EndX;
+    } else if (t < 0.85) {
+      // Pause showing swapped state
+      fingerOpacity = 0;
+      c1x = c1EndX; c2x = c2EndX;
+    } else {
+      // Snap back instantly
+      fingerOpacity = 0;
+      c1x = c1StartX; c2x = c2StartX;
+    }
+
+    finger.setAttribute('cx', (c1x + 35).toFixed(1)); // center of chip1
+    finger.setAttribute('opacity', fingerOpacity.toFixed(3));
+    chip1.setAttribute('x', c1x.toFixed(1));
+    text1.setAttribute('x', (c1x + 35).toFixed(1));
+    chip2.setAttribute('x', c2x.toFixed(1));
+    text2.setAttribute('x', (c2x + 43).toFixed(1));
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
 function showWinIcon() {
   document.getElementById('statusSquare').textContent = '✅';
   document.getElementById('puzzle-num').classList.add('solved');
@@ -1237,6 +1385,7 @@ function checkCompletion(manual) {
   }));
   saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
   localStorage.setItem('canofwords_tutorial_seen', '1');
+  localStorage.setItem('canofwords_tray_tutorial_seen', '1');
   document.body.classList.add('solved');
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
@@ -1342,7 +1491,7 @@ if (PUZZLE) {
   <div id="shareArea" style="display:none">
     <button id="shareBtn" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;padding:6px 14px;cursor:pointer;background:#d0ead0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #4a7a4a;border-bottom:2px solid #4a7a4a;">📤 Share</button>
   </div>
-  <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
+  <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
 </div>
 <div id="shareCopied" style="font-size:11px;opacity:0;text-align:center;margin-bottom:4px;transition:opacity 400ms">Copied to clipboard!</div>
 <div style="text-align:center;margin-bottom:12px;font-size:10px;opacity:0.3;letter-spacing:0.05em">a game by seth s. scott</div>

@@ -248,7 +248,32 @@
   }
   #trayTutorialDismiss:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
 
-  /* ── Sunday tutorial overlay ── */
+  /* ── Archive calendar ── */
+  .archive-week-row {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; margin-bottom: 4px;
+  }
+  .archive-day-label {
+    text-align: center; font-size: 9px; opacity: 0.4;
+    font-weight: 700; letter-spacing: 0.05em; padding-bottom: 4px;
+  }
+  .archive-day {
+    aspect-ratio: 1; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; cursor: pointer;
+    background: #fdf8f0; color: #2d1f0e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    transition: transform 80ms;
+  }
+  .archive-day:active { transform: scale(0.92); }
+  .archive-day.solved { background: #d0eacc; color: #2a5a2a; }
+  .archive-day.today { box-shadow: 0 0 0 2px #c0392b; }
+  .archive-day.future { background: #ede8de; color: #2d1f0e; opacity: 0.3; cursor: default; pointer-events: none; }
+  .archive-day.empty { background: transparent; box-shadow: none; cursor: default; pointer-events: none; }
+  .archive-month-label {
+    font-size: 11px; font-weight: 700; opacity: 0.5;
+    margin: 8px 0 4px; letter-spacing: 0.05em;
+  }
   #sundayTutorialOverlay {
     display: none; position: fixed; inset: 0;
     background: rgba(45,31,14,0.6);
@@ -516,7 +541,11 @@
       </div>
     </div>
   </div>
-  <button id="helpBtn">?</button>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button id="archiveBackBtn" style="display:none;font-size:10px;font-weight:700;padding:0 8px;height:30px;border-radius:15px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;white-space:nowrap" onclick="returnToToday()">← Today</button>
+    <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">📅</button>
+    <button id="helpBtn">?</button>
+  </div>
 </div>
 
 <div class="frame"><div class="grid-wrap"><div id="grid" class="grid"></div><svg id="wormSvg"></svg></div></div>
@@ -572,7 +601,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 3.8
+   PUZZLE LIBRARY — VERSION 4.1
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -588,7 +617,7 @@ const PUZZLES = [
   { clue: 'Buffalo;',      sentence: 'large american bison city in new york state',            type: 'sunday'  }, // Sun May 10
 
   // ── WEEK 2 (May 11) ────────────────────────────────
-  { clue: 'Penguin',       sentence: 'flightless bird native to the southern hemisphere',               type: 'regular' }, // Mon May 11
+  { clue: 'Penguin',       sentence: 'flightless bird native to the southern hemisphere',              type: 'regular' }, // Mon May 11
   { clue: 'Piano',         sentence: 'large keyboard instrument with black and white keys',    type: 'regular' }, // Tue May 12
   { clue: 'Volcano',       sentence: 'mountain that erupts molten lava and ash',               type: 'regular' }, // Wed May 13
   { clue: 'Honey',         sentence: 'sweet golden syrup made by bees in a hive',             type: 'regular' }, // Thu May 14
@@ -676,11 +705,12 @@ if (window.location.search.includes('reset')) {
 }
 
 const savedState = loadState();
+let ACTIVE_PUZZLE = PUZZLE; // swapped to archive puzzle when in archive mode
 const alreadyPlayedToday = savedState.dateKey === TODAY_KEY && savedState.solved === true;
 
 if (alreadyPlayedToday) {
   document.getElementById('ap-answer').textContent =
-    `${PUZZLE.clue}: ${PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
+    `${ACTIVE_PUZZLE.clue}: ${ACTIVE_PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
   document.getElementById('already-played').classList.add('show');
 }
 
@@ -723,6 +753,8 @@ if (PUZZLE && PUZZLE.sentence.includes('|')) {
   PUZZLE.sentence = PUZZLE._sentenceParts.join(' ');
 }
 
+let ACTIVE_PATH = null; // set after PATH is generated
+const TODAY_PUZZLE = PUZZLE; // immutable reference to today's puzzle
 const LETTERS = PUZZLE ? PUZZLE.sentence.replaceAll(' ','') : '';
 
 function hashString(str) {
@@ -756,11 +788,27 @@ function genPath(len, seed) {
 }
 
 const SEED = getSeed();
+const alpha = 'abcdefghijklmnopqrstuvwxyz';
+
+function buildGridForPuzzle(sentence, dateKey) {
+  const letters = sentence.replaceAll(' ', '');
+  const seed = hashString(`${dateKey}-${sentence}`);
+  const path = genPath(letters.length, seed);
+  const g = Array.from({length:7}, () => Array(7).fill(''));
+  path.forEach((p,i) => g[p[0]][p[1]] = letters[i]);
+  const r2 = rng(seed ^ 0x9e3779b9);
+  for (let r=0;r<7;r++) for (let c=0;c<7;c++) {
+    if (!g[r][c]) g[r][c] = alpha[r2()*26|0];
+  }
+  return { grid: g, path };
+}
+
 const PATH = genPath(LETTERS.length, SEED);
 
 let grid = Array.from({length:7}, () => Array(7).fill(''));
 PATH.forEach((p,i) => grid[p[0]][p[1]] = LETTERS[i]);
-const alpha = 'abcdefghijklmnopqrstuvwxyz', r2 = rng(SEED ^ 0x9e3779b9);
+ACTIVE_PATH = PATH; // default to today's path
+const r2 = rng(SEED ^ 0x9e3779b9);
 for (let r=0; r<7; r++) for (let c=0; c<7; c++) if (!grid[r][c]) grid[r][c] = alpha[r2()*26|0];
 
 /* =====================================================================
@@ -772,8 +820,8 @@ const ty = todayParts[0], tm = todayParts[1], td = todayParts[2];
 if (!PUZZLE) {
   document.getElementById('clue').textContent = 'No puzzle available for today — check back soon!';
 } else {
-  document.getElementById('clue').textContent =
-    `Today's answer: ${PUZZLE.clue}`;
+  document.getElementById('clue').innerHTML =
+    `Today's answer: ${ACTIVE_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
   document.getElementById('puzzle-num').textContent =
     `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
 }
@@ -827,6 +875,11 @@ const HINT_COLORS = { 1: '#9bdcff', 2: '#ffcc80', 3: '#d1c4e9', 4: '#d7c4a0' };
 function useHint(n) {
   if (hintsUsed.has(n) || done) return;
   hintsUsed.add(n);
+  // Persist hint usage for today's puzzle so it survives archive visits
+  if (!archiveMode) {
+    const cur = loadState();
+    saveState({ ...cur, hintsUsed: [...hintsUsed] });
+  }
   hintsMenu.classList.remove('show');
   document.getElementById(`hint${n}Item`).classList.add('used');
 
@@ -842,21 +895,22 @@ function useHint(n) {
 }
 
 function applyHint1() {
-  const wordCount = PUZZLE.sentence.trim().split(/\s+/).length;
+  const wordCount = ACTIVE_PUZZLE.sentence.trim().split(/\s+/).length;
   const clueEl = document.getElementById('clue');
-  clueEl.innerHTML = `Today's answer: ${PUZZLE.clue} <span style="color:#2980b9;font-weight:bold">(${wordCount})</span>`;
+  const formattedClue = ACTIVE_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>');
+  clueEl.innerHTML = `Today's answer: ${formattedClue} <span style="color:#2980b9;font-weight:bold">(${wordCount})</span>`;
 }
 
 function applyHint2() {
   // Show word lengths in sentence header
-  const lengths = PUZZLE.sentence.trim().split(/\s+/).map(w => w.length);
+  const lengths = ACTIVE_PUZZLE.sentence.trim().split(/\s+/).map(w => w.length);
   document.getElementById('hint2Text').textContent =
     `Lengths: ${lengths.join(' · ')}`;
 }
 
 function applyHint3() {
   // Build a set of cells that are physically on the answer path
-  const pathCells = new Set(PATH.map(pos => pos[0] + ',' + pos[1]));
+  const pathCells = new Set(ACTIVE_PATH.map(pos => pos[0] + ',' + pos[1]));
   document.querySelectorAll('#grid .cell').forEach(cell => {
     if (cell.classList.contains('selected')) return;
     const key = cell.dataset.r + ',' + cell.dataset.c;
@@ -866,7 +920,7 @@ function applyHint3() {
 
 function applyHint4() {
   // Place raised circle indicator under first letters of each word in the path
-  const words_in_sentence = PUZZLE.sentence.trim().split(/\s+/);
+  const words_in_sentence = ACTIVE_PUZZLE.sentence.trim().split(/\s+/);
   let letterIdx = 0;
   const firstLetterIndices = new Set();
   words_in_sentence.forEach(word => {
@@ -875,7 +929,7 @@ function applyHint4() {
   });
 
   // Mark the path cells that are first letters
-  PATH.forEach((pos, i) => {
+  ACTIVE_PATH.forEach((pos, i) => {
     if (!firstLetterIndices.has(i)) return;
     const cell = document.querySelector(`#grid .cell[data-r="${pos[0]}"][data-c="${pos[1]}"]`);
     if (cell && !cell.classList.contains('selected')) {
@@ -1227,9 +1281,250 @@ function endGrid() {
 }
 
 
-/* ── Sunday tutorial ── */
+function confirmReset() {
+  if (confirm('This will reset all of your progress today and in the archive. Are you sure?')) {
+    clearAllState();
+  }
+}
+window.confirmReset = confirmReset;
+
+/* ── Clear all state ── */
+function clearAllState() {
+  // Clear main state and tutorial flags
+  localStorage.removeItem('canofwords_state');
+  localStorage.removeItem('canofwords_tutorial_seen');
+  localStorage.removeItem('canofwords_tray_tutorial_seen');
+  localStorage.removeItem('canofwords_sunday_tutorial_seen');
+  // Clear all archive solved states
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('canofwords_archive_'))
+    .forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+
+function resetHints() {
+  hintsUsed = new Set();
+  [1,2,3,4].forEach(n => {
+    const circle = document.getElementById('hintCircle'+n);
+    const item = document.getElementById('hint'+n+'Item');
+    if (circle) { circle.style.background = ''; circle.classList.remove('filled'); circle.textContent = '🪱'; }
+    if (item) item.classList.remove('used');
+  });
+  document.getElementById('hint2Text').textContent = '';
+  document.querySelectorAll('#grid .cell').forEach(c => {
+    c.classList.remove('hint3-fade', 'hint4-circle');
+  });
+}
+
+/* ── Archive ── */
+let archiveMode = false;
+let archiveDateKey = null;
+
+function getArchiveStateKey(dateKey) { return 'canofwords_archive_' + dateKey; }
+
+function buildArchiveCalendar() {
+  const cal = document.getElementById('archiveCalendar');
+  cal.innerHTML = '';
+
+  const startDate = new Date(PUZZLE_START_DATE + 'T00:00:00');
+  const today = new Date(TODAY_KEY + 'T00:00:00');
+  const dayLabels = ['M','T','W','T','F','S','S'];
+
+  // Day labels header
+  const header = document.createElement('div');
+  header.className = 'archive-week-row';
+  dayLabels.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'archive-day-label';
+    d.textContent = l;
+    header.appendChild(d);
+  });
+  cal.appendChild(header);
+
+  // Build weeks
+  // Find Monday before or on startDate
+  const firstMonday = new Date(startDate);
+  const dow = firstMonday.getDay(); // 0=Sun
+  const offsetToMon = dow === 0 ? -6 : 1 - dow;
+  firstMonday.setDate(firstMonday.getDate() + offsetToMon);
+
+  let current = new Date(firstMonday);
+  let lastMonth = null;
+
+  while (current <= today) {
+    // Month label
+    const monthName = current.toLocaleString('default', { month: 'long', year: 'numeric' });
+    if (monthName !== lastMonth) {
+      const ml = document.createElement('div');
+      ml.className = 'archive-month-label';
+      ml.textContent = monthName;
+      cal.appendChild(ml);
+      lastMonth = monthName;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'archive-week-row';
+
+    for (let d = 0; d < 7; d++) {
+      const cell = document.createElement('div');
+      const cellDate = new Date(current);
+      cellDate.setDate(current.getDate() + d);
+
+      const mm = String(cellDate.getMonth()+1).padStart(2,'0');
+      const dd = String(cellDate.getDate()).padStart(2,'0');
+      const yyyy = cellDate.getFullYear();
+      const dateKey = `${yyyy}-${mm}-${dd}`;
+
+      const puzzleIdx = Math.round((cellDate - startDate) / 86400000);
+
+      if (cellDate < startDate || puzzleIdx >= PUZZLES.length) {
+        cell.className = 'archive-day empty';
+        cell.textContent = '';
+      } else if (cellDate > today) {
+        cell.className = 'archive-day future';
+        cell.textContent = cellDate.getDate();
+      } else {
+        const isSolved = dateKey === TODAY_KEY
+          ? (localStorage.getItem(STORAGE_KEY) && JSON.parse(localStorage.getItem(STORAGE_KEY)).solved)
+          : localStorage.getItem(getArchiveStateKey(dateKey));
+
+        cell.className = 'archive-day' + (isSolved ? ' solved' : '') +
+          (dateKey === TODAY_KEY ? ' today' : '');
+        cell.textContent = cellDate.getDate();
+
+        if (cellDate <= today) {
+          cell.onclick = () => {
+            document.getElementById('archiveModal').classList.remove('show');
+            if (dateKey === TODAY_KEY) {
+              returnToToday();
+            } else {
+              loadArchivePuzzle(dateKey, puzzleIdx);
+            }
+          };
+        }
+      }
+      row.appendChild(cell);
+    }
+
+    cal.appendChild(row);
+    current.setDate(current.getDate() + 7);
+  }
+}
+
+function loadArchivePuzzle(dateKey, puzzleIdx) {
+  document.getElementById('archiveModal').classList.remove('show');
+
+  archiveMode = true;
+  archiveDateKey = dateKey;
+
+  // Load archive state if exists
+  const saved = localStorage.getItem(getArchiveStateKey(dateKey));
+  const parsedSave = saved ? JSON.parse(saved) : null;
+
+  // Swap puzzle
+  const archivePuzzle = Object.assign({}, PUZZLES[puzzleIdx]);
+  if (archivePuzzle.sentence.includes('|')) {
+    archivePuzzle._sentenceParts = archivePuzzle.sentence.split('|').map(p => p.trim());
+    archivePuzzle.sentence = archivePuzzle._sentenceParts.join(' ');
+  }
+
+  // Update display
+  const mm = dateKey.split('-')[1], dd = dateKey.split('-')[2], yy = dateKey.split('-')[0].slice(2);
+  document.getElementById('clue').innerHTML =
+    `Today's answer: ${archivePuzzle.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
+  document.getElementById('puzzle-num').textContent =
+    `Archive: ${mm}-${dd}-${yy}`;
+
+  document.getElementById('archiveBackBtn').style.display = 'block';
+
+  // Reset game state with archive puzzle
+  words = []; drag = []; done = false; hintsUsed = new Set(); wordHistory = [];
+  trayTutorialShown = true; // don't show tray tutorial in archive
+
+  // Rebuild grid with archive puzzle's letters
+  rebuildForArchive(archivePuzzle, dateKey, parsedSave);
+}
+
+function rebuildForArchive(puzzle, dateKey, savedState) {
+  ACTIVE_PUZZLE = puzzle;
+
+  const built = buildGridForPuzzle(puzzle.sentence, dateKey);
+  grid = built.grid;
+  ACTIVE_PATH = built.path;
+  build();
+
+  words = []; drag = []; done = false; wordHistory = [];
+  submitBtn.disabled = false;
+  hintsBtn.disabled = false;
+  document.body.classList.remove('solved');
+  document.querySelector('.frame').style.animation = '';
+  document.getElementById('statusSquare').textContent = '';
+  document.getElementById('shareArea').style.display = 'none';
+  resetHints();
+
+  redraw();
+
+  if (savedState && savedState.solved) {
+    done = true;
+    replaySolvedStateFromData(savedState.words, puzzle);
+  }
+}
+
+function returnToToday() {
+  archiveMode = false;
+  archiveDateKey = null;
+  document.getElementById('archiveBackBtn').style.display = 'none';
+  ACTIVE_PUZZLE = TODAY_PUZZLE;
+  ACTIVE_PATH = PATH;
+
+  words = []; drag = []; done = false; hintsUsed = new Set(); wordHistory = [];
+  trayTutorialShown = false;
+  submitBtn.disabled = false;
+  hintsBtn.disabled = false;
+  document.body.classList.remove('solved');
+  document.querySelector('.frame').style.animation = '';
+  document.getElementById('shareArea').style.display = 'none';
+  document.getElementById('statusSquare').textContent = '';
+  resetHints();
+
+  const tm = String(new Date().getMonth()+1).padStart(2,'0');
+  const td = String(new Date().getDate()).padStart(2,'0');
+  const ty = String(new Date().getFullYear()).slice(2);
+  document.getElementById('clue').innerHTML =
+    `Today's answer: ${TODAY_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
+  document.getElementById('puzzle-num').textContent = `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
+
+  grid = buildGridForPuzzle(TODAY_PUZZLE.sentence, TODAY_KEY).grid;
+  build();
+
+  const saved = loadState();
+  // Restore any hints the player already used today
+  if (saved && saved.hintsUsed) {
+    hintsUsed = new Set(saved.hintsUsed);
+    hintsUsed.forEach(n => {
+      const circle = document.getElementById('hintCircle'+n);
+      const item = document.getElementById('hint'+n+'Item');
+      if (circle) { circle.style.background = HINT_COLORS[n]; circle.classList.add('filled'); circle.textContent = ''; }
+      if (item) item.classList.add('used');
+    });
+    if (hintsUsed.has(1)) applyHint1();
+    if (hintsUsed.has(2)) applyHint2();
+    if (hintsUsed.has(3)) applyHint3();
+    if (hintsUsed.has(4)) applyHint4();
+  }
+  if (saved && saved.solved) {
+    replaySolvedState();
+  } else {
+    redraw();
+  }
+}
+
+document.getElementById('archiveBtn').onclick = () => {
+  buildArchiveCalendar();
+  document.getElementById('archiveModal').classList.add('show');
+};
 function showSundayTutorial() {
-  if (!PUZZLE || PUZZLE.type !== 'sunday') return;
+  if (!ACTIVE_PUZZLE || ACTIVE_PUZZLE.type !== 'sunday') return;
   if (localStorage.getItem('canofwords_sunday_tutorial_seen')) return;
   if (done) return;
   document.getElementById('sundayTutorialOverlay').classList.add('show');
@@ -1407,8 +1702,9 @@ function showWinIcon() {
 const HINT_EMOJIS = { 1: '🔵', 2: '🟠', 3: '🟣', 4: '🟤' };
 
 function buildShareText() {
-  const todayParts = TODAY_KEY.split('-');
-  const tm = todayParts[1], td = todayParts[2], ty = todayParts[0].slice(2);
+  const dateKey = (archiveMode && archiveDateKey) ? archiveDateKey : TODAY_KEY;
+  const parts = dateKey.split('-');
+  const tm = parts[1], td = parts[2], ty = parts[0].slice(2);
   const dateStr = `${tm}-${td}-${ty}`;
 
   const usedAny = hintsUsed.size > 0;
@@ -1416,7 +1712,7 @@ function buildShareText() {
 
   return [
     `Can of Words #${PUZZLE_NUM}`,
-    `${PUZZLE.clue} ${hintStr}`,
+    `${ACTIVE_PUZZLE.clue} ${hintStr}`,
     `${dateStr} • canofwords.xyz`,
   ].join('\n');
 }
@@ -1459,7 +1755,7 @@ function checkCompletion(manual) {
   if (!manual) return;
 
   const playerSentence = words.map(w => w.text).join(' ').trim().toLowerCase();
-  const targetSentence = PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
+  const targetSentence = ACTIVE_PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
 
   // For sunday puzzles with a | separator, accept either half order
   let isCorrect = playerSentence === targetSentence;
@@ -1485,7 +1781,11 @@ function checkCompletion(manual) {
     color: w.color,
     path:  w.cells.map(c => ({ r: parseInt(c.dataset.r), c: parseInt(c.dataset.c) }))
   }));
-  saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
+  if (archiveMode && archiveDateKey) {
+    localStorage.setItem(getArchiveStateKey(archiveDateKey), JSON.stringify({ solved: true, words: savedWords }));
+  } else {
+    saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
+  }
   localStorage.setItem('canofwords_tutorial_seen', '1');
   localStorage.setItem('canofwords_tray_tutorial_seen', '1');
   document.body.classList.add('solved');
@@ -1500,15 +1800,45 @@ function checkCompletion(manual) {
     document.getElementById('shareBtn').onclick = shareResult;
     // Populate and show win popup
     document.getElementById('win-clue').textContent =
-      `${PUZZLE.clue}: ${PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
+      `${ACTIVE_PUZZLE.clue}: ${ACTIVE_PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
     document.getElementById('win-hints').textContent =
       hintsUsed.size > 0 ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
+    document.getElementById('win-share-btn').style.display = archiveMode ? 'none' : '';
     document.getElementById('win-share-btn').onclick = shareResult;
     document.getElementById('win-popup').classList.add('show');
   }, delay);
 }
 
 /* ── Replay solved state ── */
+function replaySolvedStateFromData(savedWords) {
+  if (!savedWords) return;
+  done = true;
+  submitBtn.disabled = true;
+  hintsBtn.disabled = true;
+
+  const cellEls = {};
+  document.querySelectorAll('#grid .cell').forEach(el => {
+    cellEls[el.dataset.r + ',' + el.dataset.c] = el;
+  });
+
+  words = savedWords.map(sw => ({
+    text:  sw.text,
+    color: sw.color,
+    cells: sw.path.map(p => cellEls[p.r + ',' + p.c]).filter(Boolean)
+  }));
+
+  redraw();
+  document.body.classList.add('solved');
+  document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
+  words.flatMap(w => w.cells)
+       .forEach((c,i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
+  showWinIcon();
+  if (!archiveMode) {
+    document.getElementById('shareArea').style.display = 'block';
+    document.getElementById('shareBtn').onclick = shareResult;
+  }
+}
+
 function replaySolvedState() {
   const state = loadState();
   if (!state.solved || !state.words) return;
@@ -1546,6 +1876,20 @@ document.getElementById('ap-see-board').onclick = () => {
 if (PUZZLE) {
   build();
   redraw();
+  // Restore hints from saved state if mid-puzzle
+  if (savedState && savedState.hintsUsed && !alreadyPlayedToday) {
+    hintsUsed = new Set(savedState.hintsUsed);
+    hintsUsed.forEach(n => {
+      const circle = document.getElementById('hintCircle'+n);
+      const item = document.getElementById('hint'+n+'Item');
+      if (circle) { circle.style.background = HINT_COLORS[n]; circle.classList.add('filled'); circle.textContent = ''; }
+      if (item) item.classList.add('used');
+    });
+    if (hintsUsed.has(1)) applyHint1();
+    if (hintsUsed.has(2)) applyHint2();
+    if (hintsUsed.has(3)) applyHint3();
+    if (hintsUsed.has(4)) applyHint4();
+  }
   requestAnimationFrame(() => {
     const g = document.getElementById('grid');
     const svg = document.getElementById('wormSvg');
@@ -1555,7 +1899,7 @@ if (PUZZLE) {
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
   } else {
     setTimeout(() => {
-      if (PUZZLE.type === 'sunday' && !localStorage.getItem('canofwords_sunday_tutorial_seen')) {
+      if (ACTIVE_PUZZLE.type === 'sunday' && !localStorage.getItem('canofwords_sunday_tutorial_seen')) {
         showSundayTutorial();
       } else {
         showOnboarding();
@@ -1564,6 +1908,16 @@ if (PUZZLE) {
   }
 }
 </script>
+<!-- Archive modal -->
+<div id="archiveModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:320px;width:92%">
+    <h2>Puzzle Archive 📅</h2>
+    <p style="font-size:12px;opacity:0.6;margin:0 0 14px;text-align:center">Tap any past day to play it</p>
+    <div id="archiveCalendar"></div>
+    <button class="modal-close" onclick="document.getElementById('archiveModal').classList.remove('show')" style="margin-top:14px">Close</button>
+  </div>
+</div>
+
 <!-- Sunday tutorial overlay -->
 <div id="sundayTutorialOverlay">
   <div id="sundayTutorialBox">
@@ -1625,7 +1979,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');localStorage.removeItem('canofwords_sunday_tutorial_seen');location.reload();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
+      <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

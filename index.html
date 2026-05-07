@@ -189,16 +189,8 @@
   #onboardingPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
 
   /* finger dot animation */
-  @keyframes fingerMove {
-    0%   { cx: 30;  opacity: 0; }
-    8%   { cx: 30;  opacity: 1; }
-    80%  { cx: 210; opacity: 1; }
-    92%  { cx: 210; opacity: 0; }
-    100% { cx: 210; opacity: 0; }
-  }
-  @keyframes fingerMoveY {
-    0%, 100% { cy: 30; }
-  }
+  /* finger dot - JS animated */
+  #onboardingDemo .demo-finger { transition: none; }
   @keyframes chipAppear {
     0%, 72%  { opacity: 0; transform: translateY(6px); }
     85%      { opacity: 1; transform: translateY(0); }
@@ -209,12 +201,17 @@
     20%, 75% { fill: var(--hi); }
     85%,100% { fill: #fdf8f0; }
   }
+  @keyframes wormAppear {
+    0%, 65%  { opacity: 0; }
+    80%      { opacity: 1; }
+    100%     { opacity: 1; }
+  }
   .demo-cell { animation: cellHighlight 2.8s ease-in-out infinite; }
   .demo-cell:nth-child(1) { animation-delay: 0.22s; }
   .demo-cell:nth-child(2) { animation-delay: 0.44s; }
   .demo-cell:nth-child(3) { animation-delay: 0.66s; }
   .demo-cell:nth-child(4) { animation-delay: 0.88s; }
-  .demo-finger { animation: fingerMove 2.8s ease-in-out infinite; }
+  /* finger driven by JS */
   .demo-chip   { animation: chipAppear 2.8s ease-in-out infinite; }
   .grid-wrap { position: relative; display: inline-block; }
   #wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
@@ -389,14 +386,18 @@
     </div>
     <div class="how-step">
       <span class="how-step-num">3</span>
-      <span>Selected <strong>words</strong> appear in the section below the grid. <strong>Drag</strong> them around to rearrange the sentence into the correct order. All words will begin/end near adjacent words in the grid.</span>
+      <span>Selected <strong>words</strong> appear in the section below the grid. <strong>Drag</strong> them around to rearrange the sentence into the correct order.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">4</span>
-      <span><strong>Tap</strong> or <strong>Drag</strong> words to 🗑️ to remove any words from the sentence.</span>
+      <span>All words in the grid will <strong>touch</strong> other words they are adjacent to in the sentence.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">5</span>
+      <span><strong>Tap</strong> or <strong>Drag</strong> words to 🗑️ to remove any words from the sentence.</span>
+    </div>
+    <div class="how-step">
+      <span class="how-step-num">6</span>
       <span>Tap the <strong>Hints</strong> button if you need a nudge in the right direction.</span>
     </div>
     <button class="modal-close" onclick="document.getElementById('how-to-play').classList.remove('show')">Got it!</button>
@@ -1091,8 +1092,58 @@ function endGrid() {
 /* ── Onboarding overlay ── */
 function showOnboarding() {
   if (localStorage.getItem('canofwords_tutorial_seen')) return;
-  if (done) return;
   document.getElementById('onboardingOverlay').classList.add('show');
+  startFingerAnimation();
+}
+
+function startFingerAnimation() {
+  const finger = document.querySelector('#onboardingDemo .demo-finger');
+  if (!finger) return;
+
+  const DURATION = 2800;
+  const START_X = 30, END_X = 210, Y = 30;
+  let startTime = null;
+  let running = true;
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+  }
+
+  function frame(ts) {
+    if (!running) return;
+    if (!startTime) startTime = ts;
+    const elapsed = (ts - startTime) % DURATION;
+    const t = elapsed / DURATION;
+
+    // Opacity: fade in 0-8%, full 8-80%, fade out 80-92%, gone 92-100%
+    let opacity = 0;
+    if (t < 0.08) opacity = t / 0.08;
+    else if (t < 0.80) opacity = 1;
+    else if (t < 0.92) opacity = 1 - (t - 0.80) / 0.12;
+
+    // Position: move during 8-80%
+    let x = START_X;
+    if (t >= 0.08 && t <= 0.80) {
+      const progress = (t - 0.08) / 0.72;
+      x = START_X + (END_X - START_X) * easeInOut(progress);
+    } else if (t > 0.80) {
+      x = END_X;
+    }
+
+    finger.setAttribute('cx', x.toFixed(1));
+    finger.setAttribute('cy', Y);
+    finger.setAttribute('opacity', opacity.toFixed(3));
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+
+  // Stop when dismissed
+  document.getElementById('onboardingPlayBtn').addEventListener('click', () => {
+    running = false;
+    finger.setAttribute('opacity', 0);
+  }, { once: true });
 }
 
 function dismissOnboarding() {
@@ -1185,7 +1236,7 @@ function checkCompletion(manual) {
     path:  w.cells.map(c => ({ r: parseInt(c.dataset.r), c: parseInt(c.dataset.c) }))
   }));
   saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
-
+  localStorage.setItem('canofwords_tutorial_seen', '1');
   document.body.classList.add('solved');
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
@@ -1279,6 +1330,7 @@ if (PUZZLE) {
       <!-- Chip that appears after drag -->
       <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:#2d1f0e;box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
     </div>
+    <p style="font-size:12px;margin:0 0 14px;opacity:0.6;line-height:1.5"><em>Click the ? in the top right<br>for more info on how to play!</em></p>
     <button id="onboardingPlayBtn" onclick="dismissOnboarding()">Let's Play! 🪱</button>
   </div>
 </div>
@@ -1290,7 +1342,7 @@ if (PUZZLE) {
   <div id="shareArea" style="display:none">
     <button id="shareBtn" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;padding:6px 14px;cursor:pointer;background:#d0ead0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #4a7a4a;border-bottom:2px solid #4a7a4a;">📤 Share</button>
   </div>
-  <button onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
+  <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');location.reload();" style="font-family:Chicago,Geneva,system-ui,sans-serif;font-size:11px;opacity:0.4;padding:6px 16px;cursor:pointer;background:#e6e6e6;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #7a7a7a;border-bottom:2px solid #7a7a7a;">↺ Reset saved state</button>
 </div>
 <div id="shareCopied" style="font-size:11px;opacity:0;text-align:center;margin-bottom:4px;transition:opacity 400ms">Copied to clipboard!</div>
 <div style="text-align:center;margin-bottom:12px;font-size:10px;opacity:0.3;letter-spacing:0.05em">a game by seth s. scott</div>

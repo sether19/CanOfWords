@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Can of Words🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -245,7 +248,45 @@
   }
   #trayTutorialDismiss:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
 
-  /* finger driven by JS */
+  /* ── Sunday tutorial overlay ── */
+  #sundayTutorialOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,31,14,0.6);
+    align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  #sundayTutorialOverlay.show { display: flex; }
+  #sundayTutorialBox {
+    background: #fdf8f0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 24px 24px 20px;
+    max-width: 300px; width: 90%;
+    text-align: center;
+    font-family: 'Quicksand', system-ui, sans-serif;
+  }
+  #sundayTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
+  #sundayTutorialBox p { margin: 0 0 12px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  .sunday-example {
+    background: #ede8de; border-radius: 10px;
+    padding: 10px 12px; font-size: 12px; margin: 8px 0 14px;
+    line-height: 1.7; color: #2d1f0e; text-align: left;
+  }
+  .sunday-example strong { font-size: 13px; }
+  #sundayDontShow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin-bottom: 14px; font-size: 12px; color: #2d1f0e; opacity: 0.5;
+  }
+  #sundayDontShow input { cursor: pointer; }
+  #sundayPlayBtn {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
+    border: none; border-radius: 12px;
+    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms;
+  }
+  #sundayPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
   .demo-chip   { animation: chipAppear 2.8s ease-in-out infinite; }
   .grid-wrap { position: relative; display: inline-block; }
   #wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
@@ -407,7 +448,7 @@
     <h2>How to Play 🪱</h2>
     <div class="how-step">
       <span class="how-step-num">1</span>
-      <span>Read the <strong>answer clue</strong> at the top of the board. Your goal is to create a sentence describing the answer.</span>
+      <span>Read the <span style="color:#c0392b;font-weight:700;">answer clue</span> at the top of the board. Your goal is to create a sentence describing the answer.</span>
     </div>
     <div class="how-example">
       <strong>Example</strong><br>
@@ -416,23 +457,23 @@
     </div>
     <div class="how-step">
       <span class="how-step-num">2</span>
-      <span><strong>Drag</strong> across letters to trace out words — words can snake in any cardinal direction across the grid, including backwards and upwards.</span>
+      <span><span style="color:#c0392b;font-weight:700;">Drag</span> across letters to trace out words — words can snake in any cardinal direction across the grid, including backwards and upwards.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">3</span>
-      <span>Selected <strong>words</strong> appear in the section below the grid. <strong>Drag</strong> them around to rearrange the sentence into the correct order.</span>
+      <span>Selected <span style="color:#c0392b;font-weight:700;">words</span> appear in the section below the grid. <span style="color:#c0392b;font-weight:700;">Drag</span> them around to rearrange the sentence into the correct order.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">4</span>
-      <span>All words in the grid will <strong>touch</strong> other words they are adjacent to in the sentence.</span>
+      <span>Neighboring words in the sentence will have <span style="color:#c0392b;font-weight:700;">touching first/last letters</span> in the grid.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">5</span>
-      <span><strong>Tap</strong> or <strong>Drag</strong> words to 🗑️ to remove any words from the sentence.</span>
+      <span><span style="color:#c0392b;font-weight:700;">Tap</span> or <span style="color:#c0392b;font-weight:700;">Drag</span> words to 🗑️ to remove any words from the sentence.</span>
     </div>
     <div class="how-step">
       <span class="how-step-num">6</span>
-      <span>Tap the <strong>Hints</strong> button if you need a nudge in the right direction.</span>
+      <span>Tap the <span style="color:#c0392b;font-weight:700;">Hints</span> button if you need a nudge in the right direction.</span>
     </div>
     <button class="modal-close" onclick="document.getElementById('how-to-play').classList.remove('show')">Got it!</button>
   </div>
@@ -531,38 +572,75 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 3.6
+   PUZZLE LIBRARY — VERSION 3.8
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
 const PUZZLE_START_DATE = '2026-05-05';
 const PUZZLES = [
-  { clue: 'Shakespeare',   sentence: 'english playwright who wrote hamlet and macbeth' },
-  { clue: 'Coffee',        sentence: 'hot morning drink brewed from roasted beans' },
-  { clue: 'Avocado',       sentence: 'creamy fruit required to make guacamole' },
-  { clue: 'Solar Eclipse', sentence: 'when the moon passes between earth and the sun' },
-  { clue: 'Chess',         sentence: 'strategy board game with kings and queens' },
-  { clue: 'Calm?',         sentence: 'known to come before the storm' },
-  { clue: 'Penguin',       sentence: 'flightless bird native to the south pole' },
-  { clue: 'Piano',         sentence: 'large keyboard instrument with black and white keys' },
-  { clue: 'Tofu!',         sentence: 'silken soft firm extra firm' },
-  { clue: 'Volcano',       sentence: 'mountain that erupts molten lava and ash' },
-  { clue: 'Honey',         sentence: 'sweet golden syrup made by bees in a hive' },
-  { clue: 'Mount Everest', sentence: 'tallest peak on earth' },
-  { clue: 'Marathon',      sentence: 'long running race of just over twenty six miles' },
-  { clue: 'G. Washington', sentence: 'first president of the USA' },
-  { clue: 'Sneeze',        sentence: 'catalyst for saying bless you' },
-  { clue: 'T-Shirt!',      sentence: 'small medium large XL XXL XXXL' },
-  { clue: 'Titanic',       sentence: 'unsinkable ship that sank on its maiden voyage' },
-  { clue: 'The Simpsons',  sentence: 'longest running animated sitcom set in springfield' },
-  { clue: 'Sushi',         sentence: 'japanese dish of rice and raw fish wrapped in seaweed' },
-  { clue: 'Umbrella',      sentence: 'folding canopy carried to stay dry in the rain' },
-  { clue: 'Nostalgia',     sentence: 'bittersweet longing for a time that has passed' },
-  { clue: 'James Bond',    sentence: 'british spy who prefers his martini shaken not stirred' },
-  { clue: 'Bread?',        sentence: 'greatest thing since itself according to the saying' },
-  { clue: 'Sunglasses',    sentence: 'tinted lenses worn to shield eyes from bright light' },
-  { clue: 'Thermos',       sentence: 'insulated flask that keeps drinks hot or cold' },
-  { clue: "Murphy's Law",  sentence: 'anything that can go wrong will go wrong' },
+
+  // ── WEEK 1 (May 5) ─────────────────────────────────
+  { clue: 'Shakespeare',   sentence: 'english playwright who wrote hamlet and macbeth',        type: 'regular' }, // Tue May 5
+  { clue: 'Coffee',        sentence: 'hot morning drink brewed from roasted beans',            type: 'regular' }, // Wed May 6
+  { clue: 'Avocado',       sentence: 'creamy fruit required to make guacamole',                type: 'regular' }, // Thu May 7
+  { clue: 'Calm?',         sentence: 'known to come before the storm',                         type: 'playful' }, // Fri May 8
+  { clue: 'Tofu!',         sentence: 'silken soft firm extra firm',                            type: 'playful' }, // Sat May 9
+  { clue: 'Buffalo;',      sentence: 'large american bison city in new york state',            type: 'sunday'  }, // Sun May 10
+
+  // ── WEEK 2 (May 11) ────────────────────────────────
+  { clue: 'Penguin',       sentence: 'flightless bird native to the south pole',               type: 'regular' }, // Mon May 11
+  { clue: 'Piano',         sentence: 'large keyboard instrument with black and white keys',    type: 'regular' }, // Tue May 12
+  { clue: 'Volcano',       sentence: 'mountain that erupts molten lava and ash',               type: 'regular' }, // Wed May 13
+  { clue: 'Honey',         sentence: 'sweet golden syrup made by bees in a hive',             type: 'regular' }, // Thu May 14
+  { clue: 'Pizza!',        sentence: 'bread sauce cheese toppings',                            type: 'playful' }, // Fri May 15
+  { clue: 'Elevator?',     sentence: 'going up going down going up going down',               type: 'playful' }, // Sat May 16
+  { clue: 'Pinto;',        sentence: 'speckled horse coat pattern popular variety of bean',   type: 'sunday'  }, // Sun May 17
+
+  // ── WEEK 3 (May 18) ────────────────────────────────
+  { clue: 'G. Washington', sentence: 'first president of the USA',                                        type: 'regular' }, // Mon May 18
+  { clue: 'Sushi',         sentence: 'japanese dish of rice and raw fish wrapped in seaweed',             type: 'regular' }, // Tue May 19
+  { clue: 'Titanic',       sentence: 'unsinkable ship that sank on its maiden voyage',                    type: 'regular' }, // Wed May 20
+  { clue: 'The Simpsons',  sentence: 'longest running animated sitcom set in springfield',                type: 'regular' }, // Thu May 21
+  { clue: 'T-Shirt!',      sentence: 'small medium large XL XXL XXXL',                                   type: 'playful' }, // Fri May 22
+  { clue: 'Sneeze?',       sentence: 'catalyst for saying bless you',                                     type: 'playful' }, // Sat May 23
+  { clue: 'Sage;',         sentence: 'herb used in cooking wise and knowledgeable person',                type: 'sunday'  }, // Sun May 24
+
+  // ── WEEK 4 (May 25) ────────────────────────────────
+  { clue: 'Nostalgia',     sentence: 'bittersweet longing for a time that has passed',                    type: 'regular' }, // Mon May 25
+  { clue: 'James Bond',    sentence: 'british spy who prefers his martini shaken not stirred',            type: 'regular' }, // Tue May 26
+  { clue: 'Slipper',       sentence: 'glass shoe left behind by cinderella',                              type: 'regular' }, // Wed May 27
+  { clue: 'Sunglasses',    sentence: 'tinted lenses worn to shield eyes from bright light',               type: 'regular' }, // Thu May 28
+  { clue: 'Corn!',         sentence: 'cob popped creamed flakes caramel',                                 type: 'playful' }, // Fri May 29
+  { clue: "Murphy's Law?", sentence: 'anything that can go wrong will go wrong',                          type: 'playful' }, // Sat May 30
+  { clue: 'Mercury;',      sentence: 'closest planet to the sun legendary queen frontman',                type: 'sunday'  }, // Sun May 31
+
+  // ── WEEK 5 (Jun 1) ─────────────────────────────────
+  { clue: 'Marathon',      sentence: 'long running race of just over twenty six miles',                   type: 'regular' }, // Mon Jun 1
+  { clue: 'Mount Everest', sentence: 'tallest peak on planet earth',                                      type: 'regular' }, // Tue Jun 2
+  { clue: 'Umbrella',      sentence: 'folding canopy carried to stay dry in the rain',                    type: 'regular' }, // Wed Jun 3
+  { clue: 'Chess',         sentence: 'strategy board game with kings and queens',                         type: 'regular' }, // Thu Jun 4
+  { clue: 'Monday?',       sentence: 'widely agreed upon worst day of the week',                          type: 'playful' }, // Fri Jun 5
+  { clue: 'Tuesday?',      sentence: 'widely agreed upon best day for tacos',                             type: 'playful' }, // Sat Jun 6
+  { clue: 'Wednesday;',    sentence: 'widely known as hump day character from the addams family',         type: 'sunday'  }, // Sun Jun 7
+
+  // ── WEEK 6 (Jun 8) ─────────────────────────────────
+  { clue: 'Thermos',       sentence: 'insulated flask that keeps drinks hot or cold',                     type: 'regular' }, // Mon Jun 8
+  { clue: 'Armpit',        sentence: 'place to apply deodorant or antiperspirant',                        type: 'regular' }, // Tue Jun 9
+  { clue: 'Decaf',         sentence: 'order detail for customers at starbucks',                           type: 'regular' }, // Wed Jun 10
+  { clue: 'Seltzer',       sentence: 'water carbonated with carbon dioxide',                              type: 'regular' }, // Thu Jun 11
+  { clue: 'Bagel!',        sentence: 'plain sesame everything raisin pumpernickel',                       type: 'playful' }, // Fri Jun 12
+  { clue: 'Bread?',        sentence: 'greatest thing since itself according to the saying',               type: 'playful' }, // Sat Jun 13
+  { clue: 'Ace;',          sentence: 'untouched tennis serve high card in a royal flush',                 type: 'sunday'  }, // Sun Jun 14
+
+  // ── WEEK # (####) ── TEMPLATE ───────────────────────
+  // { clue: 'mmmmm',      sentence: 'mmmmm',              type: 'regular' }, // Mon
+  // { clue: 'ttttt',      sentence: 'ttttt',              type: 'regular' }, // Tue
+  // { clue: 'wwwww',      sentence: 'wwwww',              type: 'regular' }, // Wed
+  // { clue: 'ttttt',      sentence: 'ttttt',              type: 'regular' }, // Thu
+  // { clue: 'fffff!',     sentence: 'fffff',              type: 'playful' }, // Fri
+  // { clue: 'sssss?',     sentence: 'sssss',              type: 'playful' }, // Sat
+  // { clue: 'sssss;',     sentence: 'sssss',              type: 'sunday'  }, // Sun
+
 ];
 
 /* =====================================================================
@@ -639,6 +717,12 @@ function getNextColor() {
   const hue = ((words.length * GOLDEN) % 1) * 360;
   return `hsl(${hue.toFixed(1)}, 60%, 82%)`;
 }
+// Strip pipe separator from sunday sentences — stored for answer checking, removed for grid/display
+if (PUZZLE && PUZZLE.sentence.includes('|')) {
+  PUZZLE._sentenceParts = PUZZLE.sentence.split('|').map(p => p.trim());
+  PUZZLE.sentence = PUZZLE._sentenceParts.join(' ');
+}
+
 const LETTERS = PUZZLE ? PUZZLE.sentence.replaceAll(' ','') : '';
 
 function hashString(str) {
@@ -1143,6 +1227,21 @@ function endGrid() {
 }
 
 
+/* ── Sunday tutorial ── */
+function showSundayTutorial() {
+  if (!PUZZLE || PUZZLE.type !== 'sunday') return;
+  if (localStorage.getItem('canofwords_sunday_tutorial_seen')) return;
+  if (done) return;
+  document.getElementById('sundayTutorialOverlay').classList.add('show');
+}
+
+function dismissSundayTutorial() {
+  if (document.getElementById('sundayDontShowCheck').checked) {
+    localStorage.setItem('canofwords_sunday_tutorial_seen', '1');
+  }
+  document.getElementById('sundayTutorialOverlay').classList.remove('show');
+}
+
 /* ── Onboarding overlay ── */
 function showOnboarding() {
   if (localStorage.getItem('canofwords_tutorial_seen')) return;
@@ -1362,7 +1461,10 @@ function checkCompletion(manual) {
   const playerSentence = words.map(w => w.text).join(' ').trim().toLowerCase();
   const targetSentence = PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
 
-  if (playerSentence !== targetSentence) {
+  // For sunday puzzles with a | separator, accept either half order
+  let isCorrect = playerSentence === targetSentence;
+
+  if (!isCorrect) {
     // Wrong — flash submit button red briefly
     submitBtn.style.background = '#e8b0b0';
     submitBtn.textContent = 'Not quite!';
@@ -1452,10 +1554,35 @@ if (PUZZLE) {
   if (alreadyPlayedToday) {
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
   } else {
-    setTimeout(showOnboarding, 400);
+    setTimeout(() => {
+      if (PUZZLE.type === 'sunday' && !localStorage.getItem('canofwords_sunday_tutorial_seen')) {
+        showSundayTutorial();
+      } else {
+        showOnboarding();
+      }
+    }, 400);
   }
 }
 </script>
+<!-- Sunday tutorial overlay -->
+<div id="sundayTutorialOverlay">
+  <div id="sundayTutorialBox">
+    <h2>🪱 Semicolon Sunday!</h2>
+    <p>Today's puzzle is a <strong>Semicolon Sunday</strong>, which signifies the end/beginning of a new week! The answer sentence contains two separate groups of words describing the clue.</p>
+    <div class="sunday-example">
+      <strong>Example</strong><br>
+      Answer: <em>Robin<span style="color:#c0392b;font-weight:700;">;</span></em><br>
+      Question: <em>red breasted songbird sidekick to the superhero batman</em>
+    </div>
+    <p><span style="color:#c0392b;font-weight:700;">Reminder:</span> Your rearranged sentence will still follow the same everyday rules — neighboring words in the sentence will have touching first/last letters in the grid.</p>
+    <div id="sundayDontShow">
+      <input type="checkbox" id="sundayDontShowCheck">
+      <label for="sundayDontShowCheck">Don't show this again</label>
+    </div>
+    <button id="sundayPlayBtn" onclick="dismissSundayTutorial()">Let's Play! 🪱</button>
+  </div>
+</div>
+
 <!-- Onboarding overlay -->
 <div id="onboardingOverlay">
   <div id="onboardingBox">
@@ -1498,7 +1625,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');location.reload();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
+      <button onclick="localStorage.removeItem('canofwords_state');localStorage.removeItem('canofwords_tutorial_seen');localStorage.removeItem('canofwords_tray_tutorial_seen');localStorage.removeItem('canofwords_sunday_tutorial_seen');location.reload();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

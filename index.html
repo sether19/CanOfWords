@@ -601,7 +601,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 4.1
+   PUZZLE LIBRARY — VERSION 4.2
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1433,7 +1433,7 @@ function loadArchivePuzzle(dateKey, puzzleIdx) {
   document.getElementById('clue').innerHTML =
     `Today's answer: ${archivePuzzle.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
   document.getElementById('puzzle-num').textContent =
-    `Archive: ${mm}-${dd}-${yy}`;
+    `Archive Puzzle #${puzzleIdx + 1} · ${mm}-${dd}-${yy}`;
 
   document.getElementById('archiveBackBtn').style.display = 'block';
 

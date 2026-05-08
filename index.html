@@ -632,7 +632,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 4.4
+   PUZZLE LIBRARY — VERSION 4.5
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1763,7 +1763,7 @@ function buildShareText() {
     : PUZZLE_NUM;
 
   const usedAny = hintsUsed.size > 0;
-  const hintStr = usedAny ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
+  const hintStr = usedAny ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🪱').join('') : '🪱🪱🪱🪱';
 
   return [
     `Can of Words #${puzzleNum}`,
@@ -1857,7 +1857,7 @@ function checkCompletion(manual) {
     document.getElementById('win-clue').textContent =
       `${ACTIVE_PUZZLE.clue}: ${ACTIVE_PUZZLE.sentence.replace(/\b\w/g, l => l.toUpperCase())}`;
     document.getElementById('win-hints').textContent =
-      hintsUsed.size > 0 ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
+      hintsUsed.size > 0 ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🪱').join('') : '🪱🪱🪱🪱';
     document.getElementById('win-share-btn').style.display = archiveMode ? 'none' : '';
     document.getElementById('win-share-btn').onclick = shareResult;
     document.getElementById('win-popup').classList.add('show');

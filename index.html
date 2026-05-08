@@ -632,7 +632,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 4.3
+   PUZZLE LIBRARY — VERSION 4.4
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -652,7 +652,7 @@ const PUZZLES = [
   { clue: 'Piano',         sentence: 'large keyboard instrument with black and white keys',    type: 'regular' }, // Tue May 12
   { clue: 'Volcano',       sentence: 'mountain that erupts molten lava and ash',               type: 'regular' }, // Wed May 13
   { clue: 'Honey',         sentence: 'sweet golden syrup made by bees in a hive',             type: 'regular' }, // Thu May 14
-  { clue: 'Pizza!',        sentence: 'dough tomato sauce cheese toppings',                            type: 'playful' }, // Fri May 15
+  { clue: 'Pizza!',        sentence: 'bread sauce cheese toppings',                            type: 'playful' }, // Fri May 15
   { clue: 'Elevator?',     sentence: 'going up going down going up going down',               type: 'playful' }, // Sat May 16
   { clue: 'Pinto;',        sentence: 'speckled horse coat pattern popular variety of bean',   type: 'sunday'  }, // Sun May 17
 
@@ -1555,6 +1555,24 @@ document.getElementById('archiveBtn').onclick = () => {
   buildArchiveCalendar();
   document.getElementById('archiveModal').classList.add('show');
 };
+/* ── Playful Weekend tutorial ── */
+function showPlayfulTutorial() {
+  if (!ACTIVE_PUZZLE || ACTIVE_PUZZLE.type !== 'playful') return;
+  if (localStorage.getItem('canofwords_playful_tutorial_seen')) return;
+  if (done) return;
+  document.getElementById('playfulTutorialOverlay').classList.add('show');
+}
+
+function dismissPlayfulTutorial() {
+  if (document.getElementById('playfulDontShowCheck').checked) {
+    localStorage.setItem('canofwords_playful_tutorial_seen', '1');
+  }
+  document.getElementById('playfulTutorialOverlay').classList.remove('show');
+  if (!localStorage.getItem('canofwords_tutorial_seen')) {
+    setTimeout(showOnboarding, 300);
+  }
+}
+
 function showSundayTutorial() {
   if (!ACTIVE_PUZZLE || ACTIVE_PUZZLE.type !== 'sunday') return;
   if (localStorage.getItem('canofwords_sunday_tutorial_seen')) return;
@@ -1739,11 +1757,16 @@ function buildShareText() {
   const tm = parts[1], td = parts[2], ty = parts[0].slice(2);
   const dateStr = `${tm}-${td}-${ty}`;
 
+  // Use archive puzzle number if in archive mode
+  const puzzleNum = archiveMode && archiveDateKey
+    ? Math.round((new Date(archiveDateKey + 'T00:00:00') - new Date(PUZZLE_START_DATE + 'T00:00:00')) / 86400000) + 1
+    : PUZZLE_NUM;
+
   const usedAny = hintsUsed.size > 0;
   const hintStr = usedAny ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🔘').join('') : '🪱🪱🪱🪱';
 
   return [
-    `Can of Words #${PUZZLE_NUM}`,
+    `Can of Words #${puzzleNum}`,
     `${ACTIVE_PUZZLE.clue} ${hintStr}`,
     `${dateStr} • canofwords.xyz`,
   ].join('\n');
@@ -1935,7 +1958,7 @@ if (PUZZLE) {
         showSundayTutorial();
       } else if (ACTIVE_PUZZLE.type === 'playful' && !localStorage.getItem('canofwords_playful_tutorial_seen')) {
         showPlayfulTutorial();
-      } else {
+      } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
         showOnboarding();
       }
     }, 400);

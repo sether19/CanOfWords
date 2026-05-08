@@ -632,7 +632,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 4.5
+   PUZZLE LIBRARY — VERSION 4.6
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -736,7 +736,9 @@ if (window.location.search.includes('reset')) {
 }
 
 const savedState = loadState();
-let ACTIVE_PUZZLE = PUZZLE; // swapped to archive puzzle when in archive mode
+// Decode Base64 sentence early so all code can use it
+if (PUZZLE && !PUZZLE._decoded) { PUZZLE.sentence = atob(PUZZLE.sentence); PUZZLE._decoded = true; }
+let ACTIVE_PUZZLE = PUZZLE;
 const alreadyPlayedToday = savedState.dateKey === TODAY_KEY && savedState.solved === true;
 
 if (alreadyPlayedToday) {
@@ -779,8 +781,7 @@ function getNextColor() {
   return `hsl(${hue.toFixed(1)}, 60%, 82%)`;
 }
 // Strip pipe separator from sunday sentences — stored for answer checking, removed for grid/display
-// Decode Base64 sentences at runtime
-if (PUZZLE && !PUZZLE._decoded) { PUZZLE.sentence = atob(PUZZLE.sentence); PUZZLE._decoded = true; }
+// Decode Base64 sentences at runtime - already done above at init
 if (PUZZLE && PUZZLE.sentence.includes('|')) {
   PUZZLE._sentenceParts = PUZZLE.sentence.split('|').map(p => p.trim());
   PUZZLE.sentence = PUZZLE._sentenceParts.join(' ');

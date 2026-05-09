@@ -533,7 +533,7 @@
       <span class="how-step-num">6</span>
       <span>Tap the <span style="color:#c0392b;font-weight:700;">Hints</span> button if you need a nudge in the right direction.</span>
     </div>
-    <button class="modal-close" onclick="document.getElementById('how-to-play').classList.remove('show')">Got it!</button>
+    <button class="modal-close" onclick="dismissHowToPlay()">Got it!</button>
   </div>
 </div>
 
@@ -1362,6 +1362,7 @@ function clearAllState() {
   localStorage.removeItem('canofwords_tray_tutorial_seen');
   localStorage.removeItem('canofwords_sunday_tutorial_seen');
   localStorage.removeItem('canofwords_playful_tutorial_seen');
+  localStorage.removeItem('canofwords_howtoplay_seen');
   // Clear all archive solved states
   Object.keys(localStorage)
     .filter(k => k.startsWith('canofwords_archive_'))
@@ -1591,6 +1592,20 @@ document.getElementById('archiveBtn').onclick = () => {
   buildArchiveCalendar();
   document.getElementById('archiveModal').classList.add('show');
 };
+/* ── How To Play auto-show ── */
+function showHowToPlay() {
+  if (localStorage.getItem('canofwords_howtoplay_seen')) return;
+  document.getElementById('how-to-play').classList.add('show');
+}
+
+function dismissHowToPlay() {
+  localStorage.setItem('canofwords_howtoplay_seen', '1');
+  document.getElementById('how-to-play').classList.remove('show');
+  if (!localStorage.getItem('canofwords_tutorial_seen')) {
+    setTimeout(showOnboarding, 300);
+  }
+}
+
 /* ── Playful Weekend tutorial ── */
 function showPlayfulTutorial() {
   if (!ACTIVE_PUZZLE || ACTIVE_PUZZLE.type !== 'playful') return;
@@ -1604,7 +1619,9 @@ function dismissPlayfulTutorial() {
     localStorage.setItem('canofwords_playful_tutorial_seen', '1');
   }
   document.getElementById('playfulTutorialOverlay').classList.remove('show');
-  if (!localStorage.getItem('canofwords_tutorial_seen')) {
+  if (!localStorage.getItem('canofwords_howtoplay_seen')) {
+    setTimeout(showHowToPlay, 300);
+  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
     setTimeout(showOnboarding, 300);
   }
 }
@@ -1621,6 +1638,11 @@ function dismissSundayTutorial() {
     localStorage.setItem('canofwords_sunday_tutorial_seen', '1');
   }
   document.getElementById('sundayTutorialOverlay').classList.remove('show');
+  if (!localStorage.getItem('canofwords_howtoplay_seen')) {
+    setTimeout(showHowToPlay, 300);
+  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
+    setTimeout(showOnboarding, 300);
+  }
 }
 
 /* ── Onboarding overlay ── */
@@ -1994,6 +2016,8 @@ if (PUZZLE) {
         showSundayTutorial();
       } else if (ACTIVE_PUZZLE.type === 'playful' && !localStorage.getItem('canofwords_playful_tutorial_seen')) {
         showPlayfulTutorial();
+      } else if (!localStorage.getItem('canofwords_howtoplay_seen')) {
+        showHowToPlay();
       } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
         showOnboarding();
       }

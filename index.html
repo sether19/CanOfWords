@@ -634,7 +634,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 5.3
+   PUZZLE LIBRARY — VERSION 5.4
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -738,7 +738,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v5.3';
+const BUILD = '2026-05-09-v5.4';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -841,24 +841,30 @@ function buildGridForPuzzle(sentence, dateKey) {
   const g = Array.from({length:7}, () => Array(7).fill(''));
   path.forEach((p,i) => g[p[0]][p[1]] = letters[i]);
   const r2 = rng(seed ^ 0x9e3779b9);
-  // Build set of path letters per cell for adjacency checking
-  const pathLetters = new Set();
+  // Build a map of path cell -> forbidden filler letters
+  // For each path cell, the letters before and after it in the sentence are forbidden
+  // for any filler cell adjacent to it
+  const forbidden = {}; // key: "r,c" -> Set of forbidden letters
   path.forEach(([pr, pc], i) => {
-    // For each filler cell, track what letters are on adjacent path cells
+    const prev = i > 0 ? letters[i-1] : null;
+    const next = i < letters.length-1 ? letters[i+1] : null;
+    [[pr-1,pc],[pr+1,pc],[pr,pc-1],[pr,pc+1]].forEach(([nr,nc]) => {
+      if (nr<0||nr>=7||nc<0||nc>=7) return;
+      if (g[nr][nc]) return; // already a path cell
+      const key = nr+','+nc;
+      if (!forbidden[key]) forbidden[key] = new Set();
+      if (prev) forbidden[key].add(prev);
+      if (next) forbidden[key].add(next);
+    });
   });
   for (let r=0;r<7;r++) for (let c=0;c<7;c++) {
     if (g[r][c]) continue;
-    // Collect letters of adjacent path cells
-    const adjPathLetters = new Set();
-    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc]) => {
-      if (nr>=0&&nr<7&&nc>=0&&nc<7&&g[nr][nc]) adjPathLetters.add(g[nr][nc]);
-    });
-    // Pick a random letter that doesn't match any adjacent path letter
+    const banned = forbidden[r+','+c] || new Set();
     let attempts = 0, letter;
     do {
       letter = alpha[r2()*26|0];
       attempts++;
-    } while (adjPathLetters.has(letter) && attempts < 26);
+    } while (banned.has(letter) && attempts < 26);
     g[r][c] = letter;
   }
   return { grid: g, path };
@@ -870,17 +876,28 @@ let grid = Array.from({length:7}, () => Array(7).fill(''));
 PATH.forEach((p,i) => grid[p[0]][p[1]] = LETTERS[i]);
 ACTIVE_PATH = PATH; // default to today's path
 const r2 = rng(SEED ^ 0x9e3779b9);
+// Build forbidden letters map for filler cells
+const forbidden = {};
+PATH.forEach(([pr, pc], i) => {
+  const prev = i > 0 ? LETTERS[i-1] : null;
+  const next = i < LETTERS.length-1 ? LETTERS[i+1] : null;
+  [[pr-1,pc],[pr+1,pc],[pr,pc-1],[pr,pc+1]].forEach(([nr,nc]) => {
+    if (nr<0||nr>=7||nc<0||nc>=7) return;
+    if (grid[nr][nc]) return;
+    const key = nr+','+nc;
+    if (!forbidden[key]) forbidden[key] = new Set();
+    if (prev) forbidden[key].add(prev);
+    if (next) forbidden[key].add(next);
+  });
+});
 for (let r=0; r<7; r++) for (let c=0; c<7; c++) {
   if (grid[r][c]) continue;
-  const adjPathLetters = new Set();
-  [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc]) => {
-    if (nr>=0&&nr<7&&nc>=0&&nc<7&&grid[nr][nc]) adjPathLetters.add(grid[nr][nc]);
-  });
+  const banned = forbidden[r+','+c] || new Set();
   let attempts = 0, letter;
   do {
     letter = alpha[r2()*26|0];
     attempts++;
-  } while (adjPathLetters.has(letter) && attempts < 26);
+  } while (banned.has(letter) && attempts < 26);
   grid[r][c] = letter;
 }
 
@@ -1397,15 +1414,68 @@ let archiveDateKey = null;
 
 function getArchiveStateKey(dateKey) { return 'canofwords_archive_' + dateKey; }
 
+let archiveCalendarMonth = null; // { year, month } currently displayed
+
 function buildArchiveCalendar() {
+  const startDate = new Date(PUZZLE_START_DATE + 'T00:00:00');
+  const today = new Date(TODAY_KEY + 'T00:00:00');
+
+  // Default to current month
+  if (!archiveCalendarMonth) {
+    archiveCalendarMonth = { year: today.getFullYear(), month: today.getMonth() };
+  }
+
+  const firstMonth = { year: startDate.getFullYear(), month: startDate.getMonth() };
+  const currentMonth = { year: today.getFullYear(), month: today.getMonth() };
+
+  const isFirst = archiveCalendarMonth.year === firstMonth.year && archiveCalendarMonth.month === firstMonth.month;
+  const isCurrent = archiveCalendarMonth.year === currentMonth.year && archiveCalendarMonth.month === currentMonth.month;
+
   const cal = document.getElementById('archiveCalendar');
   cal.innerHTML = '';
 
-  const startDate = new Date(PUZZLE_START_DATE + 'T00:00:00');
-  const today = new Date(TODAY_KEY + 'T00:00:00');
-  const dayLabels = ['M','T','W','T','F','S','S'];
+  // Month nav header
+  const monthDate = new Date(archiveCalendarMonth.year, archiveCalendarMonth.month, 1);
+  const monthName = monthDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-  // Day labels header
+  const nav = document.createElement('div');
+  nav.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.textContent = '←';
+  prevBtn.style.cssText = 'width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;';
+  prevBtn.disabled = isFirst;
+  prevBtn.onclick = () => {
+    let { year, month } = archiveCalendarMonth;
+    month--;
+    if (month < 0) { month = 11; year--; }
+    archiveCalendarMonth = { year, month };
+    buildArchiveCalendar();
+  };
+
+  const nextBtn = document.createElement('button');
+  nextBtn.textContent = '→';
+  nextBtn.style.cssText = 'width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;';
+  nextBtn.disabled = isCurrent;
+  nextBtn.onclick = () => {
+    let { year, month } = archiveCalendarMonth;
+    month++;
+    if (month > 11) { month = 0; year++; }
+    archiveCalendarMonth = { year, month };
+    buildArchiveCalendar();
+  };
+
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:13px;font-weight:700;color:#2d1f0e;opacity:0.7';
+  label.textContent = monthName;
+
+  nav.appendChild(prevBtn);
+  nav.appendChild(label);
+  nav.appendChild(nextBtn);
+  cal.appendChild(nav);
+
+  // Day labels
+  const dayLabels = ['M','T','W','T','F','S','S'];
   const header = document.createElement('div');
   header.className = 'archive-week-row';
   dayLabels.forEach(l => {
@@ -1416,26 +1486,21 @@ function buildArchiveCalendar() {
   });
   cal.appendChild(header);
 
-  // Build weeks
-  // Find Monday before or on startDate
-  const firstMonday = new Date(startDate);
-  const dow = firstMonday.getDay(); // 0=Sun
+  // Find first Monday of the month's display (Monday on or before 1st of month)
+  const firstOfMonth = new Date(archiveCalendarMonth.year, archiveCalendarMonth.month, 1);
+  const firstMonday = new Date(firstOfMonth);
+  const dow = firstMonday.getDay();
   const offsetToMon = dow === 0 ? -6 : 1 - dow;
   firstMonday.setDate(firstMonday.getDate() + offsetToMon);
 
   let current = new Date(firstMonday);
-  let lastMonth = null;
 
-  while (current <= today) {
-    // Month label
-    const monthName = current.toLocaleString('default', { month: 'long', year: 'numeric' });
-    if (monthName !== lastMonth) {
-      const ml = document.createElement('div');
-      ml.className = 'archive-month-label';
-      ml.textContent = monthName;
-      cal.appendChild(ml);
-      lastMonth = monthName;
-    }
+  // Build weeks that overlap with this month
+  while (current.getMonth() <= archiveCalendarMonth.month && current.getFullYear() <= archiveCalendarMonth.year ||
+         current <= today && current.getMonth() === archiveCalendarMonth.month) {
+
+    // Stop if the week starts after the month
+    if (current.getMonth() > archiveCalendarMonth.month && current.getFullYear() >= archiveCalendarMonth.year) break;
 
     const row = document.createElement('div');
     row.className = 'archive-week-row';
@@ -1449,12 +1514,13 @@ function buildArchiveCalendar() {
       const dd = String(cellDate.getDate()).padStart(2,'0');
       const yyyy = cellDate.getFullYear();
       const dateKey = `${yyyy}-${mm}-${dd}`;
-
       const puzzleIdx = Math.round((cellDate - startDate) / 86400000);
 
-      if (cellDate < startDate || puzzleIdx >= PUZZLES.length) {
+      // Not in this month
+      if (cellDate.getMonth() !== archiveCalendarMonth.month) {
         cell.className = 'archive-day empty';
-        cell.textContent = '';
+      } else if (cellDate < startDate || puzzleIdx >= PUZZLES.length) {
+        cell.className = 'archive-day empty';
       } else if (cellDate > today) {
         cell.className = 'archive-day future';
         cell.textContent = cellDate.getDate();
@@ -1467,16 +1533,14 @@ function buildArchiveCalendar() {
           (dateKey === TODAY_KEY ? ' today' : '');
         cell.textContent = cellDate.getDate();
 
-        if (cellDate <= today) {
-          cell.onclick = () => {
-            document.getElementById('archiveModal').classList.remove('show');
-            if (dateKey === TODAY_KEY) {
-              returnToToday();
-            } else {
-              loadArchivePuzzle(dateKey, puzzleIdx);
-            }
-          };
-        }
+        cell.onclick = () => {
+          document.getElementById('archiveModal').classList.remove('show');
+          if (dateKey === TODAY_KEY) {
+            returnToToday();
+          } else {
+            loadArchivePuzzle(dateKey, puzzleIdx);
+          }
+        };
       }
       row.appendChild(cell);
     }
@@ -1596,6 +1660,7 @@ function returnToToday() {
 }
 
 document.getElementById('archiveBtn').onclick = () => {
+  archiveCalendarMonth = null; // reset to current month each time
   buildArchiveCalendar();
   document.getElementById('archiveModal').classList.add('show');
 };
@@ -2117,7 +2182,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v5.3</span>
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v5.4</span>
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪱</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Can of Words</title>
+<title>Can of Words🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -634,7 +634,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 4.9
+   PUZZLE LIBRARY — VERSION 5.0
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -834,8 +834,25 @@ function buildGridForPuzzle(sentence, dateKey) {
   const g = Array.from({length:7}, () => Array(7).fill(''));
   path.forEach((p,i) => g[p[0]][p[1]] = letters[i]);
   const r2 = rng(seed ^ 0x9e3779b9);
+  // Build set of path letters per cell for adjacency checking
+  const pathLetters = new Set();
+  path.forEach(([pr, pc], i) => {
+    // For each filler cell, track what letters are on adjacent path cells
+  });
   for (let r=0;r<7;r++) for (let c=0;c<7;c++) {
-    if (!g[r][c]) g[r][c] = alpha[r2()*26|0];
+    if (g[r][c]) continue;
+    // Collect letters of adjacent path cells
+    const adjPathLetters = new Set();
+    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc]) => {
+      if (nr>=0&&nr<7&&nc>=0&&nc<7&&g[nr][nc]) adjPathLetters.add(g[nr][nc]);
+    });
+    // Pick a random letter that doesn't match any adjacent path letter
+    let attempts = 0, letter;
+    do {
+      letter = alpha[r2()*26|0];
+      attempts++;
+    } while (adjPathLetters.has(letter) && attempts < 26);
+    g[r][c] = letter;
   }
   return { grid: g, path };
 }
@@ -846,7 +863,19 @@ let grid = Array.from({length:7}, () => Array(7).fill(''));
 PATH.forEach((p,i) => grid[p[0]][p[1]] = LETTERS[i]);
 ACTIVE_PATH = PATH; // default to today's path
 const r2 = rng(SEED ^ 0x9e3779b9);
-for (let r=0; r<7; r++) for (let c=0; c<7; c++) if (!grid[r][c]) grid[r][c] = alpha[r2()*26|0];
+for (let r=0; r<7; r++) for (let c=0; c<7; c++) {
+  if (grid[r][c]) continue;
+  const adjPathLetters = new Set();
+  [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc]) => {
+    if (nr>=0&&nr<7&&nc>=0&&nc<7&&grid[nr][nc]) adjPathLetters.add(grid[nr][nc]);
+  });
+  let attempts = 0, letter;
+  do {
+    letter = alpha[r2()*26|0];
+    attempts++;
+  } while (adjPathLetters.has(letter) && attempts < 26);
+  grid[r][c] = letter;
+}
 
 /* =====================================================================
    UI SETUP
@@ -1938,8 +1967,8 @@ document.getElementById('ap-see-board').onclick = () => {
 if (PUZZLE) {
   build();
   redraw();
-  // Restore hints from saved state if mid-puzzle
-  if (savedState && savedState.hintsUsed && !alreadyPlayedToday) {
+  // Restore hints from saved state if mid-puzzle today (not yesterday's hints)
+  if (savedState && savedState.hintsUsed && savedState.dateKey === TODAY_KEY && !alreadyPlayedToday) {
     hintsUsed = new Set(savedState.hintsUsed);
     hintsUsed.forEach(n => {
       const circle = document.getElementById('hintCircle'+n);

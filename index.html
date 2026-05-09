@@ -634,7 +634,7 @@
 
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 5.0
+   PUZZLE LIBRARY — VERSION 5.2
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -735,6 +735,13 @@ function saveState(obj) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify
 if (window.location.search.includes('reset')) {
   localStorage.removeItem(STORAGE_KEY);
   window.history.replaceState({}, '', window.location.pathname);
+}
+
+// Cache-busting: if build version has changed, force a fresh reload
+const BUILD = '2026-05-09-v5.2';
+if (localStorage.getItem('canofwords_build') !== BUILD) {
+  localStorage.setItem('canofwords_build', BUILD);
+  if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
 }
 
 const savedState = loadState();

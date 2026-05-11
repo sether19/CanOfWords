@@ -747,7 +747,7 @@ function getSeed() { return PUZZLE ? hashString(`${TODAY_KEY}-${PUZZLE.sentence}
 /* =====================================================================
    PATH GENERATION
    ===================================================================== */
-function genPath(len, seed) {
+function genPath(len, seed, noLoop = false) {
   const r = rng(seed);
   while (true) {
     let used = new Set(), p = [];
@@ -762,7 +762,13 @@ function genPath(len, seed) {
       let [dx,dy] = opts[r()*opts.length|0];
       x+=dx; y+=dy; p.push([x,y]); used.add(x+','+y);
     }
-    if (ok) return p;
+    if (!ok) continue;
+    // For Sunday puzzles, reject paths where last cell is adjacent to first cell
+    if (noLoop) {
+      const [fx, fy] = p[0], [lx, ly] = p[p.length-1];
+      if (Math.abs(fx-lx) + Math.abs(fy-ly) === 1) continue;
+    }
+    return p;
   }
 }
 
@@ -770,10 +776,9 @@ const SEED = getSeed();
 const alpha = 'abcdefghijklmnopqrstuvwxyz';
 
 function buildGridForPuzzle(sentence, dateKey) {
-  // sentence may already be decoded
   const letters = sentence.replaceAll(' ', '');
   const seed = hashString(`${dateKey}-${sentence}`);
-  const path = genPath(letters.length, seed);
+  const path = genPath(letters.length, seed, true);
   const g = Array.from({length:7}, () => Array(7).fill(''));
   path.forEach((p,i) => g[p[0]][p[1]] = letters[i]);
   const r2 = rng(seed ^ 0x9e3779b9);
@@ -806,7 +811,7 @@ function buildGridForPuzzle(sentence, dateKey) {
   return { grid: g, path };
 }
 
-const PATH = genPath(LETTERS.length, SEED);
+const PATH = genPath(LETTERS.length, SEED, true);
 
 let grid = Array.from({length:7}, () => Array(7).fill(''));
 PATH.forEach((p,i) => grid[p[0]][p[1]] = LETTERS[i]);

@@ -618,9 +618,9 @@
     <p>Drag words to rearrange them into the right order.</p>
     <div id="trayTutorialDemo">
       <svg id="trayTutorialSvg" width="220" height="44" viewBox="0 0 220 44">
-        <rect id="trayChip1" x="4" y="7" width="70" height="30" rx="15" fill="#b9f6ca"/>
+        <rect id="trayChip1" x="4" y="7" width="70" height="30" rx="15" fill="#f8bbd0"/>
         <text id="trayChipText1" x="39" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">word</text>
-        <rect id="trayChip2" x="84" y="7" width="86" height="30" rx="15" fill="#ffe082"/>
+        <rect id="trayChip2" x="84" y="7" width="86" height="30" rx="15" fill="#b9f6ca"/>
         <text id="trayChipText2" x="127" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">another</text>
         <circle id="trayFinger" cx="39" cy="22" r="11" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
       </svg>
@@ -674,7 +674,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v5.6';
+const BUILD = '2026-05-09-v5.1';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);

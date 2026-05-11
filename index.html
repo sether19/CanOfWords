@@ -632,78 +632,14 @@
   <div class="sentence-instruction">Drag to arrange words &bull; Drag to 🗑️ to delete</div>
 </div>
 
+<script src="puzzles-v5.6.js"></script>
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 5.4
+   PUZZLE LIBRARY — VERSION 5.6
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
-const PUZZLE_START_DATE = '2026-05-05';
-const PUZZLES = [
-
-  // ── WEEK 1 (May 5) ─────────────────────────────────
-  { clue: 'Shakespeare',   sentence: 'ZW5nbGlzaCBwbGF5d3JpZ2h0IHdobyB3cm90ZSBoYW1sZXQgYW5kIG1hY2JldGg=',        type: 'regular' }, // Tue May 5
-  { clue: 'Coffee',        sentence: 'aG90IG1vcm5pbmcgZHJpbmsgYnJld2VkIGZyb20gcm9hc3RlZCBiZWFucw==',            type: 'regular' }, // Wed May 6
-  { clue: 'Avocado',       sentence: 'Y3JlYW15IGZydWl0IHJlcXVpcmVkIHRvIG1ha2UgZ3VhY2Ftb2xl',                type: 'regular' }, // Thu May 7
-  { clue: 'Calm?',         sentence: 'a25vd24gdG8gY29tZSBiZWZvcmUgdGhlIHN0b3Jt',                         type: 'playful' }, // Fri May 8
-  { clue: 'Tofu!',         sentence: 'c2lsa2VuIHNvZnQgZmlybSBleHRyYSBmaXJt',                            type: 'playful' }, // Sat May 9
-  { clue: 'Buffalo;',      sentence: 'bGFyZ2UgYW1lcmljYW4gYmlzb24gY2l0eSBpbiBuZXcgeW9yayBzdGF0ZQ==',            type: 'sunday'  }, // Sun May 10
-
-  // ── WEEK 2 (May 11) ────────────────────────────────
-  { clue: 'Penguin',       sentence: 'ZmxpZ2h0bGVzcyBiaXJkIG5hdGl2ZSB0byB0aGUgc291dGhlcm4gaGVtaXNwaGVyZQ==',              type: 'regular' }, // Mon May 11
-  { clue: 'Piano',         sentence: 'bGFyZ2Uga2V5Ym9hcmQgaW5zdHJ1bWVudCB3aXRoIGJsYWNrIGFuZCB3aGl0ZSBrZXlz',    type: 'regular' }, // Tue May 12
-  { clue: 'Volcano',       sentence: 'bW91bnRhaW4gdGhhdCBlcnVwdHMgbW9sdGVuIGxhdmEgYW5kIGFzaA==',               type: 'regular' }, // Wed May 13
-  { clue: 'Honey',         sentence: 'c3dlZXQgZ29sZGVuIHN5cnVwIG1hZGUgYnkgYmVlcyBpbiBhIGhpdmU=',             type: 'regular' }, // Thu May 14
-  { clue: 'Pizza!',        sentence: 'YnJlYWQgc2F1Y2UgY2hlZXNlIHRvcHBpbmdz',                            type: 'playful' }, // Fri May 15
-  { clue: 'Elevator?',     sentence: 'Z29pbmcgdXAgZ29pbmcgZG93biBnb2luZyB1cCBnb2luZyBkb3du',               type: 'playful' }, // Sat May 16
-  { clue: 'Pinto;',        sentence: 'c3BlY2tsZWQgaG9yc2UgY29hdCBwYXR0ZXJuIHBvcHVsYXIgdmFyaWV0eSBvZiBiZWFu',   type: 'sunday'  }, // Sun May 17
-
-  // ── WEEK 3 (May 18) ────────────────────────────────
-  { clue: 'G. Washington', sentence: 'Zmlyc3QgcHJlc2lkZW50IG9mIHRoZSBVU0E=',                                        type: 'regular' }, // Mon May 18
-  { clue: 'Sushi',         sentence: 'amFwYW5lc2UgZGlzaCBvZiByaWNlIGFuZCByYXcgZmlzaCB3cmFwcGVkIGluIHNlYXdlZWQ=',             type: 'regular' }, // Tue May 19
-  { clue: 'Titanic',       sentence: 'dW5zaW5rYWJsZSBzaGlwIHRoYXQgc2FuayBvbiBpdHMgbWFpZGVuIHZveWFnZQ==',                    type: 'regular' }, // Wed May 20
-  { clue: 'The Simpsons',  sentence: 'bG9uZ2VzdCBydW5uaW5nIGFuaW1hdGVkIHNpdGNvbSBzZXQgaW4gc3ByaW5nZmllbGQ=',                type: 'regular' }, // Thu May 21
-  { clue: 'T-Shirt!',      sentence: 'c21hbGwgbWVkaXVtIGxhcmdlIFhMIFhYTCBYWFhM',                                   type: 'playful' }, // Fri May 22
-  { clue: 'Sneeze?',       sentence: 'Y2F0YWx5c3QgZm9yIHNheWluZyBibGVzcyB5b3U=',                                     type: 'playful' }, // Sat May 23
-  { clue: 'Sage;',         sentence: 'aGVyYiB1c2VkIGluIGNvb2tpbmcgd2lzZSBhbmQga25vd2xlZGdlYWJsZSBwZXJzb24=',                type: 'sunday'  }, // Sun May 24
-
-  // ── WEEK 4 (May 25) ────────────────────────────────
-  { clue: 'Nostalgia',     sentence: 'Yml0dGVyc3dlZXQgbG9uZ2luZyBmb3IgYSB0aW1lIHRoYXQgaGFzIHBhc3NlZA==',                    type: 'regular' }, // Mon May 25
-  { clue: 'James Bond',    sentence: 'YnJpdGlzaCBzcHkgd2hvIHByZWZlcnMgaGlzIG1hcnRpbmkgc2hha2VuIG5vdCBzdGlycmVk',            type: 'regular' }, // Tue May 26
-  { clue: 'Slipper',       sentence: 'Z2xhc3Mgc2hvZSBsZWZ0IGJlaGluZCBieSBjaW5kZXJlbGxh',                              type: 'regular' }, // Wed May 27
-  { clue: 'Sunglasses',    sentence: 'dGludGVkIGxlbnNlcyB3b3JuIHRvIHNoaWVsZCBleWVzIGZyb20gYnJpZ2h0IGxpZ2h0',               type: 'regular' }, // Thu May 28
-  { clue: 'Corn!',         sentence: 'Y29iIHBvcHBlZCBjcmVhbWVkIGZsYWtlcyBjYXJhbWVs',                                 type: 'playful' }, // Fri May 29
-  { clue: "Murphy's Law?", sentence: 'YW55dGhpbmcgdGhhdCBjYW4gZ28gd3Jvbmcgd2lsbCBnbyB3cm9uZw==',                          type: 'playful' }, // Sat May 30
-  { clue: 'Mercury;',      sentence: 'Y2xvc2VzdCBwbGFuZXQgdG8gdGhlIHN1biBsZWdlbmRhcnkgcXVlZW4gZnJvbnRtYW4=',                type: 'sunday'  }, // Sun May 31
-
-  // ── WEEK 5 (Jun 1) ─────────────────────────────────
-  { clue: 'Marathon',      sentence: 'bG9uZyBydW5uaW5nIHJhY2Ugb2YganVzdCBvdmVyIHR3ZW50eSBzaXggbWlsZXM=',                   type: 'regular' }, // Mon Jun 1
-  { clue: 'Mount Everest', sentence: 'dGFsbGVzdCBwZWFrIG9uIHBsYW5ldCBlYXJ0aA==',                                      type: 'regular' }, // Tue Jun 2
-  { clue: 'Umbrella',      sentence: 'Zm9sZGluZyBjYW5vcHkgY2FycmllZCB0byBzdGF5IGRyeSBpbiB0aGUgcmFpbg==',                    type: 'regular' }, // Wed Jun 3
-  { clue: 'Chess',         sentence: 'c3RyYXRlZ3kgYm9hcmQgZ2FtZSB3aXRoIGtpbmdzIGFuZCBxdWVlbnM=',                         type: 'regular' }, // Thu Jun 4
-  { clue: 'Monday?',       sentence: 'd2lkZWx5IGFncmVlZCB1cG9uIHdvcnN0IGRheSBvZiB0aGUgd2Vlaw==',                          type: 'playful' }, // Fri Jun 5
-  { clue: 'Tuesday?',      sentence: 'd2lkZWx5IGFncmVlZCB1cG9uIGJlc3QgZGF5IGZvciB0YWNvcw==',                             type: 'playful' }, // Sat Jun 6
-  { clue: 'Wednesday;',    sentence: 'd2lkZWx5IGtub3duIGFzIGh1bXAgZGF5IGNoYXJhY3RlciBmcm9tIHRoZSBhZGRhbXMgZmFtaWx5',         type: 'sunday'  }, // Sun Jun 7
-
-  // ── WEEK 6 (Jun 8) ─────────────────────────────────
-  { clue: 'Thermos',       sentence: 'aW5zdWxhdGVkIGZsYXNrIHRoYXQga2VlcHMgZHJpbmtzIGhvdCBvciBjb2xk',                     type: 'regular' }, // Mon Jun 8
-  { clue: 'Armpit',        sentence: 'cGxhY2UgdG8gYXBwbHkgZGVvZG9yYW50IG9yIGFudGlwZXJzcGlyYW50',                        type: 'regular' }, // Tue Jun 9
-  { clue: 'Decaf',         sentence: 'b3JkZXIgZGV0YWlsIGZvciBjdXN0b21lcnMgYXQgc3RhcmJ1Y2tz',                           type: 'regular' }, // Wed Jun 10
-  { clue: 'Seltzer',       sentence: 'd2F0ZXIgY2FyYm9uYXRlZCB3aXRoIGNhcmJvbiBkaW94aWRl',                              type: 'regular' }, // Thu Jun 11
-  { clue: 'Bagel!',        sentence: 'cGxhaW4gc2VzYW1lIGV2ZXJ5dGhpbmcgcmFpc2luIHB1bXBlcm5pY2tlbA==',                       type: 'playful' }, // Fri Jun 12
-  { clue: 'Bread?',        sentence: 'Z3JlYXRlc3QgdGhpbmcgc2luY2UgaXRzZWxmIGFjY29yZGluZyB0byB0aGUgc2F5aW5n',               type: 'playful' }, // Sat Jun 13
-  { clue: 'Ace;',          sentence: 'dW50b3VjaGVkIHRlbm5pcyBzZXJ2ZSBoaWdoIGNhcmQgaW4gYSByb3lhbCBmbHVzaA==',                 type: 'sunday'  }, // Sun Jun 14
-
-  // ── WEEK # (####) ── TEMPLATE ───────────────────────
-  // { clue: 'mmmmm',      sentence: 'bW1tbW0=',              type: 'regular' }, // Mon
-  // { clue: 'ttttt',      sentence: 'dHR0dHQ=',              type: 'regular' }, // Tue
-  // { clue: 'wwwww',      sentence: 'd3d3d3c=',              type: 'regular' }, // Wed
-  // { clue: 'ttttt',      sentence: 'dHR0dHQ=',              type: 'regular' }, // Thu
-  // { clue: 'fffff!',     sentence: 'ZmZmZmY=',              type: 'playful' }, // Fri
-  // { clue: 'sssss?',     sentence: 'c3Nzc3M=',              type: 'playful' }, // Sat
-  // { clue: 'sssss;',     sentence: 'c3Nzc3M=',              type: 'sunday'  }, // Sun
-
-];
+// Puzzle data loaded from external file (see puzzles-v5.6.js)
 
 /* =====================================================================
    DAILY PUZZLE SELECTION
@@ -738,7 +674,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v5.4';
+const BUILD = '2026-05-09-v5.6';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -968,7 +904,7 @@ function useHint(n) {
   // Persist hint usage for today's puzzle so it survives archive visits
   if (!archiveMode) {
     const cur = loadState();
-    saveState({ ...cur, hintsUsed: [...hintsUsed] });
+    saveState({ ...cur, dateKey: TODAY_KEY, hintsUsed: [...hintsUsed] });
   }
   hintsMenu.classList.remove('show');
   document.getElementById(`hint${n}Item`).classList.add('used');
@@ -1969,7 +1905,7 @@ function checkCompletion(manual) {
   if (archiveMode && archiveDateKey) {
     localStorage.setItem(getArchiveStateKey(archiveDateKey), JSON.stringify({ solved: true, words: savedWords }));
   } else {
-    saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords });
+    saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords, hintsUsed: [...hintsUsed] });
   }
   localStorage.setItem('canofwords_tutorial_seen', '1');
   localStorage.setItem('canofwords_tray_tutorial_seen', '1');
@@ -2182,7 +2118,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v5.4</span>
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v5.6</span>
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

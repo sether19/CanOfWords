@@ -543,7 +543,8 @@
     <h2>You solved it! 🪱✅</h2>
     <p style="font-size:13px;margin:0 0 6px">Today's answer:</p>
     <div class="ap-answer" id="win-clue"></div>
-    <div id="win-hints" style="font-size:18px;letter-spacing:3px;margin:10px 0 14px"></div>
+    <div id="win-hints" style="font-size:18px;letter-spacing:3px;margin:10px 0 8px"></div>
+    <div id="win-solve-count" style="font-size:11px;opacity:0.5;margin-bottom:14px;min-height:16px"></div>
     <button class="modal-close" id="win-share-btn" style="margin-top:0;background:#d0ead0;border-right-color:#4a7a4a;border-bottom-color:#4a7a4a">📤 Share result</button>
     <button class="modal-close" onclick="document.getElementById('win-popup').classList.remove('show')" style="margin-top:8px;opacity:0.6;font-size:12px">See the board</button>
   </div>
@@ -631,6 +632,34 @@
 </div>
   <div class="sentence-instruction">Drag to arrange words &bull; Drag to 🗑️ to delete</div>
 </div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC43oE5exbi3zP8oL6uHTUY8eSXFg5_IUs",
+    authDomain: "canofwords-ee2a2.firebaseapp.com",
+    projectId: "canofwords-ee2a2",
+    storageBucket: "canofwords-ee2a2.firebasestorage.app",
+    messagingSenderId: "158091333965",
+    appId: "1:158091333965:web:c5cdfb844443c4233f2704"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  async function incrementSolveCount(dateKey) {
+    try {
+      const ref = db.collection('puzzle_stats').doc(dateKey);
+      await ref.set({ solve_count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+      const snap = await ref.get();
+      return snap.data().solve_count;
+    } catch(e) {
+      console.warn('Firebase error:', e);
+      return null;
+    }
+  }
+</script>
 
 <script src="puzzles-v5.8.js"></script>
 <script>
@@ -1933,6 +1962,13 @@ function checkCompletion(manual) {
       hintsUsed.size > 0 ? [1,2,3,4].map(n => hintsUsed.has(n) ? HINT_EMOJIS[n] : '🪱').join('') : '🪱🪱🪱🪱';
     document.getElementById('win-share-btn').style.display = archiveMode ? 'none' : '';
     document.getElementById('win-share-btn').onclick = shareResult;
+    // Track solve count via Firebase (today's puzzles only)
+    if (!archiveMode && typeof incrementSolveCount === 'function') {
+      incrementSolveCount(TODAY_KEY).then(count => {
+        const el = document.getElementById('win-solve-count');
+        if (el && count) el.textContent = `You're one of ${count} ${count === 1 ? 'person' : 'people'} who solved today! 🪱`;
+      });
+    }
     document.getElementById('win-popup').classList.add('show');
   }, delay);
 }

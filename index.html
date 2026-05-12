@@ -635,7 +635,7 @@
 <script src="puzzles-v5.8.js"></script>
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 5.9
+   PUZZLE LIBRARY — VERSION 6.0
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -674,7 +674,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v5.9';
+const BUILD = '2026-05-09-v6.0';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1467,7 +1467,7 @@ function buildArchiveCalendar() {
         cell.textContent = cellDate.getDate();
       } else {
         const isSolved = dateKey === TODAY_KEY
-          ? (localStorage.getItem(STORAGE_KEY) && JSON.parse(localStorage.getItem(STORAGE_KEY)).solved)
+          ? (() => { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); return s && s.solved && s.dateKey === TODAY_KEY; } catch(e) { return false; } })()
           : localStorage.getItem(getArchiveStateKey(dateKey));
 
         cell.className = 'archive-day' + (isSolved ? ' solved' : '') +
@@ -1593,7 +1593,7 @@ function returnToToday() {
     if (hintsUsed.has(3)) applyHint3();
     if (hintsUsed.has(4)) applyHint4();
   }
-  if (saved && saved.solved) {
+  if (saved && saved.solved && saved.dateKey === TODAY_KEY) {
     replaySolvedState();
   } else {
     redraw();
@@ -1969,7 +1969,7 @@ function replaySolvedStateFromData(savedWords) {
 
 function replaySolvedState() {
   const state = loadState();
-  if (!state.solved || !state.words) return;
+  if (!state.solved || !state.words || state.dateKey !== TODAY_KEY) return;
 
   done = true;
   submitBtn.disabled = true;
@@ -2125,7 +2125,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v5.9</span>
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v6.0</span>
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

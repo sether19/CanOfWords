@@ -250,6 +250,11 @@
   }
   #trayTutorialDismiss:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
 
+  /* ── Submission modal placeholder styling ── */
+  #submitClue::placeholder, #submitSentence::placeholder, #submitName::placeholder {
+    opacity: 0.3; font-weight: 500;
+  }
+
   /* ── Archive calendar ── */
   .archive-week-row {
     display: grid; grid-template-columns: repeat(7, 1fr);
@@ -578,7 +583,13 @@
   <div style="display:flex;gap:6px;align-items:center">
     <button id="archiveBackBtn" style="display:none;font-size:10px;font-weight:700;padding:0 8px;height:30px;border-radius:15px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;white-space:nowrap" onclick="returnToToday()">← Today</button>
     <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">📅</button>
-    <button id="helpBtn">?</button>
+    <div style="position:relative">
+      <button id="helpBtn" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;">💡</button>
+      <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:#faf6ef;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
+        <div id="howToPlayBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);">📖 How to Play</div>
+        <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;">💡 Submit a Puzzle</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -637,6 +648,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+  // Firebase web config — public by design for client-side apps.
+  // Access is controlled via Firestore security rules, not this key.
   const firebaseConfig = {
     apiKey: "AIzaSyC43oE5exbi3zP8oL6uHTUY8eSXFg5_IUs",
     authDomain: "canofwords-ee2a2.firebaseapp.com",
@@ -703,7 +716,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v6.1';
+const BUILD = '2026-05-09-v6.2';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1634,6 +1647,83 @@ document.getElementById('archiveBtn').onclick = () => {
   buildArchiveCalendar();
   document.getElementById('archiveModal').classList.add('show');
 };
+/* ── Help menu (💡 button) ── */
+let submitType = 'regular';
+
+function setSubmitType(type) {
+  submitType = type;
+  ['regular','playful','sunday'].forEach(t => {
+    const btn = document.getElementById('type' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.style.background = t === type ? '#fef3b0' : '#fdf8f0';
+  });
+}
+setSubmitType('regular'); // default highlight
+
+document.getElementById('helpBtn').onclick = (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById('helpMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+};
+document.getElementById('howToPlayBtn').onclick = () => {
+  document.getElementById('helpMenu').style.display = 'none';
+  document.getElementById('how-to-play').classList.add('show');
+};
+document.getElementById('submitPuzzleBtn').onclick = () => {
+  document.getElementById('helpMenu').style.display = 'none';
+  document.getElementById('submitError').style.display = 'none';
+  document.getElementById('submitSuccess').style.display = 'none';
+  document.getElementById('submitClue').value = '';
+  document.getElementById('submitSentence').value = '';
+  document.getElementById('submitName').value = '';
+  setSubmitType('regular');
+  document.getElementById('submitModal').classList.add('show');
+};
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('helpMenu');
+  if (menu && !menu.contains(e.target) && e.target !== document.getElementById('helpBtn')) {
+    menu.style.display = 'none';
+  }
+});
+
+async function submitPuzzle() {
+  const clue = document.getElementById('submitClue').value.trim();
+  const sentence = document.getElementById('submitSentence').value.trim().toLowerCase();
+  const name = document.getElementById('submitName').value.trim();
+  const errorEl = document.getElementById('submitError');
+  const successEl = document.getElementById('submitSuccess');
+
+  if (!clue) { errorEl.textContent = 'Please enter an answer clue.'; errorEl.style.display = 'block'; return; }
+  if (!sentence) { errorEl.textContent = 'Please enter a sentence.'; errorEl.style.display = 'block'; return; }
+
+  errorEl.style.display = 'none';
+  const btn = document.getElementById('submitPuzzleConfirm');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    await db.collection('puzzle_submissions').add({
+      clue,
+      sentence,
+      type: submitType,
+      name: name || 'Anonymous',
+      submitted_at: firebase.firestore.FieldValue.serverTimestamp(),
+      puzzle_date: TODAY_KEY
+    });
+    successEl.style.display = 'block';
+    btn.textContent = 'Submitted! 🪱';
+    setTimeout(() => {
+      document.getElementById('submitModal').classList.remove('show');
+      btn.disabled = false;
+      btn.textContent = 'Submit 🪱';
+    }, 2000);
+  } catch(e) {
+    errorEl.textContent = 'Something went wrong. Please try again!';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit 🪱';
+  }
+}
+
 /* ── How To Play auto-show ── */
 function showHowToPlay() {
   if (localStorage.getItem('canofwords_howtoplay_seen')) return;
@@ -2082,6 +2172,38 @@ if (PUZZLE) {
   }
 }
 </script>
+<!-- Puzzle Submission modal -->
+<div id="submitModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:320px;width:92%">
+    <h2>Submit a Puzzle 💡</h2>
+    <p style="font-size:12px;opacity:0.6;margin:0 0 14px">Got a great clue? Submit it and it might appear in a future puzzle!</p>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">ANSWER CLUE</label>
+    <input id="submitClue" type="text" placeholder="e.g. Robin" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:12px"/>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">SENTENCE / DESCRIPTION</label>
+    <textarea id="submitSentence" placeholder="e.g. sidekick to the superhero batman" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:12px;resize:vertical;min-height:70px"></textarea>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">TYPE</label>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button id="typeRegular" onclick="setSubmitType('regular')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Regular</button>
+      <button id="typePlayful" onclick="setSubmitType('playful')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Playful !?</button>
+      <button id="typeSunday" onclick="setSubmitType('sunday')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Sunday ;</button>
+    </div>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">YOUR NAME <span style="opacity:0.5;font-weight:400">(optional but I'd love to credit you!)</span></label>
+    <input id="submitName" type="text" placeholder="e.g. Andrew, Gwen, WormGurl22, etc" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:16px"/>
+
+    <div id="submitError" style="font-size:11px;color:#c0392b;margin-bottom:8px;display:none"></div>
+    <div id="submitSuccess" style="font-size:12px;color:#2a7a2a;text-align:center;margin-bottom:8px;display:none">Submitted! Thanks for the idea 🪱</div>
+
+    <div style="display:flex;gap:8px">
+      <button class="modal-close" onclick="document.getElementById('submitModal').classList.remove('show')" style="flex:1;opacity:0.5;font-size:12px">Cancel</button>
+      <button id="submitPuzzleConfirm" onclick="submitPuzzle()" style="flex:2;background:#d0eacc;box-shadow:0 2px 0 #7ab870;border-radius:12px;font-size:13px;font-weight:700">Submit 🪱</button>
+    </div>
+  </div>
+</div>
+
 <!-- Archive modal -->
 <div id="archiveModal" class="modal-overlay">
   <div class="modal-box" style="max-width:320px;width:92%">
@@ -2167,7 +2289,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v6.1</span>
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v6.2</span>
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

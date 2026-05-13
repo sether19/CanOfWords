@@ -779,7 +779,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-14-v0.71hardpushhhhhhhhhhh'; // //UPDATE: date + version on every meaningful push
+const BUILD = '2026-05-14-v0.71hardresetttttt'; // //UPDATE: date + version on every meaningful push
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2136,19 +2136,18 @@ function initPar() {
   parScore = 0;
   submitCount = 0;
 
-  const container = document.querySelector('#parDisplay > div');
+  const container = document.getElementById('parDisplay');
   if (!container) return;
   container.innerHTML = '';
 
-  // Create par circles — outlined up to par, plain beyond
-  for (let i = 1; i <= 5; i++) {
+  // Create only par circles initially — extras added dynamically if player goes over
+  const count = par || 0;
+  for (let i = 1; i <= count; i++) {
     const dot = document.createElement('div');
     dot.className = 'par-circle';
     dot.id = 'parCircle' + i;
-    if (par && i <= par) {
-      dot.style.outline = '1.5px solid rgba(45,31,14,0.25)';
-      dot.style.outlineOffset = '1px';
-    }
+    dot.style.outline = '1.5px solid rgba(45,31,14,0.25)';
+    dot.style.outlineOffset = '0px';
     container.appendChild(dot);
   }
 }

@@ -779,7 +779,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '3027-05-13-v0.728932920'; // //UPDATE: date + version on every meaningful push
+const BUILD = '4026-05-09-v0.7111111'; // //UPDATE: date + version on every meaningful push
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2085,7 +2085,7 @@ function buildShareText() {
   }
 
   return [
-    `Can of Words #${puzzleNum}`,
+    `Can of Words 🪱 #${puzzleNum}`,
     `${ACTIVE_PUZZLE.clue} ${parCircleStr}`,
     `${dateStr} • canofwords.xyz`,
   ].join('\n');

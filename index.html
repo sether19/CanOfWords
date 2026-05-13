@@ -779,7 +779,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-14-v0.71hardresetttttt'; // //UPDATE: date + version on every meaningful push
+const BUILD = '3027-05-13-v0.728932920'; // //UPDATE: date + version on every meaningful push
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2080,7 +2080,7 @@ function buildShareText() {
   let i = 1;
   while (document.getElementById('parCircle'+i)) {
     const el = document.getElementById('parCircle'+i);
-    parCircleStr += (!el || !el.classList.contains('filled')) ? '⚪' : (PAR_COLOR_EMOJIS[el.style.background] || '⚪');
+    parCircleStr += (!el || !el.classList.contains('filled')) ? '⚪' : (PAR_COLOR_EMOJIS[el.dataset.color] || '⚪');
     i++;
   }
 
@@ -2165,7 +2165,7 @@ function fillParCircle(color) {
       container.appendChild(el);
     }
   }
-  if (el) { el.style.background = color; el.classList.add('filled'); }
+  if (el) { el.style.background = color; el.classList.add('filled'); el.dataset.color = color; }
 }
 
 function shakeFrame() {
@@ -2251,12 +2251,7 @@ function checkCompletion(manual) {
         winPar.appendChild(dot);
         i++;
       }
-      if (ACTIVE_PUZZLE.par) {
-        const label = document.createElement('span');
-        label.style.cssText = 'font-size:10px;font-weight:700;opacity:0.4;margin-left:4px;letter-spacing:0.03em';
-        label.textContent = `/ Par ${ACTIVE_PUZZLE.par}`;
-        winPar.appendChild(label);
-      }
+
     }
     document.getElementById('win-share-btn').style.display = archiveMode ? 'none' : '';
     document.getElementById('win-share-btn').onclick = shareResult;

@@ -76,7 +76,7 @@ const PUZZLES = [
   { clue: 'Match?',  sentence: 'dGhlIHJlc3VsdCBvZiB0d28gcGVvcGxlIHN3aXBpbmcgcmlnaHQ=',  type: 'playful' }, // Sat Jun 27
   { clue: 'Bark;',  sentence: 'b3V0ZXIgbGF5ZXIgb2YgYSB0cmVlIHNvdW5kIGEgZG9nIG1ha2Vz',  type: 'sunday' }, // Sun Jun 28
 
-  // ── WEEK # (####) ── TEMPLATE ───────────────────────
+ // ── WEEK # (####) ── TEMPLATE ───────────────────────
   // { clue: 'mmmmm',      sentence: 'bW1tbW0=',              type: 'regular' }, // Mon
   // { clue: 'ttttt',      sentence: 'dHR0dHQ=',              type: 'regular' }, // Tue
   // { clue: 'wwwww',      sentence: 'd3d3d3c=',              type: 'regular' }, // Wed
@@ -84,5 +84,7 @@ const PUZZLES = [
   // { clue: 'fffff!',     sentence: 'ZmZmZmY=',              type: 'playful' }, // Fri
   // { clue: 'sssss?',     sentence: 'c3Nzc3M=',              type: 'playful' }, // Sat
   // { clue: 'sssss;',     sentence: 'c3Nzc3M=',              type: 'sunday'  }, // Sun
+  //User Submitted Format
+  // { clue: 'Piano', sentence: 'BASE64...', type: 'regular', credit: 'Josh' }
 
 ];

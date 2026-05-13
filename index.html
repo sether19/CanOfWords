@@ -779,7 +779,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '4026-05-013-v0.71111111119'; // //UPDATE: date + version on every meaningful push
+const BUILD = '5026-05-09-v0.7222222222'; // //UPDATE: date + version on every meaningful push
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2233,7 +2233,15 @@ function checkCompletion(manual) {
   if (archiveMode && archiveDateKey) {
     localStorage.setItem(getArchiveStateKey(archiveDateKey), JSON.stringify({ solved: true, words: savedWords, parScore }));
   } else {
-    saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords, hintsUsed: [...hintsUsed], parScore });
+    // Collect par circle colors in order
+    const parColors = [];
+    let pi = 1;
+    while (document.getElementById('parCircle'+pi)) {
+      const el = document.getElementById('parCircle'+pi);
+      parColors.push(el.classList.contains('filled') ? (el.dataset.color || '') : '');
+      pi++;
+    }
+    saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords, hintsUsed: [...hintsUsed], parScore, parColors });
     // Also write to archive key so calendar shows solved when this day becomes part of the archive
     localStorage.setItem(getArchiveStateKey(TODAY_KEY), JSON.stringify({ solved: true, words: savedWords, parScore }));
   }
@@ -2272,6 +2280,7 @@ function checkCompletion(manual) {
     document.getElementById('win-share-btn').style.display = archiveMode ? 'none' : '';
     document.getElementById('win-share-btn').onclick = shareResult;
     // Track solve count via Firebase (today's puzzles only)
+    document.getElementById('win-solve-count').style.display = archiveMode ? 'none' : '';
     if (!archiveMode && typeof incrementSolveCount === 'function') {
       incrementSolveCount(TODAY_KEY).then(count => {
         const el = document.getElementById('win-solve-count');
@@ -2345,6 +2354,24 @@ function replaySolvedState() {
   showWinIcon();
   document.getElementById('shareArea').style.display = 'block';
   document.getElementById('shareBtn').onclick = shareResult;
+  // Restore par circle colors from saved state
+  if (state.parColors && state.parColors.length) {
+    initPar();
+    state.parColors.forEach((color, i) => {
+      if (!color) return;
+      let el = document.getElementById('parCircle'+(i+1));
+      if (!el) {
+        const container = document.getElementById('parDisplay');
+        if (container) {
+          el = document.createElement('div');
+          el.className = 'par-circle';
+          el.id = 'parCircle'+(i+1);
+          container.appendChild(el);
+        }
+      }
+      if (el) { el.style.background = color; el.dataset.color = color; el.classList.add('filled'); }
+    });
+  }
 }
 
 document.getElementById('ap-see-board').onclick = () => {

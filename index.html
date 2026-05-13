@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪱</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Can of Words 🪱</title>
+<title>Can of Words🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -677,11 +677,11 @@
 <script src="puzzles-v6.0.js"></script>
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 6.0
+   PUZZLE LIBRARY — VERSION 0.63
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
-// Puzzle data loaded from external file (see puzzles-v6.0.js)
+// Puzzle data loaded from external file (see puzzles-v56.0.js)
 
 /* =====================================================================
    DAILY PUZZLE SELECTION
@@ -716,7 +716,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-09-v6.2';
+const BUILD = '2026-05-13-v0.68';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -894,7 +894,7 @@ if (!PUZZLE) {
   document.getElementById('clue').textContent = 'No puzzle available for today — check back soon!';
 } else {
   document.getElementById('clue').innerHTML =
-    `Today's answer: ${ACTIVE_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
+    formatClue(ACTIVE_PUZZLE);
   document.getElementById('puzzle-num').textContent =
     `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
 }
@@ -970,8 +970,9 @@ function useHint(n) {
 function applyHint1() {
   const wordCount = ACTIVE_PUZZLE.sentence.trim().split(/\s+/).length;
   const clueEl = document.getElementById('clue');
-  const formattedClue = ACTIVE_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>');
-  clueEl.innerHTML = `Today's answer: ${formattedClue} <span style="color:#2980b9;font-weight:bold">(${wordCount})</span>`;
+  const baseClue = ACTIVE_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>');
+  const credit = ACTIVE_PUZZLE.credit ? ` <span style="opacity:0.4;font-weight:500;font-size:0.9em">(sent by ${ACTIVE_PUZZLE.credit})</span>` : '';
+  clueEl.innerHTML = `Today's answer: ${baseClue}${credit} <span style="color:#2980b9;font-weight:bold">(${wordCount})</span>`;
 }
 
 function applyHint2() {
@@ -1554,7 +1555,7 @@ function loadArchivePuzzle(dateKey, puzzleIdx) {
   // Update display
   const mm = dateKey.split('-')[1], dd = dateKey.split('-')[2], yy = dateKey.split('-')[0].slice(2);
   document.getElementById('clue').innerHTML =
-    `Today's answer: ${archivePuzzle.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
+    formatClue(archivePuzzle);
   document.getElementById('puzzle-num').textContent =
     `Archive Puzzle #${puzzleIdx + 1} · ${mm}-${dd}-${yy}`;
 
@@ -1614,7 +1615,7 @@ function returnToToday() {
   const td = String(new Date().getDate()).padStart(2,'0');
   const ty = String(new Date().getFullYear()).slice(2);
   document.getElementById('clue').innerHTML =
-    `Today's answer: ${TODAY_PUZZLE.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>')}`;
+    formatClue(TODAY_PUZZLE);
   document.getElementById('puzzle-num').textContent = `Puzzle #${PUZZLE_NUM} · ${tm}-${td}-${ty}`;
 
   grid = buildGridForPuzzle(TODAY_PUZZLE.sentence, TODAY_KEY).grid;
@@ -1647,6 +1648,13 @@ document.getElementById('archiveBtn').onclick = () => {
   buildArchiveCalendar();
   document.getElementById('archiveModal').classList.add('show');
 };
+/* ── Clue formatter ── */
+function formatClue(puzzle) {
+  const clue = puzzle.clue.replace(/([!?;]+)$/, '<span style="color:#c0392b;font-weight:700;">$1</span>');
+  const credit = puzzle.credit ? ` <span style="opacity:0.4;font-weight:500;font-size:0.9em">(sent by ${puzzle.credit})</span>` : '';
+  return `Today's answer: ${clue}${credit}`;
+}
+
 /* ── Help menu (💡 button) ── */
 let submitType = 'regular';
 
@@ -2289,7 +2297,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v6.2</span>
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.63</span>
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

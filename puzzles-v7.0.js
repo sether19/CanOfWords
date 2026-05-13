@@ -10,7 +10,7 @@ const PUZZLES = [
   { clue: 'Coffee',        sentence: 'aG90IG1vcm5pbmcgZHJpbmsgYnJld2VkIGZyb20gcm9hc3RlZCBiZWFucw==',     type: 'regular', par: 2 }, // Wed May 6
   { clue: 'Avocado',       sentence: 'Y3JlYW15IGZydWl0IHJlcXVpcmVkIHRvIG1ha2UgZ3VhY2Ftb2xl',             type: 'regular', par: 2 }, // Thu May 7
   { clue: 'Calm?',         sentence: 'a25vd24gdG8gY29tZSBiZWZvcmUgdGhlIHN0b3Jt',                         type: 'playful', par: 1 }, // Fri May 8
-  { clue: 'Tofu!',         sentence: 'c2lsa2VuIHNvZnQgZmlybSBleHRyYSBmaXJt',                             type: 'playful', par: 1 }, // Sat May 9
+  { clue: 'Tofu!',         sentence: 'c2lsa2VuIHNvZnQgZmlybSBleHRyYSBmaXJt',                             type: 'playful', par: 2 }, // Sat May 9
   { clue: 'Buffalo;',      sentence: 'bGFyZ2UgYW1lcmljYW4gYmlzb24gY2l0eSBpbiBuZXcgeW9yayBzdGF0ZQ==',     type: 'sunday',  par: 2 }, // Sun May 10
 
   // ── WEEK 2 (May 11) ────────────────────────────────

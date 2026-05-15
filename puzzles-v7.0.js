@@ -23,7 +23,7 @@ const PUZZLES = [
   { clue: 'Pinto;',        sentence: 'c3BlY2tsZWQgaG9yc2UgY29hdCBwYXR0ZXJuIHBvcHVsYXIgdmFyaWV0eSBvZiBiZWFu', type: 'sunday',  par: 3 }, // Sun May 17
 
   // ── WEEK 3 (May 18) ────────────────────────────────
-  { clue: 'G. Washington', sentence: 'Zmlyc3QgcHJlc2lkZW50IG9mIHRoZSBVU0E=',                             type: 'regular', par: 1 }, // Mon May 18
+  { clue: 'G. Washington', sentence: 'Zmlyc3QgcHJlc2lkZW50IG9mIHRoZSB1c2Egd2hvc2UgZmFjZSBncmFjZXMgdGhlIGRvbGxhciBiaWxs', type: 'regular', par: 2 }, // Mon May 18
   { clue: 'Sushi',         sentence: 'amFwYW5lc2UgZGlzaCBvZiByaWNlIGFuZCByYXcgZmlzaCB3cmFwcGVkIGluIHNlYXdlZWQ=', type: 'regular', par: 3 }, // Tue May 19
   { clue: 'Oxygen',        sentence: 'ZWxlbWVudCBlc3NlbnRpYWwgZm9yIGh1bWFuIHJlc3BpcmF0aW9u',             type: 'regular', par: 2 }, // Wed May 20
   { clue: 'The Simpsons',  sentence: 'bG9uZ2VzdCBydW5uaW5nIGFuaW1hdGVkIHNob3cgc2V0IGluIHNwcmluZ2ZpZWxk', type: 'regular', par: 2 }, // Thu May 21

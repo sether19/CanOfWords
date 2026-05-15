@@ -1963,7 +1963,7 @@ function dismissSundayTutorial() {
 
 /* ── Acronym tutorial ── */
 // Show for any puzzle on or after 2026-05-18 (Monday May 19 in UTC, but using local date index)
-const ACRONYM_TUTORIAL_START = '2026-05-19'; // first puzzle with an acronym
+const ACRONYM_TUTORIAL_START = '2026-05-18'; // first puzzle with an acronym
 function shouldShowAcronymTutorial() {
   if (localStorage.getItem('canofwords_acronym_tutorial_seen')) return false;
   if (done) return false;

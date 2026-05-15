@@ -397,6 +397,55 @@
     transition: box-shadow 80ms, transform 80ms;
   }
   #sundayPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+
+  /* ── Acronym tutorial overlay ── */
+  #acronymTutorialOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,31,14,0.6);
+    align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  #acronymTutorialOverlay.show { display: flex; }
+  #acronymTutorialBox {
+    background: #fdf8f0; border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 24px 24px 20px; max-width: 300px; width: 90%;
+    text-align: center; font-family: 'Quicksand', system-ui, sans-serif;
+  }
+  #acronymTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
+  #acronymTutorialBox p { margin: 0 0 12px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  .acronym-demo-row {
+    display: flex; gap: 8px; align-items: flex-start; justify-content: center;
+    background: #ede8de; border-radius: 12px;
+    padding: 12px 8px; margin-bottom: 14px;
+  }
+  .acronym-demo-col {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1;
+  }
+  .acronym-demo-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    opacity: 0.55; color: #2d1f0e;
+  }
+  .acronym-demo-label.wrong { color: #c0392b; opacity: 1; }
+  .acronym-demo-label.right { color: #2a7a2a; opacity: 1; }
+  .acronym-demo-divider {
+    width: 1px; background: rgba(45,31,14,0.12); align-self: stretch; margin-top: 18px;
+  }
+  #acronymDontShow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin-bottom: 14px; font-size: 12px; color: #2d1f0e; opacity: 0.5;
+  }
+  #acronymDontShow input { cursor: pointer; }
+  #acronymPlayBtn {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
+    border: none; border-radius: 12px;
+    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms;
+  }
+  #acronymPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+
   .demo-chip   { animation: chipAppear 2.8s ease-in-out infinite; }
   .grid-wrap { position: relative; display: inline-block; }
   #wormSvg { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; overflow: visible; }
@@ -740,7 +789,7 @@
 <script src="puzzles-v7.0.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.72  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.70  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -779,7 +828,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '5026-05-09-v0.7222222222'; // //UPDATE: date + version on every meaningful push
+const BUILD = '7026-05-15-v0.7333333';
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1912,6 +1961,178 @@ function dismissSundayTutorial() {
   }
 }
 
+/* ── Acronym tutorial ── */
+// Show for any puzzle on or after 2026-05-18 (Monday May 19 in UTC, but using local date index)
+const ACRONYM_TUTORIAL_START = '2026-05-19'; // first puzzle with an acronym
+function shouldShowAcronymTutorial() {
+  if (localStorage.getItem('canofwords_acronym_tutorial_seen')) return false;
+  if (done) return false;
+  // Show if today's puzzle date is on or after the acronym start date
+  const startParts = ACRONYM_TUTORIAL_START.split('-').map(Number);
+  const startMs = Date.UTC(startParts[0], startParts[1]-1, startParts[2]);
+  const todayParts = TODAY_KEY.split('-').map(Number);
+  const todayMs = Date.UTC(todayParts[0], todayParts[1]-1, todayParts[2]);
+  return todayMs >= startMs;
+}
+
+function showAcronymTutorial() {
+  if (!shouldShowAcronymTutorial()) return;
+  document.getElementById('acronymTutorialOverlay').classList.add('show');
+  startAcronymWrongAnimation();
+  startAcronymRightAnimation();
+}
+
+function dismissAcronymTutorial() {
+  if (document.getElementById('acronymDontShowCheck').checked) {
+    localStorage.setItem('canofwords_acronym_tutorial_seen', '1');
+  }
+  document.getElementById('acronymTutorialOverlay').classList.remove('show');
+  // Chain into next tutorial in sequence
+  if (!localStorage.getItem('canofwords_howtoplay_seen')) {
+    setTimeout(showHowToPlay, 300);
+  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
+    setTimeout(showOnboarding, 300);
+  }
+}
+
+function startAcronymWrongAnimation() {
+  const taps = [
+    document.getElementById('acrTap1'),
+    document.getElementById('acrTap2'),
+    document.getElementById('acrTap3'),
+  ];
+  if (!taps[0]) return;
+
+  const CYCLE = 2400; // ms per full cycle
+  let running = true;
+  let startTime = null;
+
+  function frame(ts) {
+    if (!running) return;
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % CYCLE) / CYCLE;
+
+    // Each tap fires sequentially: tap1 at 0–0.25, tap2 at 0.33–0.58, tap3 at 0.66–0.91
+    const tapWindows = [[0, 0.25], [0.33, 0.58], [0.66, 0.91]];
+    taps.forEach((tap, i) => {
+      const [s, e] = tapWindows[i];
+      let op = 0;
+      if (t >= s && t < s + 0.06) op = (t - s) / 0.06;        // fade in
+      else if (t >= s + 0.06 && t < e - 0.06) op = 1;          // hold
+      else if (t >= e - 0.06 && t < e) op = 1 - (t - (e - 0.06)) / 0.06; // fade out
+      tap.setAttribute('opacity', op.toFixed(3));
+    });
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  document.getElementById('acronymPlayBtn').addEventListener('click', () => {
+    running = false;
+    taps.forEach(t => t.setAttribute('opacity', 0));
+  }, { once: true });
+}
+
+function startAcronymRightAnimation() {
+  const finger = document.getElementById('acrDragFinger');
+  const worm   = document.getElementById('acrWormPath');
+  const chip   = document.getElementById('acrChip');
+  const chipTx = document.getElementById('acrChipText');
+  const cells  = [
+    document.getElementById('acrCellR1'),
+    document.getElementById('acrCellR2'),
+    document.getElementById('acrCellR3'),
+  ];
+  if (!finger) return;
+
+  const CYCLE = 2400;
+  const CELL_COLOR = '#b9f6ca';
+  // Cell center x positions
+  const xs = [19, 54, 89];
+  const Y = 19;
+  let running = true;
+  let startTime = null;
+
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  // Build a simple rounded worm rect path covering cells 0..n
+  function wormPath(nCells) {
+    if (nCells < 1) return '';
+    const x1 = 4, x2 = 4 + nCells * 35 - 1, cy = Y, r = 12;
+    return `M${x1+r},${cy-r} H${x2-r} A${r},${r} 0 0 1 ${x2+r-2},${cy} A${r},${r} 0 0 1 ${x2-r},${cy+r} H${x1+r} A${r},${r} 0 0 1 ${x1-r+2},${cy} A${r},${r} 0 0 1 ${x1+r},${cy-r}`;
+  }
+
+  function frame(ts) {
+    if (!running) return;
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % CYCLE) / CYCLE;
+
+    // Phases:
+    // 0–0.05: appear at cell 1
+    // 0.05–0.60: drag across to cell 3
+    // 0.60–0.75: hold, chip appears
+    // 0.75–0.85: fade out finger
+    // 0.85–1.00: chip fades, reset
+
+    let fingerOp = 0, fx = xs[0];
+    let showChip = 0;
+
+    if (t < 0.05) {
+      fingerOp = t / 0.05;
+      fx = xs[0];
+    } else if (t < 0.60) {
+      fingerOp = 1;
+      const progress = (t - 0.05) / 0.55;
+      fx = xs[0] + (xs[2] - xs[0]) * easeInOut(progress);
+    } else if (t < 0.75) {
+      fingerOp = 1 - (t - 0.60) / 0.15;
+      fx = xs[2];
+      showChip = (t - 0.60) / 0.15;
+    } else if (t < 0.85) {
+      fingerOp = 0; fx = xs[2];
+      showChip = 1;
+    } else {
+      fingerOp = 0; fx = xs[0];
+      showChip = 1 - (t - 0.85) / 0.15;
+    }
+
+    finger.setAttribute('cx', fx.toFixed(1));
+    finger.setAttribute('cy', Y);
+    finger.setAttribute('opacity', fingerOp.toFixed(3));
+
+    // Highlight cells as finger passes
+    cells.forEach((c, i) => {
+      const activated = fx >= xs[i] - 2;
+      c.setAttribute('fill', activated && fingerOp > 0.1 ? CELL_COLOR : '#fdf8f0');
+    });
+
+    // Worm path grows with finger
+    const nCells = fx < xs[1] - 2 ? 1 : fx < xs[2] - 2 ? 2 : 3;
+    if (fingerOp > 0.1) {
+      worm.setAttribute('d', wormPath(nCells));
+      worm.setAttribute('opacity', '0.5');
+    } else {
+      worm.setAttribute('opacity', '0');
+      cells.forEach(c => c.setAttribute('fill', '#fdf8f0'));
+    }
+
+    chip.setAttribute('opacity', showChip.toFixed(3));
+    chipTx.setAttribute('opacity', showChip.toFixed(3));
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  document.getElementById('acronymPlayBtn').addEventListener('click', () => {
+    running = false;
+    finger.setAttribute('opacity', 0);
+    worm.setAttribute('opacity', 0);
+    chip.setAttribute('opacity', 0);
+    chipTx.setAttribute('opacity', 0);
+    cells.forEach(c => c.setAttribute('fill', '#fdf8f0'));
+  }, { once: true });
+}
+
 /* ── Onboarding overlay ── */
 function showOnboarding() {
   if (localStorage.getItem('canofwords_tutorial_seen')) return;
@@ -2407,7 +2628,9 @@ if (PUZZLE) {
     requestAnimationFrame(() => requestAnimationFrame(() => replaySolvedState()));
   } else {
     setTimeout(() => {
-      if (ACTIVE_PUZZLE.type === 'sunday' && !localStorage.getItem('canofwords_sunday_tutorial_seen')) {
+      if (shouldShowAcronymTutorial()) {
+        showAcronymTutorial();
+      } else if (ACTIVE_PUZZLE.type === 'sunday' && !localStorage.getItem('canofwords_sunday_tutorial_seen')) {
         showSundayTutorial();
       } else if (ACTIVE_PUZZLE.type === 'playful' && !localStorage.getItem('canofwords_playful_tutorial_seen')) {
         showPlayfulTutorial();
@@ -2506,6 +2729,72 @@ if (PUZZLE) {
   </div>
 </div>
 
+<!-- Acronym tutorial overlay -->
+<div id="acronymTutorialOverlay">
+  <div id="acronymTutorialBox">
+    <h2>🪱 Acronyms & Abbreviations!</h2>
+    <p>Since today's clue <strong>G. Washington</strong> features an abbreviation, the answer sentence will too — similar to a crossword. Drag across all letters in any acronyms in one continuous swipe — treat them just like a regular word!</p>
+
+    <div class="acronym-demo-row">
+      <!-- Wrong side -->
+      <div class="acronym-demo-col">
+        <div class="acronym-demo-label wrong">✗ Don't tap each letter</div>
+        <svg id="acronymWrongSvg" width="108" height="76" viewBox="0 0 108 76">
+          <!-- Three cells in a row -->
+          <rect class="acr-cell-wrong" x="4"  y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <rect class="acr-cell-wrong" x="39" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <rect class="acr-cell-wrong" x="74" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <text x="19"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">U</text>
+          <text x="54"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">S</text>
+          <text x="89"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">A</text>
+          <!-- Three separate small chips below -->
+          <rect x="4"  y="44" width="30" height="22" rx="11" fill="#f8bbd0"/>
+          <text x="19" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">U</text>
+          <rect x="39" y="44" width="30" height="22" rx="11" fill="#b9f6ca"/>
+          <text x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">S</text>
+          <rect x="74" y="44" width="30" height="22" rx="11" fill="#ffe082"/>
+          <text x="89" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">A</text>
+          <!-- Tap finger dots animated separately -->
+          <circle class="acr-tap-dot" id="acrTap1" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+          <circle class="acr-tap-dot" id="acrTap2" cx="54" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+          <circle class="acr-tap-dot" id="acrTap3" cx="89" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+        </svg>
+      </div>
+
+      <div class="acronym-demo-divider"></div>
+
+      <!-- Right side -->
+      <div class="acronym-demo-col">
+        <div class="acronym-demo-label right">✓ One continuous drag</div>
+        <svg id="acronymRightSvg" width="108" height="76" viewBox="0 0 108 76">
+          <!-- Three cells in a row -->
+          <rect id="acrCellR1" x="4"  y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <rect id="acrCellR2" x="39" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <rect id="acrCellR3" x="74" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+          <text x="19"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">U</text>
+          <text x="54"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">S</text>
+          <text x="89"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">A</text>
+          <!-- Worm path drawn as the finger moves -->
+          <path id="acrWormPath" d="" fill="#b9f6ca" opacity="0"/>
+          <!-- One chip at the end -->
+          <rect id="acrChip" x="24" y="44" width="60" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
+          <text id="acrChipText" x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">USA</text>
+          <!-- Single drag finger -->
+          <circle id="acrDragFinger" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+        </svg>
+      </div>
+    </div>
+
+    <p style="font-size:12px;margin:0 0 14px;opacity:0.75;line-height:1.5;text-align:left">This is a standard rule going forward — dragging acronyms as one chip keeps your sentence tray clean and readable!</p>
+
+    <div id="acronymDontShow">
+      <input type="checkbox" id="acronymDontShowCheck">
+      <label for="acronymDontShowCheck">Don't show this again</label>
+    </div>
+    <button id="acronymPlayBtn" onclick="dismissAcronymTutorial()">Got it! 🪱</button>
+  </div>
+</div>
+
 <!-- Onboarding overlay -->
 <div id="onboardingOverlay">
   <div id="onboardingBox">
@@ -2548,7 +2837,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.72</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.73</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

@@ -27,7 +27,7 @@ const PUZZLES = [
     { clue: 'Sushi', sentence: 'amFwYW5lc2UgZGlzaCBvZiByaWNlIGFuZCByYXcgZmlzaCB3cmFwcGVkIGluIHNlYXdlZWQ=', type: 'regular', par: 3 }, // Tue May 19
     { clue: 'Oxygen', sentence: 'Y2hlbWljYWwgZWxlbWVudCBlc3NlbnRpYWwgZm9yIGh1bWFuIHJlc3BpcmF0aW9u', type: 'regular', par: 2 }, // Wed May 20
     { clue: 'The Simpsons', sentence: 'bG9uZ2VzdCBydW5uaW5nIGFuaW1hdGVkIHNob3cgc2V0IGluIHNwcmluZ2ZpZWxk', type: 'regular', par: 2 }, // Thu May 21
-    { clue: 'T-Shirt!', sentence: 'c21hbGwgbWVkaXVtIGxhcmdlIFhMIFhYTCBYWFhM', type: 'playful', par: 3 }, // Fri May 22
+    { clue: 'T-Shirt!', sentence: 'c21hbGwgbWVkaXVtIGxhcmdlIHhsIGRvdWJsZSB4bCB0cmlwbGUgeGw=', type: 'playful', par: 3 }, // Fri May 22
     { clue: 'Sneeze?', sentence: 'Y2F0YWx5c3QgZm9yIHNheWluZyBibGVzcyB5b3U=', type: 'playful', par: 2 }, // Sat May 23
     { clue: 'Sage;', sentence: 'aGVyYiB1c2VkIGluIGNvb2tpbmcgd2lzZSBhbmQga25vd2xlZGdlYWJsZSBwZXJzb24=', type: 'sunday', par: 3 }, // Sun May 24
 

@@ -20,7 +20,7 @@ const PUZZLES = [
     { clue: 'Honey', sentence: 'c3dlZXQgZ29sZGVuIHN5cnVwIG1hZGUgYnkgYmVlcyBpbiBhIGhpdmU=', type: 'regular', par: 1 }, // Thu May 14
     { clue: 'Pizza!', sentence: 'ZG91Z2ggc2F1Y2UgY2hlZXNlIHRvcHBpbmdz', type: 'playful', par: 2 }, // Fri May 15
     { clue: 'Elevator?', sentence: 'Z29pbmcgdXAgZ29pbmcgZG93biBnb2luZyB1cCBnb2luZyBkb3du', type: 'playful', par: 3 }, // Sat May 16
-    { clue: 'Pinto;', sentence: 'c3BlY2tsZWQgaG9yc2UgY29hdCBwYXR0ZXJuIHBvcHVsYXIgdmFyaWV0eSBvZiBiZWFu', type: 'sunday', par: 4 }, // Sun May 17
+    { clue: 'Pinto;', sentence: 'c3BlY2tsZWQgaG9yc2UgY29hdCBwYXR0ZXJuIHBvcHVsYXIgdmFyaWV0eSBvZiBiZWFu', type: 'sunday', par: 3 }, // Sun May 17
 
     // ── WEEK 3 (May 18) ────────────────────────────────
     { clue: 'G. Washington', sentence: 'Zmlyc3QgcHJlc2lkZW50IG9mIHRoZSB1c2Egd2hvc2UgZmFjZSBncmFjZXMgdGhlIGRvbGxhciBiaWxs', type: 'regular', par: 2 }, // Mon May 18

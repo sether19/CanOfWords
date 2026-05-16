@@ -586,6 +586,48 @@
   .modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: #2d1f0e; }
   .modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; }
 
+  /* ── How to Play wizard ── */
+  .htp-step-dots {
+    display: flex; justify-content: center; gap: 6px; margin-bottom: 16px;
+  }
+  .htp-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #d4cbb8; transition: background 250ms, transform 250ms;
+    flex-shrink: 0;
+  }
+  .htp-dot.active { background: #2d1f0e; transform: scale(1.2); }
+  .htp-nav {
+    display: flex; gap: 8px; margin-top: 14px; align-items: center;
+  }
+  .htp-nav-back {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    background: #f0ebe0; box-shadow: 0 2px 0 #c9b99a;
+    border: none; border-radius: 12px;
+    padding: 9px 16px; cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms; opacity: 0.7;
+  }
+  .htp-nav-back:active { box-shadow: 0 0px 0 #c9b99a; transform: translateY(2px); }
+  .htp-nav-next {
+    flex: 1;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
+    border: none; border-radius: 12px;
+    padding: 10px 0; cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms;
+  }
+  .htp-nav-next:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
+  .htp-panel { display: none; }
+  .htp-panel.active { display: block; }
+
+  /* Onboarding demo reused inside wizard */
+  .htp-demo-wrap {
+    background: #ede8de; border-radius: 12px;
+    padding: 12px; margin-bottom: 12px;
+    text-align: center;
+  }
+
   .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #2d1f0e; }
   .how-step-num { font-weight: 700; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.4; }
   .how-example {
@@ -601,40 +643,119 @@
 </head>
 <body>
 
-<!-- How to Play modal -->
+<!-- How to Play wizard (4 steps) -->
 <div id="how-to-play" class="modal-overlay">
-  <div class="modal-box">
-    <h2>How to Play 🪱</h2>
-    <div class="how-step">
-      <span class="how-step-num">1</span>
-      <span>Read the <span style="color:#c0392b;font-weight:700;">answer clue</span> at the top of the board. Your goal is to create a sentence describing the answer.</span>
+  <div class="modal-box" style="max-width:310px;width:92%">
+
+    <!-- Step dots -->
+    <div class="htp-step-dots">
+      <div class="htp-dot active" id="htpDot0"></div>
+      <div class="htp-dot" id="htpDot1"></div>
+      <div class="htp-dot" id="htpDot2"></div>
+      <div class="htp-dot" id="htpDot3"></div>
     </div>
-    <div class="how-example">
-      <strong>Example</strong><br>
-      Answer: <em>Robin</em><br>
-      Question: <em>Sidekick to the superhero Batman</em>
+
+    <!-- Step 1: Rules -->
+    <div class="htp-panel active" id="htpPanel0">
+      <h2 style="margin:0 0 12px;font-size:18px;text-align:center;color:#2d1f0e">How to Play 🪱</h2>
+      <div class="how-step"><span class="how-step-num">1</span><span>Read the <span style="color:#c0392b;font-weight:700;">answer clue</span> at the top. Your goal is to create a sentence describing the answer.</span></div>
+      <div class="how-example">
+        <strong>Example</strong><br>
+        Answer: <em>Robin</em><br>
+        Question: <em>Sidekick to the superhero Batman</em>
+      </div>
+      <div class="how-step"><span class="how-step-num">2</span><span><span style="color:#c0392b;font-weight:700;">Drag</span> across letters to trace words — they can snake in any direction, including backwards.</span></div>
+      <div class="how-step"><span class="how-step-num">3</span><span>Neighboring words in the sentence will have <span style="color:#c0392b;font-weight:700;">touching first/last letters</span> in the grid.</span></div>
+      <div class="how-step"><span class="how-step-num">4</span><span><span style="color:#c0392b;font-weight:700;">Tap</span> or <span style="color:#c0392b;font-weight:700;">Drag</span> words to 🗑️ to remove them. Use <span style="color:#c0392b;font-weight:700;">Hints</span> if you need a nudge.</span></div>
     </div>
-    <div class="how-step">
-      <span class="how-step-num">2</span>
-      <span><span style="color:#c0392b;font-weight:700;">Drag</span> across letters to trace out words — words can snake in any cardinal direction across the grid, including backwards and upwards.</span>
+
+    <!-- Step 2: Drag tutorial -->
+    <div class="htp-panel" id="htpPanel1">
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Dragging Words 🪱</h2>
+      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Drag across letters in the grid to spell out words. They'll appear as coloured chips below the grid.</p>
+      <div class="htp-demo-wrap">
+        <svg width="240" height="70" viewBox="0 0 240 70">
+          <rect class="demo-cell" x="5"   y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+          <rect class="demo-cell" x="65"  y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+          <rect class="demo-cell" x="125" y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+          <rect class="demo-cell" x="185" y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
+          <text x="30"  y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">W</text>
+          <text x="90"  y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">O</text>
+          <text x="150" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">R</text>
+          <text x="210" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">D</text>
+          <circle class="htp-drag-finger" cy="30" r="12" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+        </svg>
+        <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:#2d1f0e;box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
+      </div>
     </div>
-    <div class="how-step">
-      <span class="how-step-num">3</span>
-      <span>Selected <span style="color:#c0392b;font-weight:700;">words</span> appear in the section below the grid. <span style="color:#c0392b;font-weight:700;">Drag</span> them around to rearrange the sentence into the correct order.</span>
+
+    <!-- Step 3: Tray reorder -->
+    <div class="htp-panel" id="htpPanel2">
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Arranging Words 🪱</h2>
+      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Once you've dragged out your words, drag the chips to rearrange them into the correct sentence order.</p>
+      <div class="htp-demo-wrap">
+        <svg id="htpTraySvg" width="220" height="44" viewBox="0 0 220 44">
+          <rect id="htpTrayChip1" x="4" y="7" width="70" height="30" rx="15" fill="#f8bbd0"/>
+          <text id="htpTrayText1" x="39" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">word</text>
+          <rect id="htpTrayChip2" x="84" y="7" width="86" height="30" rx="15" fill="#b9f6ca"/>
+          <text id="htpTrayText2" x="127" y="27" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#2d1f0e">another</text>
+          <circle id="htpTrayFinger" cx="39" cy="22" r="11" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+        </svg>
+      </div>
+      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">FACT:</span> Neighboring words will have touching first/last letters in the grid — use this to figure out the order!</em></p>
     </div>
-    <div class="how-step">
-      <span class="how-step-num">4</span>
-      <span>Neighboring words in the sentence will have <span style="color:#c0392b;font-weight:700;">touching first/last letters</span> in the grid.</span>
+
+    <!-- Step 4: Acronyms -->
+    <div class="htp-panel" id="htpPanel3">
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Acronyms & Abbreviations 🪱</h2>
+      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Some puzzles include acronyms or abbreviations. Drag across all their letters in one continuous swipe — treat them just like a regular word!</p>
+      <div class="acronym-demo-row" style="margin-bottom:10px">
+        <div class="acronym-demo-col">
+          <div class="acronym-demo-label wrong">✗ Don't tap each letter</div>
+          <svg width="108" height="76" viewBox="0 0 108 76">
+            <rect x="4"  y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <rect x="39" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <rect x="74" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <text x="19" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">U</text>
+            <text x="54" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">S</text>
+            <text x="89" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">A</text>
+            <rect x="4"  y="44" width="30" height="22" rx="11" fill="#f8bbd0"/>
+            <text x="19" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">U</text>
+            <rect x="39" y="44" width="30" height="22" rx="11" fill="#b9f6ca"/>
+            <text x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">S</text>
+            <rect x="74" y="44" width="30" height="22" rx="11" fill="#ffe082"/>
+            <text x="89" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e">A</text>
+            <circle id="htpAcrTap1" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+            <circle id="htpAcrTap2" cx="54" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+            <circle id="htpAcrTap3" cx="89" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+          </svg>
+        </div>
+        <div class="acronym-demo-divider"></div>
+        <div class="acronym-demo-col">
+          <div class="acronym-demo-label right">✓ One continuous drag</div>
+          <svg width="108" height="76" viewBox="0 0 108 76">
+            <rect id="htpAcrCellR1" x="4"  y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <rect id="htpAcrCellR2" x="39" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <rect id="htpAcrCellR3" x="74" y="4" width="30" height="30" rx="5" fill="#fdf8f0"/>
+            <text x="19" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">U</text>
+            <text x="54" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">S</text>
+            <text x="89" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">A</text>
+            <path id="htpAcrWorm" d="" fill="#b9f6ca" opacity="0"/>
+            <rect id="htpAcrChip" x="24" y="44" width="60" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
+            <text id="htpAcrChipTx" x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">USA</text>
+            <circle id="htpAcrDrag" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
+          </svg>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#2d1f0e;opacity:0.7;margin:0;line-height:1.5;text-align:left">Dragging an acronym as one chip keeps your sentence tray clean and readable!</p>
     </div>
-    <div class="how-step">
-      <span class="how-step-num">5</span>
-      <span><span style="color:#c0392b;font-weight:700;">Tap</span> or <span style="color:#c0392b;font-weight:700;">Drag</span> words to 🗑️ to remove any words from the sentence.</span>
+
+    <!-- Nav -->
+    <div class="htp-nav">
+      <button class="htp-nav-back" id="htpBackBtn" onclick="htpNav(-1)" style="display:none">← Back</button>
+      <button class="htp-nav-next" id="htpNextBtn" onclick="htpNav(1)">Next →</button>
     </div>
-    <div class="how-step">
-      <span class="how-step-num">6</span>
-      <span>Tap the <span style="color:#c0392b;font-weight:700;">Hints</span> button if you need a nudge in the right direction.</span>
-    </div>
-    <button class="modal-close" onclick="dismissHowToPlay()">Got it!</button>
+
   </div>
 </div>
 
@@ -789,11 +910,11 @@
 <script src="puzzles-v7.1.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.71  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.72  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
-// Puzzle data loaded from external file (see puzzles-v7.0.js)
+// Puzzle data loaded from external file (see puzzles-v7.1.js)
 
 /* =====================================================================
    DAILY PUZZLE SELECTION
@@ -828,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '8026-05-15-v0.74444414694';
+const BUILD = '2026-05-15-v0.75';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -849,10 +970,20 @@ if (alreadyPlayedToday) {
 /* =====================================================================
    HELP & MODALS
    ===================================================================== */
-function openHelp() { document.getElementById('how-to-play').classList.add('show'); }
+function openHelp() { openHowToPlay(); }
 document.getElementById('helpBtn').onclick = openHelp;
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) {
+      overlay.classList.remove('show');
+      // Stop wizard animations if closing how-to-play
+      if (overlay.id === 'how-to-play') {
+        htpAnimRunning.drag = false;
+        htpAnimRunning.tray = false;
+        htpAnimRunning.acr  = false;
+      }
+    }
+  });
 });
 
 /* =====================================================================
@@ -1850,7 +1981,7 @@ document.getElementById('helpBtn').onclick = (e) => {
 };
 document.getElementById('howToPlayBtn').onclick = () => {
   document.getElementById('helpMenu').style.display = 'none';
-  document.getElementById('how-to-play').classList.add('show');
+  openHowToPlay();
 };
 document.getElementById('submitPuzzleBtn').onclick = () => {
   document.getElementById('helpMenu').style.display = 'none';
@@ -1908,18 +2039,177 @@ async function submitPuzzle() {
   }
 }
 
-/* ── How To Play auto-show ── */
+/* ── How To Play wizard ── */
+const HTP_STEPS = 4;
+let htpCurrentStep = 0;
+let htpAnimRunning = { drag: false, tray: false, acr: false };
+
 function showHowToPlay() {
   if (localStorage.getItem('canofwords_howtoplay_seen')) return;
+  openHowToPlay();
+}
+
+function openHowToPlay() {
+  htpCurrentStep = 0;
+  htpRenderStep();
   document.getElementById('how-to-play').classList.add('show');
 }
 
+function htpNav(dir) {
+  htpCurrentStep = Math.max(0, Math.min(HTP_STEPS - 1, htpCurrentStep + dir));
+  htpRenderStep();
+}
+
+function htpRenderStep() {
+  // Panels
+  for (let i = 0; i < HTP_STEPS; i++) {
+    document.getElementById(`htpPanel${i}`).classList.toggle('active', i === htpCurrentStep);
+    document.getElementById(`htpDot${i}`).classList.toggle('active', i === htpCurrentStep);
+  }
+  // Back button
+  const back = document.getElementById('htpBackBtn');
+  back.style.display = htpCurrentStep === 0 ? 'none' : '';
+  // Next button label
+  const next = document.getElementById('htpNextBtn');
+  next.textContent = htpCurrentStep === HTP_STEPS - 1 ? 'Got it! 🪱' : 'Next →';
+  if (htpCurrentStep === HTP_STEPS - 1) {
+    next.onclick = dismissHowToPlay;
+  } else {
+    next.onclick = () => htpNav(1);
+  }
+  // Stop all anims then start the right one
+  htpAnimRunning.drag = false;
+  htpAnimRunning.tray = false;
+  htpAnimRunning.acr  = false;
+  if (htpCurrentStep === 1) { htpAnimRunning.drag = true; htpStartDragAnim(); }
+  if (htpCurrentStep === 2) { htpAnimRunning.tray = true; htpStartTrayAnim(); }
+  if (htpCurrentStep === 3) { htpAnimRunning.acr  = true; htpStartAcrWrongAnim(); htpStartAcrRightAnim(); }
+}
+
 function dismissHowToPlay() {
+  htpAnimRunning.drag = false;
+  htpAnimRunning.tray = false;
+  htpAnimRunning.acr  = false;
   localStorage.setItem('canofwords_howtoplay_seen', '1');
   document.getElementById('how-to-play').classList.remove('show');
   if (!localStorage.getItem('canofwords_tutorial_seen')) {
     setTimeout(showOnboarding, 300);
   }
+}
+
+/* ── Wizard animations ── */
+function htpStartDragAnim() {
+  const finger = document.querySelector('.htp-drag-finger');
+  if (!finger) return;
+  const DURATION = 2800, START_X = 30, END_X = 210, Y = 30;
+  let startTime = null;
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function frame(ts) {
+    if (!htpAnimRunning.drag) { finger.setAttribute('opacity', 0); return; }
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % DURATION) / DURATION;
+    let opacity = 0, x = START_X;
+    if (t < 0.08) opacity = t / 0.08;
+    else if (t < 0.80) opacity = 1;
+    else if (t < 0.92) opacity = 1 - (t - 0.80) / 0.12;
+    if (t >= 0.08 && t <= 0.80) x = START_X + (END_X - START_X) * easeInOut((t - 0.08) / 0.72);
+    else if (t > 0.80) x = END_X;
+    finger.setAttribute('cx', x.toFixed(1));
+    finger.setAttribute('cy', Y);
+    finger.setAttribute('opacity', opacity.toFixed(3));
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function htpStartTrayAnim() {
+  const finger = document.getElementById('htpTrayFinger');
+  const chip1  = document.getElementById('htpTrayChip1');
+  const text1  = document.getElementById('htpTrayText1');
+  const chip2  = document.getElementById('htpTrayChip2');
+  const text2  = document.getElementById('htpTrayText2');
+  if (!finger) return;
+  const DURATION = 3200;
+  const c1StartX=4, c1EndX=130, c2StartX=84, c2EndX=4, fStartX=39;
+  let startTime = null;
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function frame(ts) {
+    if (!htpAnimRunning.tray) { finger.setAttribute('opacity', 0); return; }
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % DURATION) / DURATION;
+    let fingerOpacity = 0, c1x = c1StartX, c2x = c2StartX;
+    if (t < 0.10) { fingerOpacity = t / 0.10; }
+    else if (t < 0.55) { const p = easeInOut((t-0.10)/0.45); fingerOpacity=1; c1x=c1StartX+(c1EndX-c1StartX)*p; c2x=c2StartX+(c2EndX-c2StartX)*p; }
+    else if (t < 0.70) { fingerOpacity = 1-(t-0.55)/0.15; c1x=c1EndX; c2x=c2EndX; }
+    else if (t < 0.85) { fingerOpacity=0; c1x=c1EndX; c2x=c2EndX; }
+    else { fingerOpacity=0; c1x=c1StartX; c2x=c2StartX; }
+    finger.setAttribute('cx', (c1x+35).toFixed(1));
+    finger.setAttribute('opacity', fingerOpacity.toFixed(3));
+    chip1.setAttribute('x', c1x.toFixed(1)); text1.setAttribute('x', (c1x+35).toFixed(1));
+    chip2.setAttribute('x', c2x.toFixed(1)); text2.setAttribute('x', (c2x+43).toFixed(1));
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function htpStartAcrWrongAnim() {
+  const taps = [document.getElementById('htpAcrTap1'), document.getElementById('htpAcrTap2'), document.getElementById('htpAcrTap3')];
+  if (!taps[0]) return;
+  const CYCLE = 2400; let startTime = null;
+  function frame(ts) {
+    if (!htpAnimRunning.acr) { taps.forEach(t => t.setAttribute('opacity', 0)); return; }
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % CYCLE) / CYCLE;
+    const tapWindows = [[0,0.25],[0.33,0.58],[0.66,0.91]];
+    taps.forEach((tap, i) => {
+      const [s, e] = tapWindows[i]; let op = 0;
+      if (t>=s && t<s+0.06) op=(t-s)/0.06;
+      else if (t>=s+0.06 && t<e-0.06) op=1;
+      else if (t>=e-0.06 && t<e) op=1-(t-(e-0.06))/0.06;
+      tap.setAttribute('opacity', op.toFixed(3));
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function htpStartAcrRightAnim() {
+  const finger = document.getElementById('htpAcrDrag');
+  const worm   = document.getElementById('htpAcrWorm');
+  const chip   = document.getElementById('htpAcrChip');
+  const chipTx = document.getElementById('htpAcrChipTx');
+  const cells  = [document.getElementById('htpAcrCellR1'), document.getElementById('htpAcrCellR2'), document.getElementById('htpAcrCellR3')];
+  if (!finger) return;
+  const CYCLE=2400, CELL_COLOR='#b9f6ca', xs=[19,54,89], Y=19; let startTime=null;
+  function easeInOut(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
+  function wormPath(n){
+    if(n<1)return'';
+    const x1=4,x2=4+n*35-1,cy=Y,r=12;
+    return`M${x1+r},${cy-r} H${x2-r} A${r},${r} 0 0 1 ${x2+r-2},${cy} A${r},${r} 0 0 1 ${x2-r},${cy+r} H${x1+r} A${r},${r} 0 0 1 ${x1-r+2},${cy} A${r},${r} 0 0 1 ${x1+r},${cy-r}`;
+  }
+  function frame(ts) {
+    if (!htpAnimRunning.acr) {
+      finger.setAttribute('opacity',0); worm.setAttribute('opacity',0);
+      chip.setAttribute('opacity',0); chipTx.setAttribute('opacity',0);
+      cells.forEach(c=>c.setAttribute('fill','#fdf8f0')); return;
+    }
+    if (!startTime) startTime=ts;
+    const t=((ts-startTime)%CYCLE)/CYCLE;
+    let fingerOp=0,fx=xs[0],showChip=0;
+    if(t<0.05){fingerOp=t/0.05;fx=xs[0];}
+    else if(t<0.60){fingerOp=1;fx=xs[0]+(xs[2]-xs[0])*easeInOut((t-0.05)/0.55);}
+    else if(t<0.75){fingerOp=1-(t-0.60)/0.15;fx=xs[2];showChip=(t-0.60)/0.15;}
+    else if(t<0.85){fingerOp=0;fx=xs[2];showChip=1;}
+    else{fingerOp=0;fx=xs[0];showChip=1-(t-0.85)/0.15;}
+    finger.setAttribute('cx',fx.toFixed(1)); finger.setAttribute('cy',Y); finger.setAttribute('opacity',fingerOp.toFixed(3));
+    cells.forEach((c,i)=>c.setAttribute('fill',fx>=xs[i]-2&&fingerOp>0.1?CELL_COLOR:'#fdf8f0'));
+    const nCells=fx<xs[1]-2?1:fx<xs[2]-2?2:3;
+    if(fingerOp>0.1){worm.setAttribute('d',wormPath(nCells));worm.setAttribute('opacity','0.5');}
+    else{worm.setAttribute('opacity','0');cells.forEach(c=>c.setAttribute('fill','#fdf8f0'));}
+    chip.setAttribute('opacity',showChip.toFixed(3)); chipTx.setAttribute('opacity',showChip.toFixed(3));
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 /* ── Playful Weekend tutorial ── */
@@ -1962,7 +2252,7 @@ function dismissSundayTutorial() {
 }
 
 /* ── Acronym tutorial ── */
-// Show for any puzzle on or after 2026-05-18 (Monday May 18 in UTC, but using local date index)
+// Show for any puzzle on or after 2026-05-18 (Monday May 19 in UTC, but using local date index)
 const ACRONYM_TUTORIAL_START = '2026-05-18'; // first puzzle with an acronym
 function shouldShowAcronymTutorial() {
   if (localStorage.getItem('canofwords_acronym_tutorial_seen')) return false;
@@ -2733,7 +3023,7 @@ if (PUZZLE) {
 <div id="acronymTutorialOverlay">
   <div id="acronymTutorialBox">
     <h2>🪱 Acronyms & Abbreviations!</h2>
-    <p>Since Monday's clue <strong>G. Washington</strong> features an abbreviation, the answer sentence will too — similar to a crossword. Drag across all letters in any acronyms in one continuous swipe — treat them just like a regular word!</p>
+    <p>Since today's clue <strong>G. Washington</strong> features an abbreviation, the answer sentence will too — similar to a crossword. Drag across all letters in any acronyms in one continuous swipe — treat them just like a regular word!</p>
 
     <div class="acronym-demo-row">
       <!-- Wrong side -->
@@ -2837,7 +3127,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.74</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.75</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

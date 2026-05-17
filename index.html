@@ -949,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-17-v0.76';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-17-v0.77';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2093,10 +2093,8 @@ function dismissHowToPlay() {
   htpAnimRunning.tray = false;
   htpAnimRunning.acr  = false;
   localStorage.setItem('canofwords_howtoplay_seen', '1');
+  localStorage.setItem('canofwords_tutorial_seen', '1'); // wizard covers onboarding
   document.getElementById('how-to-play').classList.remove('show');
-  if (!localStorage.getItem('canofwords_tutorial_seen')) {
-    setTimeout(showOnboarding, 300);
-  }
 }
 
 /* ── Wizard animations ── */
@@ -2229,8 +2227,6 @@ function dismissPlayfulTutorial() {
   document.getElementById('playfulTutorialOverlay').classList.remove('show');
   if (!localStorage.getItem('canofwords_howtoplay_seen')) {
     setTimeout(showHowToPlay, 300);
-  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
-    setTimeout(showOnboarding, 300);
   }
 }
 
@@ -2248,8 +2244,6 @@ function dismissSundayTutorial() {
   document.getElementById('sundayTutorialOverlay').classList.remove('show');
   if (!localStorage.getItem('canofwords_howtoplay_seen')) {
     setTimeout(showHowToPlay, 300);
-  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
-    setTimeout(showOnboarding, 300);
   }
 }
 
@@ -2279,11 +2273,8 @@ function dismissAcronymTutorial() {
     localStorage.setItem('canofwords_acronym_tutorial_seen', '1');
   }
   document.getElementById('acronymTutorialOverlay').classList.remove('show');
-  // Chain into next tutorial in sequence
   if (!localStorage.getItem('canofwords_howtoplay_seen')) {
     setTimeout(showHowToPlay, 300);
-  } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
-    setTimeout(showOnboarding, 300);
   }
 }
 
@@ -2928,8 +2919,6 @@ if (PUZZLE) {
         showPlayfulTutorial();
       } else if (!localStorage.getItem('canofwords_howtoplay_seen')) {
         showHowToPlay();
-      } else if (!localStorage.getItem('canofwords_tutorial_seen')) {
-        showOnboarding();
       }
     }, 400);
   }
@@ -3129,7 +3118,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.76</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.77</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

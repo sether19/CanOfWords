@@ -907,10 +907,10 @@
   }
 </script>
 
-<script src="puzzles-v7.1.js"></script> <!-- //: puzzle file version -->
+<script src="puzzles-v7.1.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.72  //: version number
+   PUZZLE LIBRARY — VERSION 0.72  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -949,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-16-v0.75';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-17-v0.76';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1194,7 +1194,9 @@ function useHint(n) {
   // Persist hint usage for today's puzzle so it survives archive visits
   if (!archiveMode) {
     const cur = loadState();
-    saveState({ ...cur, dateKey: TODAY_KEY, hintsUsed: [...hintsUsed] });
+    // Only spread existing state if it's actually today's — never carry over archive solved/words
+    const base = (cur.dateKey === TODAY_KEY) ? cur : {};
+    saveState({ ...base, dateKey: TODAY_KEY, hintsUsed: [...hintsUsed] });
   }
   // Fill par circle with hint color
   const hintParColors = { 1: '#9bdcff', 2: '#ffcc80', 3: '#d1c4e9', 4: '#d7c4a0' };
@@ -3127,7 +3129,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.75</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.76</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

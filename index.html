@@ -949,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-17-v0.78';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-17-v0.79';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -975,13 +975,11 @@ document.getElementById('helpBtn').onclick = openHelp;
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) {
+      // Only close non-tutorial modals on backdrop click
+      // Tutorial overlays (how-to-play, acronym, playful, sunday) must be dismissed via button
+      const locked = ['how-to-play', 'acronymTutorialOverlay', 'playfulTutorialOverlay', 'sundayTutorialOverlay'];
+      if (locked.includes(overlay.id)) return;
       overlay.classList.remove('show');
-      // Stop wizard animations if closing how-to-play
-      if (overlay.id === 'how-to-play') {
-        htpAnimRunning.drag = false;
-        htpAnimRunning.tray = false;
-        htpAnimRunning.acr  = false;
-      }
     }
   });
 });
@@ -2251,16 +2249,11 @@ function dismissSundayTutorial() {
 
 /* ── Acronym tutorial ── */
 // Show for any puzzle on or after 2026-05-18 (Monday May 19 in UTC, but using local date index)
-const ACRONYM_TUTORIAL_START = '2026-05-18'; // first puzzle with an acronym
+const ACRONYM_TUTORIAL_DATES = ['2026-05-18', '2026-05-22'];
 function shouldShowAcronymTutorial() {
   if (localStorage.getItem('canofwords_acronym_tutorial_seen')) return false;
   if (done) return false;
-  // Show if today's puzzle date is on or after the acronym start date
-  const startParts = ACRONYM_TUTORIAL_START.split('-').map(Number);
-  const startMs = Date.UTC(startParts[0], startParts[1]-1, startParts[2]);
-  const todayParts = TODAY_KEY.split('-').map(Number);
-  const todayMs = Date.UTC(todayParts[0], todayParts[1]-1, todayParts[2]);
-  return todayMs >= startMs;
+  return ACRONYM_TUTORIAL_DATES.includes(TODAY_KEY);
 }
 
 function showAcronymTutorial() {
@@ -3122,7 +3115,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.78</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.79</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

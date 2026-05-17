@@ -41,21 +41,21 @@ const PUZZLES = [
     { clue: 'Mercury;', sentence: 'Y2xvc2VzdCBwbGFuZXQgdG8gdGhlIHN1biBsZWdlbmRhcnkgcXVlZW4gZnJvbnRtYW4=', type: 'sunday', par: 3 }, // Sun May 31
 
     // ── WEEK 5 (Jun 1) ─────────────────────────────────
-    { clue: 'Marathon', sentence: 'bG9uZyBydW5uaW5nIHJhY2Ugb2YganVzdCBvdmVyIHR3ZW50eSBzaXggbWlsZXM=', type: 'regular', par: 3 }, // Mon Jun 1
+    { clue: 'Marathon', sentence: 'bG9uZyBydW5uaW5nIHJhY2Ugb2YganVzdCBvdmVyIHR3ZW50eSBzaXggbWlsZXM=', type: 'regular', par: 2 }, // Mon Jun 1
     { clue: 'Mount Everest', sentence: 'dGFsbGVzdCBtb3VudGFpbiBwZWFrIG9uIHBsYW5ldCBlYXJ0aA==', type: 'regular', par: 1 }, // Tue Jun 2
     { clue: 'Umbrella', sentence: 'Zm9sZGluZyBjYW5vcHkgY2FycmllZCB0byBzdGF5IGRyeSBpbiB0aGUgcmFpbg==', type: 'regular', par: 2 }, // Wed Jun 3
     { clue: 'Titanic', sentence: 'bmluZXRpZXMgYmVzdCBwaWN0dXJlIG9zY2FyIHdpbm5lcg==', type: 'regular', par: 2 }, // Thu Jun 4
     { clue: 'Monday?', sentence: 'd2lkZWx5IGFncmVlZCB1cG9uIHdvcnN0IGRheSBvZiB0aGUgd2Vlaw==', type: 'playful', par: 3 }, // Fri Jun 5
     { clue: 'Tuesday?', sentence: 'd2lkZWx5IGFncmVlZCB1cG9uIGJlc3QgZGF5IGZvciB0YWNvcw==', type: 'playful', par: 3 }, // Sat Jun 6
-    { clue: 'Wednesday;', sentence: 'd2lkZWx5IGtub3duIGFzIGh1bXAgZGF5IGRhdWdodGVyIGluIHRoZSBhZGRhbXMgZmFtaWx5', type: 'sunday', par: 4 }, // Sun Jun 7
+    { clue: 'Wednesday;', sentence: 'd2lkZWx5IGtub3duIGFzIGh1bXAgZGF5IGRhdWdodGVyIGluIHRoZSBhZGRhbXMgZmFtaWx5', type: 'sunday', par: 3 }, // Sun Jun 7
 
     // ── WEEK 6 (Jun 8) ─────────────────────────────────
     { clue: 'Thermos', sentence: 'aW5zdWxhdGVkIGZsYXNrIHRoYXQga2VlcHMgZHJpbmtzIGhvdCBvciBjb2xk', type: 'regular', par: 2 }, // Mon Jun 8
     { clue: 'Armpit', sentence: 'cGxhY2UgdG8gYXBwbHkgZGVvZG9yYW50IG9yIGFudGlwZXJzcGlyYW50', type: 'regular', par: 2 }, // Tue Jun 9
     { clue: 'Decaf', sentence: 'b3JkZXIgZGV0YWlsIGZvciBjdXN0b21lcnMgYXQgc3RhcmJ1Y2tz', type: 'regular', par: 3 }, // Wed Jun 10
     { clue: 'Seltzer', sentence: 'd2F0ZXIgY2FyYm9uYXRlZCB3aXRoIGNhcmJvbiBkaW94aWRl', type: 'regular', par: 2 }, // Thu Jun 11
-    { clue: 'Bagel!', sentence: 'cGxhaW4gc2VzYW1lIGV2ZXJ5dGhpbmcgcmFpc2luIHB1bXBlcm5pY2tlbA==', type: 'playful', par: 3 }, // Fri Jun 12
-    { clue: 'Bread?', sentence: 'Z3JlYXRlc3QgdGhpbmcgc2luY2UgaXRzZWxmIGFjY29yZGluZyB0byB0aGUgc2F5aW5n', type: 'playful', par: 3 }, // Sat Jun 13
+    { clue: 'Bagel!', sentence: 'cGxhaW4gc2VzYW1lIGV2ZXJ5dGhpbmcgcmFpc2luIHB1bXBlcm5pY2tlbA==', type: 'playful', par: 2 }, // Fri Jun 12
+    { clue: 'Sliced Bread?', sentence: 'aHVtYmxlIGxvYWYgdGhhdCBiZWNhbWUgdGhlIGJlbmNobWFyayBvZiBhbGwgZ3JlYXQgaWRlYXM=', type: 'playful', par: 3 }, // Sat Jun 13
     { clue: 'Ace;', sentence: 'dW50b3VjaGVkIHRlbm5pcyBzZXJ2ZSBoaWdoIGNhcmQgaW4gYSByb3lhbCBmbHVzaA==', type: 'sunday', par: 2 }, // Sun Jun 14
 
     // ── WEEK 7 (Jun 15) ────────────────────────────────

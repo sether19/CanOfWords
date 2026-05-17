@@ -949,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-17-v0.77';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-17-v0.78';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1939,6 +1939,8 @@ function returnToToday() {
       const item = document.getElementById('hint'+n+'Item');
       if (circle) { circle.style.background = HINT_COLORS[n]; circle.classList.add('filled'); circle.textContent = ''; }
       if (item) item.classList.add('used');
+      // Restore matching par circle
+      fillParCircle(HINT_COLORS[n]);
     });
     if (hintsUsed.has(1)) applyHint1();
     if (hintsUsed.has(2)) applyHint2();
@@ -2896,6 +2898,8 @@ if (PUZZLE) {
       const item = document.getElementById('hint'+n+'Item');
       if (circle) { circle.style.background = HINT_COLORS[n]; circle.classList.add('filled'); circle.textContent = ''; }
       if (item) item.classList.add('used');
+      // Restore matching par circle
+      fillParCircle(HINT_COLORS[n]);
     });
     if (hintsUsed.has(1)) applyHint1();
     if (hintsUsed.has(2)) applyHint2();
@@ -3118,7 +3122,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.77</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.78</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

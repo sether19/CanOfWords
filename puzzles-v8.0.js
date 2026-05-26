@@ -34,7 +34,7 @@ const PUZZLES = [
     // ── WEEK 4 (May 25) ────────────────────────────────
     { clue: 'Nostalgia', sentence: 'Yml0dGVyc3dlZXQgbG9uZ2luZyBmb3IgYSB0aW1lIHRoYXQgaGFzIHBhc3NlZA==', type: 'regular', par: 3 }, // Mon May 25
     { clue: 'James Bond', sentence: 'c3B5IHdobyBwcmVmZXJzIGhpcyBtYXJ0aW5pIHNoYWtlbiBub3Qgc3RpcnJlZA==', type: 'regular', par: 2 }, // Tue May 26
-    { clue: "Murphy's Law", sentence: 'YW55dGhpbmcgdGhhdCBjYW4gZ28gd3Jvbmcgd2lsbCBnbyB3cm9uZw==', type: 'regular', par: 2 }, // Wed May 27
+    { clue: "Murphy's Law", sentence: 'YW55dGhpbmcgdGhhdCBjYW4gZ28gd3Jvbmcgd2lsbCBnbyB3cm9uZw==', type: 'regular', par: 1 }, // Wed May 27
     { clue: 'Sunglasses', sentence: 'dGludGVkIGxlbnNlcyB3b3JuIHRvIHNoaWVsZCBleWVzIGZyb20gYnJpZ2h0IGxpZ2h0', type: 'regular', par: 2 }, // Thu May 28
     { clue: 'Corn!', sentence: 'Y29iIHBvcHBlZCBjcmVhbWVkIGZsYWtlcyBjYXJhbWVs', type: 'playful', par: 2 }, // Fri May 29
     { clue: "Slipper?", sentence: 'Z2xhc3MgZm9vdHdlYXIgdGhhdCB3YXMgbGVmdCBiZWhpbmQgYnkgY2luZGVyZWxsYQ==', type: 'playful', par: 1 }, // Sat May 30

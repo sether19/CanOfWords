@@ -907,10 +907,10 @@
   }
 </script>
 
-<script src="puzzles-v8.0.js"></script> <!-- //UPDATE: puzzle file version -->
+<script src="puzzles-v8.1.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.72  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.81  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -949,7 +949,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-26-v0.82';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-28-v0.82';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);

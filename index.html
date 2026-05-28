@@ -531,7 +531,19 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.28);
     color: #2d1f0e;
   }
-  .chip.dragging { opacity: 0.35; }
+  /* ── Chip insert indicator ── */
+  .chip-insert-indicator {
+    width: 3px;
+    min-width: 3px;
+    height: 32px;
+    background: #2d1f0e;
+    border-radius: 2px;
+    opacity: 0.35;
+    flex-shrink: 0;
+    align-self: center;
+    pointer-events: none;
+    transition: opacity 150ms;
+  }
   .chip.drag-over { outline: 2px dashed rgba(0,0,0,0.3); outline-offset: 2px; }
   .chip-ghost {
     position: fixed; pointer-events: none; z-index: 999;
@@ -801,9 +813,10 @@
     <button id="archiveBackBtn" style="display:none;font-size:10px;font-weight:700;padding:0 8px;height:30px;border-radius:15px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;white-space:nowrap" onclick="returnToToday()">← Today</button>
     <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">📅</button>
     <div style="position:relative">
-      <button id="helpBtn" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;">💡</button>
+      <button id="helpBtn" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;position:relative;">💡<span id="helpDot" style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:#e8b0b0;display:none;"></span></button>
       <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:#faf6ef;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
         <div id="howToPlayBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);">📖 How to Play</div>
+        <div id="settingsBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);">⚙️ Settings</div>
         <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;">💡 Submit a Puzzle</div>
       </div>
     </div>
@@ -949,7 +962,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-28-v0.82';   //UPDATE: build force fresh reload
+const BUILD = '2026-05-29-v0.83';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -971,7 +984,6 @@ if (alreadyPlayedToday) {
    HELP & MODALS
    ===================================================================== */
 function openHelp() { openHowToPlay(); }
-document.getElementById('helpBtn').onclick = openHelp;
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) {
@@ -1516,7 +1528,7 @@ function renderChips() {
   });
 }
 
-/* ── Chip drag-to-reorder / trash ── */
+/* ── Chip drag-to-insert / trash ── */
 let chipDrag = null;
 
 function startChipDrag(e) {
@@ -1540,7 +1552,7 @@ function startChipDrag(e) {
   document.body.appendChild(ghost);
 
   chip.classList.add('dragging');
-  chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
+  chipDrag = { idx, ghost, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top, insertAt: null };
 
   trashBtn.classList.add('trash-mode');
   document.onselectstart = () => false;
@@ -1548,19 +1560,99 @@ function startChipDrag(e) {
   document.onpointerup   = endChipDrag;
 }
 
+function getInsertIndex(x, y) {
+  const chips = Array.from(document.querySelectorAll('.chip:not(.dragging)'));
+  if (!chips.length) return 0;
+
+  const trayRect = rowEl.getBoundingClientRect();
+  if (y < trayRect.top - 20 || y > trayRect.bottom + 20) return null;
+
+  // Find which row the pointer is on by comparing Y to chip centers
+  // then within that row find the insertion point by X
+  let bestInsertIdx = null;
+  let bestDist = Infinity;
+
+  // Build list of insertion slots: before each chip, and after the last
+  const slots = [];
+  chips.forEach((chip, i) => {
+    const r = chip.getBoundingClientRect();
+    const realIdx = parseInt(chip.dataset.idx);
+    // "before this chip" slot sits at the left edge of the chip, vertically centered
+    slots.push({ x: r.left, y: r.top + r.height / 2, insertAt: realIdx });
+  });
+  // "after last chip" slot
+  const lastChip = chips[chips.length - 1];
+  const lastRect = lastChip.getBoundingClientRect();
+  slots.push({
+    x: lastRect.right,
+    y: lastRect.top + lastRect.height / 2,
+    insertAt: parseInt(lastChip.dataset.idx) + 1
+  });
+
+  // Find the closest slot to the pointer using 2D distance
+  // but weight Y distance more heavily so rows don't bleed into each other
+  slots.forEach(slot => {
+    const dx = x - slot.x;
+    const dy = (y - slot.y) * 2; // weight vertical distance
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestInsertIdx = slot.insertAt;
+    }
+  });
+
+  return bestInsertIdx;
+}
+
+function renderInsertIndicator(insertAt) {
+  const existing = rowEl.querySelector('.chip-insert-indicator');
+  if (existing) existing.remove();
+  if (insertAt === null) return;
+
+  const indicator = document.createElement('div');
+  indicator.className = 'chip-insert-indicator';
+
+  const chips = Array.from(rowEl.querySelectorAll('.chip:not(.dragging)'));
+  if (!chips.length) { rowEl.appendChild(indicator); return; }
+
+  // Find the chip element whose dataset.idx matches insertAt
+  const targetChip = chips.find(c => parseInt(c.dataset.idx) === insertAt);
+  if (targetChip) {
+    rowEl.insertBefore(indicator, targetChip);
+  } else {
+    // Insert at end
+    rowEl.appendChild(indicator);
+  }
+}
+
 function moveChipDrag(e) {
   if (!chipDrag) return;
   chipDrag.ghost.style.left = (e.clientX - chipDrag.offsetX) + 'px';
   chipDrag.ghost.style.top  = (e.clientY - chipDrag.offsetY) + 'px';
 
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('drag-over'));
-  const target = chipUnderPointer(e.clientX, e.clientY);
-  if (target && parseInt(target.dataset.idx) !== chipDrag.idx) target.classList.add('drag-over');
-
+  // Check trash
   const tr = trashBtn.getBoundingClientRect();
   const overTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
                     e.clientY >= tr.top  && e.clientY <= tr.bottom;
   trashBtn.classList.toggle('trash-hover', overTrash);
+
+  if (overTrash) {
+    chipDrag.insertAt = null;
+    renderInsertIndicator(null);
+    return;
+  }
+
+  if (trayMode === 'insert') {
+    const insertAt = getInsertIndex(e.clientX, e.clientY);
+    chipDrag.insertAt = insertAt;
+    renderInsertIndicator(insertAt);
+  } else {
+    // Swap mode — highlight target chip instead
+    renderInsertIndicator(null);
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('drag-over'));
+    const target = chipUnderPointer(e.clientX, e.clientY);
+    if (target && parseInt(target.dataset.idx) !== chipDrag.idx) target.classList.add('drag-over');
+  }
 }
 
 function endChipDrag(e) {
@@ -1571,6 +1663,10 @@ function endChipDrag(e) {
 
   trashBtn.classList.remove('trash-mode', 'trash-hover');
 
+  // Remove insert indicator
+  const indicator = rowEl.querySelector('.chip-insert-indicator');
+  if (indicator) indicator.remove();
+
   const tr = trashBtn.getBoundingClientRect();
   const onTrash = e.clientX >= tr.left && e.clientX <= tr.right &&
                   e.clientY >= tr.top  && e.clientY <= tr.bottom;
@@ -1578,7 +1674,8 @@ function endChipDrag(e) {
   if (onTrash) {
     const removed = words.splice(chipDrag.idx, 1)[0];
     wordHistory = wordHistory.filter(id => id !== removed.id);
-  } else {
+  } else if (trayMode === 'swap') {
+    // Classic swap — exchange with whatever chip is under pointer
     const target = chipUnderPointer(e.clientX, e.clientY);
     if (target) {
       const toIdx = parseInt(target.dataset.idx);
@@ -1586,6 +1683,14 @@ function endChipDrag(e) {
         const moved = words.splice(chipDrag.idx, 1)[0];
         words.splice(toIdx, 0, moved);
       }
+    }
+  } else {
+    // Insert mode — splice into indicated position
+    if (chipDrag.insertAt !== null && chipDrag.insertAt !== chipDrag.idx && chipDrag.insertAt !== chipDrag.idx + 1) {
+      const moved = words.splice(chipDrag.idx, 1)[0];
+      let target = chipDrag.insertAt;
+      if (target > chipDrag.idx) target--;
+      words.splice(target, 0, moved);
     }
   }
 
@@ -2026,6 +2131,10 @@ document.getElementById('howToPlayBtn').onclick = () => {
   document.getElementById('helpMenu').style.display = 'none';
   openHowToPlay();
 };
+document.getElementById('settingsBtn').onclick = () => {
+  document.getElementById('helpMenu').style.display = 'none';
+  openSettings();
+};
 document.getElementById('submitPuzzleBtn').onclick = () => {
   document.getElementById('helpMenu').style.display = 'none';
   document.getElementById('submitError').style.display = 'none';
@@ -2081,6 +2190,39 @@ async function submitPuzzle() {
     btn.textContent = 'Submit 🪱';
   }
 }
+
+/* ── Settings & tray mode ── */
+const TRAY_MODE_KEY = 'canofwords_tray_mode';
+const SETTINGS_SEEN_KEY = 'canofwords_settings_seen';
+let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'swap'; // default to swap
+
+// Show notification dot on 💡 if player hasn't opened Settings yet
+if (!localStorage.getItem(SETTINGS_SEEN_KEY)) {
+  document.getElementById('helpDot').style.display = 'block';
+}
+
+function openSettings() {
+  document.getElementById('modeSwap').checked   = trayMode === 'swap';
+  document.getElementById('modeInsert').checked = trayMode === 'insert';
+  updateModeHighlight();
+  document.getElementById('settingsModal').classList.add('show');
+  // Dismiss the notification dot
+  localStorage.setItem(SETTINGS_SEEN_KEY, '1');
+  document.getElementById('helpDot').style.display = 'none';
+}
+
+function updateModeHighlight() {
+  document.getElementById('modeSwapLabel').style.background   = trayMode === 'swap'   ? '#d0eacc' : '#ede8de';
+  document.getElementById('modeInsertLabel').style.background = trayMode === 'insert' ? '#d0eacc' : '#ede8de';
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target.name === 'trayMode') {
+    trayMode = e.target.value;
+    localStorage.setItem(TRAY_MODE_KEY, trayMode);
+    updateModeHighlight();
+  }
+});
 
 /* ── How To Play wizard ── */
 const HTP_STEPS = 4;
@@ -2962,6 +3104,38 @@ if (PUZZLE) {
   }
 }
 </script>
+<!-- Settings modal -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:300px;width:92%">
+    <h2>⚙️ Settings</h2>
+
+    <div style="margin-bottom:18px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:#2d1f0e;margin-bottom:10px">WORD ARRANGEMENT</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+
+        <label id="modeSwapLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:#ede8de;transition:background 150ms">
+          <input type="radio" name="trayMode" value="swap" id="modeSwap" style="margin-top:2px;cursor:pointer;accent-color:#2d1f0e">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#2d1f0e">Swap mode</div>
+            <div style="font-size:11px;color:#2d1f0e;opacity:0.6;margin-top:2px;line-height:1.4">Drag a word onto another to exchange their positions</div>
+          </div>
+        </label>
+
+        <label id="modeInsertLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:#ede8de;transition:background 150ms">
+          <input type="radio" name="trayMode" value="insert" id="modeInsert" style="margin-top:2px;cursor:pointer;accent-color:#2d1f0e">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#2d1f0e">Insert mode</div>
+            <div style="font-size:11px;color:#2d1f0e;opacity:0.6;margin-top:2px;line-height:1.4">Drag a word and slide it into any position between other words</div>
+          </div>
+        </label>
+
+      </div>
+    </div>
+
+    <button class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('show')" style="width:100%;text-align:center">Done</button>
+  </div>
+</div>
+
 <!-- Puzzle Submission modal -->
 <div id="submitModal" class="modal-overlay">
   <div class="modal-box" style="max-width:320px;width:92%">
@@ -3156,7 +3330,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.82</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.83</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

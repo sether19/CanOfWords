@@ -2194,7 +2194,7 @@ async function submitPuzzle() {
 /* ── Settings & tray mode ── */
 const TRAY_MODE_KEY = 'canofwords_tray_mode';
 const SETTINGS_SEEN_KEY = 'canofwords_settings_seen';
-let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'swap'; // default to swap
+let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'insert'; // default to swap
 
 // Show notification dot on 💡 if player hasn't opened Settings yet
 if (!localStorage.getItem(SETTINGS_SEEN_KEY)) {

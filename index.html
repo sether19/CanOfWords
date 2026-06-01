@@ -307,6 +307,9 @@
     display: grid; grid-template-columns: repeat(7, 1fr);
     gap: 4px; margin-bottom: 4px;
   }
+  #archiveCalendar {
+    position: relative;
+  }
   .archive-day-label {
     text-align: center; font-size: 9px; opacity: 0.4;
     font-weight: 700; letter-spacing: 0.05em; padding-bottom: 4px;
@@ -315,8 +318,8 @@
     aspect-ratio: 1; border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
     font-size: 10px; font-weight: 700; cursor: pointer;
-    background: #fdf8f0; color: #2d1f0e;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    background: #ede8de; color: #2d1f0e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: transform 80ms;
   }
   .archive-day:active { transform: scale(0.92); }
@@ -327,6 +330,18 @@
   .archive-month-label {
     font-size: 11px; font-weight: 700; opacity: 0.5;
     margin: 8px 0 4px; letter-spacing: 0.05em;
+  }
+
+  /* Pulsing green ring on archive nav arrow */
+  @keyframes archivePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(122,184,112,0.6), 0 2px 0 #c9b99a; }
+    70%  { box-shadow: 0 0 0 5px rgba(122,184,112,0), 0 2px 0 #c9b99a; }
+    100% { box-shadow: 0 0 0 0 rgba(122,184,112,0), 0 2px 0 #c9b99a; }
+  }
+  .archive-nav-pulse {
+    animation: archivePulse 1.8s ease-out infinite;
+    outline: 2px solid #7ab870;
+    outline-offset: 1px;
   }
   /* ── Playful Weekend tutorial overlay ── */
   #playfulTutorialOverlay {
@@ -811,7 +826,7 @@
   </div>
   <div style="display:flex;gap:6px;align-items:center">
     <button id="archiveBackBtn" style="display:none;font-size:10px;font-weight:700;padding:0 8px;height:30px;border-radius:15px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;white-space:nowrap" onclick="returnToToday()">← Today</button>
-    <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">📅</button>
+    <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;">📅</button>
     <div style="position:relative">
       <button id="helpBtn" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;position:relative;">💡<span id="helpDot" style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:#e8b0b0;display:none;"></span></button>
       <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:#faf6ef;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
@@ -962,7 +977,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-05-29-v0.83';   //UPDATE: build force fresh reload
+const BUILD = '2026-056-1-v0.84';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1835,6 +1850,61 @@ function getArchiveStateKey(dateKey) { return 'canofwords_archive_' + dateKey; }
 
 let archiveCalendarMonth = null; // { year, month } currently displayed
 
+function updateArchiveBtn() {
+  const btn = document.getElementById('archiveBtn');
+  if (!btn) return;
+  // Check if ANY past puzzle (before today) is unsolved
+  const startMs = (() => { const p = PUZZLE_START_DATE.split('-').map(Number); return Date.UTC(p[0],p[1]-1,p[2]); })();
+  const todayMs = (() => { const p = TODAY_KEY.split('-').map(Number); return Date.UTC(p[0],p[1]-1,p[2]); })();
+  let hasUnsolved = false;
+  let d = new Date(startMs);
+  let idx = 0;
+  while (d.getTime() < todayMs && idx < PUZZLES.length) {
+    const yyyy = d.getUTCFullYear();
+    const mm   = String(d.getUTCMonth()+1).padStart(2,'0');
+    const dd   = String(d.getUTCDate()).padStart(2,'0');
+    const dateKey = `${yyyy}-${mm}-${dd}`;
+    const solved = !!localStorage.getItem(getArchiveStateKey(dateKey));
+    if (!solved) { hasUnsolved = true; break; }
+    d.setUTCDate(d.getUTCDate() + 1);
+    idx++;
+  }
+  if (hasUnsolved) btn.classList.add('archive-nav-pulse');
+  else btn.classList.remove('archive-nav-pulse');
+}
+
+function hasUnsolvedInEarlierMonths() {
+  // Check all puzzle dates before the current calendar month
+  const startDate = new Date(PUZZLE_START_DATE + 'T00:00:00');
+  const today = new Date(TODAY_KEY + 'T00:00:00');
+  const viewMs = Date.UTC(archiveCalendarMonth.year, archiveCalendarMonth.month, 1);
+
+  const startParts = PUZZLE_START_DATE.split('-').map(Number);
+  const startMs = Date.UTC(startParts[0], startParts[1]-1, startParts[2]);
+
+  let idx = 0;
+  const d = new Date(startMs);
+  while (d <= today) {
+    const yyyy = d.getUTCFullYear();
+    const mm   = String(d.getUTCMonth()+1).padStart(2,'0');
+    const dd   = String(d.getUTCDate()).padStart(2,'0');
+    const dateKey = `${yyyy}-${mm}-${dd}`;
+    const dateMs = Date.UTC(yyyy, d.getUTCMonth(), d.getUTCDate());
+
+    // Only check dates in months BEFORE the currently viewed month
+    if (dateMs < viewMs) {
+      const isSolved = dateKey === TODAY_KEY
+        ? (() => { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); return s && s.solved && s.dateKey === TODAY_KEY; } catch(e) { return false; } })()
+        : !!localStorage.getItem(getArchiveStateKey(dateKey));
+      if (!isSolved) return true;
+    }
+    d.setUTCDate(d.getUTCDate() + 1);
+    idx++;
+    if (idx >= PUZZLES.length) break;
+  }
+  return false;
+}
+
 function buildArchiveCalendar() {
   const startDate = new Date(PUZZLE_START_DATE + 'T00:00:00');
   const today = new Date(TODAY_KEY + 'T00:00:00');
@@ -1864,6 +1934,9 @@ function buildArchiveCalendar() {
   prevBtn.textContent = '←';
   prevBtn.style.cssText = 'width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;';
   prevBtn.disabled = isFirst;
+  if (!isFirst && hasUnsolvedInEarlierMonths()) {
+    prevBtn.classList.add('archive-nav-pulse');
+  }
   prevBtn.onclick = () => {
     let { year, month } = archiveCalendarMonth;
     month--;
@@ -1893,32 +1966,34 @@ function buildArchiveCalendar() {
   nav.appendChild(nextBtn);
   cal.appendChild(nav);
 
-  // Day labels
-  const dayLabels = ['M','T','W','T','F','S','S'];
+  // Day labels — Sunday first
+  const dayLabels = ['S','M','T','W','T','F','S'];
   const header = document.createElement('div');
   header.className = 'archive-week-row';
-  dayLabels.forEach(l => {
+  dayLabels.forEach((l, i) => {
     const d = document.createElement('div');
     d.className = 'archive-day-label';
+    d.style.position = 'relative';
+    // Small divider line after Sun (i=0) and after Fri (i=5, before Sat)
+    if (i === 0) d.style.borderRight = '1px solid rgba(45,31,14,0.2)';
+    if (i === 5) d.style.borderRight = '1px solid rgba(45,31,14,0.2)';
     d.textContent = l;
     header.appendChild(d);
   });
   cal.appendChild(header);
 
-  // Find first Monday of the month's display (Monday on or before 1st of month)
+  // Find first Sunday on or before the 1st of the month
   const firstOfMonth = new Date(archiveCalendarMonth.year, archiveCalendarMonth.month, 1);
-  const firstMonday = new Date(firstOfMonth);
-  const dow = firstMonday.getDay();
-  const offsetToMon = dow === 0 ? -6 : 1 - dow;
-  firstMonday.setDate(firstMonday.getDate() + offsetToMon);
+  const firstSunday = new Date(firstOfMonth);
+  const dow = firstSunday.getDay(); // 0=Sun
+  firstSunday.setDate(firstSunday.getDate() - dow);
 
-  let current = new Date(firstMonday);
+  let current = new Date(firstSunday);
+  const lastOfMonth = new Date(archiveCalendarMonth.year, archiveCalendarMonth.month + 1, 0);
 
-  // Build weeks that overlap with this month
-  while (current.getMonth() <= archiveCalendarMonth.month && current.getFullYear() <= archiveCalendarMonth.year ||
-         current <= today && current.getMonth() === archiveCalendarMonth.month) {
-
-    // Stop if the week starts after the month
+  // Build all weeks that contain days in this month
+  while (current <= lastOfMonth) {
+    // Stop if the week starts after the month entirely
     if (current.getMonth() > archiveCalendarMonth.month && current.getFullYear() >= archiveCalendarMonth.year) break;
 
     const row = document.createElement('div');
@@ -1929,6 +2004,8 @@ function buildArchiveCalendar() {
       const cellDate = new Date(current);
       cellDate.setDate(current.getDate() + d);
 
+      // Weekend divider lines handled by CSS on .archive-week-row
+
       const mm = String(cellDate.getMonth()+1).padStart(2,'0');
       const dd = String(cellDate.getDate()).padStart(2,'0');
       const yyyy = cellDate.getFullYear();
@@ -1938,9 +2015,9 @@ function buildArchiveCalendar() {
       // Not in this month
       if (cellDate.getMonth() !== archiveCalendarMonth.month) {
         cell.className = 'archive-day empty';
-      } else if (cellDate < startDate || puzzleIdx >= PUZZLES.length) {
+      } else if (cellDate < startDate) {
         cell.className = 'archive-day empty';
-      } else if (cellDate > today) {
+      } else if (cellDate > today || puzzleIdx >= PUZZLES.length) {
         cell.className = 'archive-day future';
         cell.textContent = cellDate.getDate();
       } else {
@@ -2194,7 +2271,7 @@ async function submitPuzzle() {
 /* ── Settings & tray mode ── */
 const TRAY_MODE_KEY = 'canofwords_tray_mode';
 const SETTINGS_SEEN_KEY = 'canofwords_settings_seen';
-let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'insert'; // default to swap
+let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'insert'; // default to insert
 
 // Show notification dot on 💡 if player hasn't opened Settings yet
 if (!localStorage.getItem(SETTINGS_SEEN_KEY)) {
@@ -2929,6 +3006,7 @@ function checkCompletion(manual) {
   }
   localStorage.setItem('canofwords_tutorial_seen', '1');
   localStorage.setItem('canofwords_tray_tutorial_seen', '1');
+  updateArchiveBtn();
   document.body.classList.add('solved');
   document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
   words.flatMap(w => w.cells)
@@ -3066,6 +3144,7 @@ if (PUZZLE) {
   initPar();
   redraw();
   setTimeout(checkUpgrade, 500);
+  updateArchiveBtn();
   // Restore hints from saved state if mid-puzzle today (not yesterday's hints)
   if (savedState && savedState.hintsUsed && savedState.dateKey === TODAY_KEY && !alreadyPlayedToday) {
     hintsUsed = new Set(savedState.hintsUsed);
@@ -3330,7 +3409,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.83</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.84</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

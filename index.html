@@ -340,7 +340,7 @@
   }
   .archive-nav-pulse {
     animation: archivePulse 1.8s ease-out infinite;
-    outline: 2px solid #8cdeb3;
+    outline: 2px solid #7ab870;
     outline-offset: 1px;
   }
   /* ── Playful Weekend tutorial overlay ── */
@@ -680,6 +680,8 @@
       <div class="htp-dot" id="htpDot1"></div>
       <div class="htp-dot" id="htpDot2"></div>
       <div class="htp-dot" id="htpDot3"></div>
+      <div class="htp-dot" id="htpDot4"></div>
+      <div class="htp-dot" id="htpDot5"></div>
     </div>
 
     <!-- Step 1: Rules -->
@@ -775,6 +777,31 @@
         </div>
       </div>
       <p style="font-size:12px;color:#2d1f0e;opacity:0.7;margin:0;line-height:1.5;text-align:left">Dragging an acronym as one chip keeps your sentence tray clean and readable!</p>
+    </div>
+
+    <!-- Step 5: Playful Weekend -->
+    <div class="htp-panel" id="htpPanel4">
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Playful Weekend 🪱</h2>
+      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Friday and Saturday puzzles are a little more <strong>fun and unconventional</strong> — expect wordplay, unusual sentence structures, and answers that might make you smile.</p>
+      <div class="how-example" style="margin-bottom:10px">
+        You'll see <span style="color:#c0392b;font-weight:700;">!</span> or <span style="color:#c0392b;font-weight:700;">?</span> with the clue to signal it's a Playful puzzle.<br><br>
+        <strong>Example</strong><br>
+        Clue: <em>Snooze<span style="color:#c0392b;font-weight:700;">!</span></em><br>
+        Answer: <em>nine more minutes of sleep please</em>
+      </div>
+      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">TIP:</span> Think outside the box — the sentence might be a list, a joke, or a deliberately weird description!</em></p>
+    </div>
+
+    <!-- Step 6: Semicolon Sunday -->
+    <div class="htp-panel" id="htpPanel5">
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Semicolon Sunday 🪱</h2>
+      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Sunday puzzles contain <strong>two separate groups of words</strong> that both describe the clue — joined by a semicolon in the answer.</p>
+      <div class="sunday-example">
+        <strong>Example</strong><br>
+        Answer: <em>Robin<span style="color:#c0392b;font-weight:700;">;</span></em><br>
+        Question: <em>red breasted songbird sidekick to the superhero batman</em>
+      </div>
+      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">Reminder:</span> Neighboring words still have touching first/last letters in the grid — the same rule applies across both halves!</em></p>
     </div>
 
     <!-- Nav -->
@@ -977,7 +1004,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-056-1-v0.84';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-1-v0.8444';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2302,7 +2329,7 @@ document.addEventListener('change', (e) => {
 });
 
 /* ── How To Play wizard ── */
-const HTP_STEPS = 4;
+const HTP_STEPS = 6;
 let htpCurrentStep = 0;
 let htpAnimRunning = { drag: false, tray: false, acr: false };
 

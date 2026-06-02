@@ -1004,7 +1004,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-1-v0.8444';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-1-v0.85';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -3436,7 +3436,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.84</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.85</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

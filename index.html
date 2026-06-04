@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪱</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Can of Words 🪱</title>
+<title>Can of Words🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -18,7 +18,40 @@
   * { touch-action: pan-x pan-y; }
   .cell, .chip { touch-action: none; }
 
-  :root { --cell: 40px; }
+  :root {
+    --cell: 40px;
+    /* ── Light theme (default) ── */
+    --bg-page:        #FAF6EF;
+    --bg-cell:        #fdf8f0;
+    --bg-frame:       #d4cbb8;
+    --bg-tray:        #d4cbb8;
+    --bg-btn:         #f0ebe0;
+    --bg-btn-shadow:  #c9b99a;
+    --bg-modal:       #fdf8f0;
+    --bg-overlay:     rgba(45,31,14,0.45);
+    --bg-menu:        #faf6ef;
+    --bg-status:      #ede8de;
+    --bg-hint-circle: #ede8de;
+    --text-main:      #2d1f0e;
+    --text-sub:       rgba(45,31,14,0.6);
+    --border-modal:   rgba(0,0,0,0.06);
+  }
+  [data-theme="dark"] {
+    --bg-page:        #2e2418;
+    --bg-cell:        #4a3a28;
+    --bg-frame:       #5a4832;
+    --bg-tray:        #5a4832;
+    --bg-btn:         #4a3a28;
+    --bg-btn-shadow:  #2e2418;
+    --bg-modal:       #3a2e20;
+    --bg-overlay:     rgba(0,0,0,0.65);
+    --bg-menu:        #3a2e20;
+    --bg-status:      #4a3a28;
+    --bg-hint-circle: #4a3a28;
+    --text-main:      #f0e6d3;
+    --text-sub:       rgba(240,230,211,0.55);
+    --border-modal:   rgba(255,255,255,0.09);
+  }
   @media (max-width: 480px) {
     :root { --cell: min(44px, calc((100vw - 24px - 16px) / 8)); }
   }
@@ -33,25 +66,25 @@
   }
   .top-bar-left { display: flex; flex-direction: column; }
   .title-group { display: flex; flex-direction: column; }
-  .game-title { font-size: 22px; font-weight: 700; line-height: 1; color: #2d1f0e; }
+  .game-title { font-size: 22px; font-weight: 700; line-height: 1; color: var(--text-main); }
   .subtitle-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
   .status-square {
     width: 28px; height: 28px; flex-shrink: 0;
-    background: #ede8de; border-radius: 6px;
+    background: var(--bg-status); border-radius: 6px;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
     display: flex; align-items: center; justify-content: center;
     font-size: 20px; line-height: 1;
   }
-  .subtitle { font-size: 12px; opacity: 0.6; color: #2d1f0e; }
+  .subtitle { font-size: 12px; opacity: 0.6; color: var(--text-main); }
   .puzzle-num-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  .puzzle-num { font-size: 11px; opacity: 0.45; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; color: #2d1f0e; }
+  .puzzle-num { font-size: 11px; opacity: 0.45; letter-spacing: 0.03em; transition: color 300ms, opacity 300ms; color: var(--text-main); }
   .puzzle-num.solved { opacity: 1; color: #2a7a2a; }
 
   /* Hint circles below hints button */
   .hint-circles { display: flex; gap: 5px; align-items: center; justify-content: center; }
   .hint-circle {
     width: 10px; height: 10px; border-radius: 50%;
-    background: #ede8de;
+    background: var(--bg-hint-circle);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
     flex-shrink: 0;
     transition: background 400ms ease, box-shadow 400ms ease;
@@ -63,9 +96,11 @@
   body {
     font-family: 'Quicksand', system-ui, sans-serif;
     font-weight: 600;
-    background: #FAF6EF;
+    background: var(--bg-page);
     display: flex; flex-direction: column; align-items: center;
     padding: 20px;
+    color: var(--text-main);
+    transition: background 300ms, color 300ms;
   }
   @media (max-width: 480px) {
     body { padding-top: 8px; padding-bottom: 20px; padding-left: 12px; padding-right: 12px; }
@@ -79,15 +114,15 @@
   button {
     font-family: 'Quicksand', system-ui, sans-serif;
     font-size: 13px; font-weight: 600;
-    padding: 4px 10px; background: #f0ebe0;
+    padding: 4px 10px; background: var(--bg-btn);
     border: none; border-radius: 10px;
-    box-shadow: 0 2px 0 #c9b99a, 0 3px 6px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: box-shadow 80ms, transform 80ms;
+    box-shadow: 0 2px 0 var(--bg-btn-shadow), 0 3px 6px rgba(0,0,0,0.1);
+    cursor: pointer; color: #2d1f0e;
+    transition: box-shadow 80ms, transform 80ms, background 300ms;
   }
   button:disabled { opacity: .5; cursor: default; }
   button:active:not(:disabled) {
-    box-shadow: 0 0px 0 #c9b99a, 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: 0 0px 0 var(--bg-btn-shadow), 0 1px 3px rgba(0,0,0,0.08);
     transform: translateY(2px);
   }
 
@@ -100,7 +135,7 @@
 
   .frame {
     padding: 10px;
-    background-color: #d4cbb8;
+    background-color: var(--bg-frame);
     background-image: repeating-linear-gradient(
       45deg,
       rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px,
@@ -109,6 +144,7 @@
     border-radius: 16px;
     box-shadow: inset 0 2px 8px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.08);
     position: relative; z-index: 1;
+    transition: background-color 300ms;
   }
   .grid {
     display: grid;
@@ -117,13 +153,14 @@
     gap: 3px;
   }
   .cell {
-    width: var(--cell); height: var(--cell); background: #fdf8f0;
+    width: var(--cell); height: var(--cell); background: var(--bg-cell);
     display: flex; align-items: center; justify-content: center;
     font-size: 17px; font-weight: 700;
     user-select: none; color: #2d1f0e;
     position: relative; z-index: 1;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: background 150ms;
   }
   .cell.hint4-circle { color: #2d1f0e; }
   .selected {
@@ -162,17 +199,17 @@
   }
   #onboardingOverlay.show { display: flex; }
   #onboardingBox {
-    background: #fdf8f0;
+    background: var(--bg-modal);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px;
     max-width: 300px; width: 90%;
     text-align: center;
   }
-  #onboardingBox h2 { margin: 0 0 4px; font-size: 20px; color: #2d1f0e; }
-  #onboardingBox p { margin: 0 0 16px; font-size: 13px; color: #2d1f0e; opacity: 0.7; line-height: 1.5; }
+  #onboardingBox h2 { margin: 0 0 4px; font-size: 20px; color: var(--text-main); }
+  #onboardingBox p { margin: 0 0 16px; font-size: 13px; color: var(--text-main); opacity: 0.7; line-height: 1.5; }
   #onboardingDemo {
-    background: #ede8de;
+    background: var(--bg-status);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 16px;
@@ -186,7 +223,7 @@
     border: none; border-radius: 12px;
     font-family: 'Quicksand', system-ui, sans-serif;
     font-size: 14px; font-weight: 700;
-    color: #2d1f0e;
+    color: var(--text-main);
     padding: 10px 28px;
     cursor: pointer;
     transition: box-shadow 80ms, transform 80ms;
@@ -226,7 +263,7 @@
   }
   #trayTutorialOverlay.show { display: flex; }
   #trayTutorialBox {
-    background: #fdf8f0;
+    background: var(--bg-modal);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px;
@@ -234,10 +271,10 @@
     text-align: center;
     font-family: 'Quicksand', system-ui, sans-serif;
   }
-  #trayTutorialBox h3 { margin: 0 0 8px; font-size: 16px; color: #2d1f0e; font-weight: 700; }
-  #trayTutorialBox p { margin: 0 0 14px; font-size: 13px; color: #2d1f0e; opacity: 0.7; line-height: 1.5; }
+  #trayTutorialBox h3 { margin: 0 0 8px; font-size: 16px; color: var(--text-main); font-weight: 700; }
+  #trayTutorialBox p { margin: 0 0 14px; font-size: 13px; color: var(--text-main); opacity: 0.7; line-height: 1.5; }
   #trayTutorialDemo {
-    background: #ede8de; border-radius: 12px;
+    background: var(--bg-status); border-radius: 12px;
     padding: 12px; margin-bottom: 14px;
   }
   #trayTutorialDismiss {
@@ -245,7 +282,7 @@
     font-size: 14px; font-weight: 700;
     background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
     border: none; border-radius: 12px;
-    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    padding: 10px 28px; cursor: pointer; color: var(--text-main);
     transition: box-shadow 80ms, transform 80ms;
   }
   #trayTutorialDismiss:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
@@ -253,7 +290,7 @@
   /* ── Par circles ── */
   .par-circle {
     width: 8px; height: 8px; border-radius: 50%;
-    background: #d4cbb8;
+    background: var(--bg-frame);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     flex-shrink: 0;
     transition: background 400ms ease, box-shadow 400ms ease;
@@ -265,7 +302,7 @@
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     font-size: 10px; font-weight: 600;
-    color: #2d1f0e; opacity: 0.18;
+    color: var(--text-main); opacity: 0.18;
     pointer-events: none; letter-spacing: 0.02em;
     text-align: center; padding: 4px 8px;
   }
@@ -280,19 +317,19 @@
   }
   #upgradeModal.show { display: flex; cursor: default; }
   #upgradeBox {
-    background: #fdf8f0; border-radius: 20px;
+    background: var(--bg-modal); border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px; max-width: 300px; width: 90%;
     text-align: center; font-family: 'Quicksand', system-ui, sans-serif;
   }
-  #upgradeBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
-  #upgradeBox p { margin: 0 0 14px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  #upgradeBox h2 { margin: 0 0 10px; font-size: 18px; color: var(--text-main); }
+  #upgradeBox p { margin: 0 0 14px; font-size: 13px; color: var(--text-main); opacity: 0.75; line-height: 1.5; text-align: left; }
   #upgradeBtn {
     font-family: 'Quicksand', system-ui, sans-serif;
     font-size: 14px; font-weight: 700;
     background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
     border: none; border-radius: 12px;
-    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    padding: 10px 28px; cursor: pointer; color: var(--text-main);
     transition: box-shadow 80ms, transform 80ms; width: 100%;
   }
   #upgradeBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
@@ -318,14 +355,14 @@
     aspect-ratio: 1; border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
     font-size: 10px; font-weight: 700; cursor: pointer;
-    background: #ede8de; color: #2d1f0e;
+    background: var(--bg-status); color: var(--text-main);
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: transform 80ms;
   }
   .archive-day:active { transform: scale(0.92); }
   .archive-day.solved { background: #d0eacc; color: #2a5a2a; }
   .archive-day.today { box-shadow: 0 0 0 2px #c0392b; }
-  .archive-day.future { background: #ede8de; color: #2d1f0e; opacity: 0.3; cursor: default; pointer-events: none; }
+  .archive-day.future { background: var(--bg-status); color: var(--text-main); opacity: 0.3; cursor: default; pointer-events: none; }
   .archive-day.empty { background: transparent; box-shadow: none; cursor: default; pointer-events: none; }
   .archive-month-label {
     font-size: 11px; font-weight: 700; opacity: 0.5;
@@ -352,16 +389,16 @@
   }
   #playfulTutorialOverlay.show { display: flex; }
   #playfulTutorialBox {
-    background: #fdf8f0; border-radius: 20px;
+    background: var(--bg-modal); border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px; max-width: 300px; width: 90%;
     text-align: center; font-family: 'Quicksand', system-ui, sans-serif;
   }
-  #playfulTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
-  #playfulTutorialBox p { margin: 0 0 12px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  #playfulTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: var(--text-main); }
+  #playfulTutorialBox p { margin: 0 0 12px; font-size: 13px; color: var(--text-main); opacity: 0.75; line-height: 1.5; text-align: left; }
   #playfulDontShow {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; margin-bottom: 14px; font-size: 12px; color: #2d1f0e; opacity: 0.5;
+    gap: 6px; margin-bottom: 14px; font-size: 12px; color: var(--text-main); opacity: 0.5;
   }
   #playfulDontShow input { cursor: pointer; }
   #playfulPlayBtn {
@@ -369,7 +406,7 @@
     font-size: 14px; font-weight: 700;
     background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
     border: none; border-radius: 12px;
-    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    padding: 10px 28px; cursor: pointer; color: var(--text-main);
     transition: box-shadow 80ms, transform 80ms;
   }
   #playfulPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
@@ -382,7 +419,7 @@
   }
   #sundayTutorialOverlay.show { display: flex; }
   #sundayTutorialBox {
-    background: #fdf8f0;
+    background: var(--bg-modal);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px;
@@ -390,17 +427,17 @@
     text-align: center;
     font-family: 'Quicksand', system-ui, sans-serif;
   }
-  #sundayTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
-  #sundayTutorialBox p { margin: 0 0 12px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  #sundayTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: var(--text-main); }
+  #sundayTutorialBox p { margin: 0 0 12px; font-size: 13px; color: var(--text-main); opacity: 0.75; line-height: 1.5; text-align: left; }
   .sunday-example {
-    background: #ede8de; border-radius: 10px;
+    background: var(--bg-status); border-radius: 10px;
     padding: 10px 12px; font-size: 12px; margin: 8px 0 14px;
-    line-height: 1.7; color: #2d1f0e; text-align: left;
+    line-height: 1.7; color: var(--text-main); text-align: left;
   }
   .sunday-example strong { font-size: 13px; }
   #sundayDontShow {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; margin-bottom: 14px; font-size: 12px; color: #2d1f0e; opacity: 0.5;
+    gap: 6px; margin-bottom: 14px; font-size: 12px; color: var(--text-main); opacity: 0.5;
   }
   #sundayDontShow input { cursor: pointer; }
   #sundayPlayBtn {
@@ -408,7 +445,7 @@
     font-size: 14px; font-weight: 700;
     background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
     border: none; border-radius: 12px;
-    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    padding: 10px 28px; cursor: pointer; color: var(--text-main);
     transition: box-shadow 80ms, transform 80ms;
   }
   #sundayPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
@@ -422,16 +459,16 @@
   }
   #acronymTutorialOverlay.show { display: flex; }
   #acronymTutorialBox {
-    background: #fdf8f0; border-radius: 20px;
+    background: var(--bg-modal); border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     padding: 24px 24px 20px; max-width: 300px; width: 90%;
     text-align: center; font-family: 'Quicksand', system-ui, sans-serif;
   }
-  #acronymTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: #2d1f0e; }
-  #acronymTutorialBox p { margin: 0 0 12px; font-size: 13px; color: #2d1f0e; opacity: 0.75; line-height: 1.5; text-align: left; }
+  #acronymTutorialBox h2 { margin: 0 0 10px; font-size: 18px; color: var(--text-main); }
+  #acronymTutorialBox p { margin: 0 0 12px; font-size: 13px; color: var(--text-main); opacity: 0.75; line-height: 1.5; text-align: left; }
   .acronym-demo-row {
     display: flex; gap: 8px; align-items: flex-start; justify-content: center;
-    background: #ede8de; border-radius: 12px;
+    background: var(--bg-status); border-radius: 12px;
     padding: 12px 8px; margin-bottom: 14px;
   }
   .acronym-demo-col {
@@ -439,7 +476,7 @@
   }
   .acronym-demo-label {
     font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
-    opacity: 0.55; color: #2d1f0e;
+    opacity: 0.55; color: var(--text-main);
   }
   .acronym-demo-label.wrong { color: #c0392b; opacity: 1; }
   .acronym-demo-label.right { color: #2a7a2a; opacity: 1; }
@@ -448,7 +485,7 @@
   }
   #acronymDontShow {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; margin-bottom: 14px; font-size: 12px; color: #2d1f0e; opacity: 0.5;
+    gap: 6px; margin-bottom: 14px; font-size: 12px; color: var(--text-main); opacity: 0.5;
   }
   #acronymDontShow input { cursor: pointer; }
   #acronymPlayBtn {
@@ -456,7 +493,7 @@
     font-size: 14px; font-weight: 700;
     background: #d0eacc; box-shadow: 0 2px 0 #7ab870;
     border: none; border-radius: 12px;
-    padding: 10px 28px; cursor: pointer; color: #2d1f0e;
+    padding: 10px 28px; cursor: pointer; color: var(--text-main);
     transition: box-shadow 80ms, transform 80ms;
   }
   #acronymPlayBtn:active { box-shadow: 0 0px 0 #7ab870; transform: translateY(2px); }
@@ -477,6 +514,10 @@
     pointer-events: none;
     color: #9c7bb5;
   }
+  [data-theme="dark"] .cell.hint3-fade {
+    opacity: 0.1;
+    color: #9c7bb5;
+  }
 
   /* Hint 4 — raised circle under first letters in tan tint */
   .cell.hint4-circle::before {
@@ -493,7 +534,7 @@
   .hints-menu {
     display: none; position: absolute;
     bottom: calc(100% + 6px); left: 0;
-    width: 190px; background: #faf6ef;
+    width: 190px; background: var(--bg-menu);
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     z-index: 500; overflow: hidden;
@@ -501,8 +542,8 @@
   .hints-menu.show { display: block; }
   .hint-item {
     padding: 9px 14px; font-size: 12px; font-weight: 600;
-    cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);
-    display: flex; align-items: center;
+    cursor: pointer; border-bottom: 1px solid var(--border-modal);
+    display: flex; align-items: center; color: #2d1f0e;
   }
   .hint-item:last-child { border-bottom: none; }
   .hint-item:hover { filter: brightness(0.95); }
@@ -523,7 +564,7 @@
     display: flex; flex-wrap: wrap; justify-content: center;
     gap: 6px; min-height: 48px; padding: 8px 6px;
     position: relative;
-    background-color: #d4cbb8;
+    background-color: var(--bg-tray);
     background-image: repeating-linear-gradient(
       45deg,
       rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
@@ -532,11 +573,12 @@
     border-radius: 12px;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
     position: relative;
+    transition: background-color 300ms;
   }
   .sentence-row.has-chips::before { display: none; }
   .sentence-instruction {
     font-size: 11px; opacity: 0.4; text-align: center;
-    margin-top: 3px; color: #2d1f0e;
+    margin-top: 3px; color: var(--text-main);
   }
   .chip {
     display: inline-flex; align-items: center;
@@ -567,11 +609,11 @@
     font-family: 'Quicksand', system-ui, sans-serif; opacity: 0.9;
     box-shadow: 0 6px 16px rgba(0,0,0,0.35);
     user-select: none; -webkit-user-select: none;
-    color: #2d1f0e;
+    color: var(--text-main);
     display: flex; align-items: center; justify-content: center;
   }
   .sentence-row, .bottom-bar { user-select: none; -webkit-user-select: none; }
-  .sentence-empty { font-size: 12px; opacity: 0.35; align-self: center; padding: 0 8px; pointer-events: none; color: #2d1f0e; }
+  .sentence-empty { font-size: 12px; opacity: 0.35; align-self: center; padding: 0 8px; pointer-events: none; color: var(--text-main); }
 
   @keyframes shake {
     0%   { transform: translateX(0); }
@@ -588,6 +630,7 @@
     100% { transform: scale(1); }
   }
   body.solved .cell:not(.selected) { opacity: 0.35; }
+  [data-theme="dark"] body.solved .cell:not(.selected) { opacity: 0.15; }
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
@@ -599,19 +642,19 @@
 
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(45,31,14,0.45);
+    background: var(--bg-overlay);
     align-items: center; justify-content: center;
     z-index: 100;
   }
   .modal-overlay.show { display: flex; }
   .modal-box {
-    background: #fdf8f0;
+    background: var(--bg-modal);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     padding: 24px 26px; max-width: 300px; width: 90%; text-align: left;
   }
-  .modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: #2d1f0e; }
-  .modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; }
+  .modal-box h2 { margin: 0 0 12px; font-size: 18px; text-align: center; color: var(--text-main); }
+  .modal-close { display: block; margin: 16px auto 0; padding: 8px 24px; border-radius: 12px; color: var(--text-main); }
 
   /* ── How to Play wizard ── */
   .htp-step-dots {
@@ -619,7 +662,7 @@
   }
   .htp-dot {
     width: 7px; height: 7px; border-radius: 50%;
-    background: #d4cbb8; transition: background 250ms, transform 250ms;
+    background: var(--bg-frame); transition: background 250ms, transform 250ms;
     flex-shrink: 0;
   }
   .htp-dot.active { background: #2d1f0e; transform: scale(1.2); }
@@ -650,22 +693,22 @@
 
   /* Onboarding demo reused inside wizard */
   .htp-demo-wrap {
-    background: #ede8de; border-radius: 12px;
+    background: var(--bg-status); border-radius: 12px;
     padding: 12px; margin-bottom: 12px;
     text-align: center;
   }
 
-  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #2d1f0e; }
+  .how-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: var(--text-main); }
   .how-step-num { font-weight: 700; font-size: 15px; flex-shrink: 0; width: 18px; opacity: 0.4; }
   .how-example {
-    background: #ede8de; border-radius: 10px;
-    padding: 10px 12px; font-size: 12px; margin: 8px 0 10px; line-height: 1.7; color: #2d1f0e;
+    background: var(--bg-status); border-radius: 10px;
+    padding: 10px 12px; font-size: 12px; margin: 8px 0 10px; line-height: 1.7; color: var(--text-main);
   }
   .how-example strong { font-size: 13px; }
 
   #already-played .modal-box { text-align: center; }
-  #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.7; color: #2d1f0e; }
-  .ap-answer { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: #2d1f0e; }
+  #already-played .modal-box p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.7; color: var(--text-main); }
+  .ap-answer { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: var(--text-main); }
 </style>
 </head>
 <body>
@@ -686,7 +729,7 @@
 
     <!-- Step 1: Rules -->
     <div class="htp-panel active" id="htpPanel0">
-      <h2 style="margin:0 0 12px;font-size:18px;text-align:center;color:#2d1f0e">How to Play 🪱</h2>
+      <h2 style="margin:0 0 12px;font-size:18px;text-align:center;color:var(--text-main)">How to Play 🪱</h2>
       <div class="how-step"><span class="how-step-num">1</span><span>Read the <span style="color:#c0392b;font-weight:700;">answer clue</span> at the top. Your goal is to create a sentence describing the answer.</span></div>
       <div class="how-example">
         <strong>Example</strong><br>
@@ -700,8 +743,8 @@
 
     <!-- Step 2: Drag tutorial -->
     <div class="htp-panel" id="htpPanel1">
-      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Dragging Words 🪱</h2>
-      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Drag across letters in the grid to spell out words. They'll appear as coloured chips below the grid.</p>
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:var(--text-main)">Dragging Words 🪱</h2>
+      <p style="font-size:13px;color:var(--text-main);opacity:0.75;margin:0 0 10px;line-height:1.5">Drag across letters in the grid to spell out words. They'll appear as coloured chips below the grid.</p>
       <div class="htp-demo-wrap">
         <svg width="240" height="70" viewBox="0 0 240 70">
           <rect class="demo-cell" x="5"   y="5" width="50" height="50" rx="6" style="--hi:#b9f6ca"/>
@@ -714,14 +757,14 @@
           <text x="210" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#2d1f0e">D</text>
           <circle class="htp-drag-finger" cy="30" r="12" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
         </svg>
-        <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:#2d1f0e;box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
+        <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:var(--text-main);box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
       </div>
     </div>
 
     <!-- Step 3: Tray reorder -->
     <div class="htp-panel" id="htpPanel2">
-      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Arranging Words 🪱</h2>
-      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Once you've dragged out your words, drag the chips to rearrange them into the correct sentence order.</p>
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:var(--text-main)">Arranging Words 🪱</h2>
+      <p style="font-size:13px;color:var(--text-main);opacity:0.75;margin:0 0 10px;line-height:1.5">Once you've dragged out your words, drag the chips to rearrange them into the correct sentence order.</p>
       <div class="htp-demo-wrap">
         <svg id="htpTraySvg" width="220" height="44" viewBox="0 0 220 44">
           <rect id="htpTrayChip1" x="4" y="7" width="70" height="30" rx="15" fill="#f8bbd0"/>
@@ -731,13 +774,13 @@
           <circle id="htpTrayFinger" cx="39" cy="22" r="11" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
         </svg>
       </div>
-      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">FACT:</span> Neighboring words will have touching first/last letters in the grid — use this to figure out the order!</em></p>
+      <p style="font-size:12px;color:var(--text-main);opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">FACT:</span> Neighboring words will have touching first/last letters in the grid — use this to figure out the order!</em></p>
     </div>
 
     <!-- Step 4: Acronyms -->
     <div class="htp-panel" id="htpPanel3">
-      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Acronyms & Abbreviations 🪱</h2>
-      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5">Some puzzles include acronyms or abbreviations. Drag across all their letters in one continuous swipe — treat them just like a regular word!</p>
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:var(--text-main)">Acronyms & Abbreviations 🪱</h2>
+      <p style="font-size:13px;color:var(--text-main);opacity:0.75;margin:0 0 10px;line-height:1.5">Some puzzles include acronyms or abbreviations. Drag across all their letters in one continuous swipe — treat them just like a regular word!</p>
       <div class="acronym-demo-row" style="margin-bottom:10px">
         <div class="acronym-demo-col">
           <div class="acronym-demo-label wrong">✗ Don't tap each letter</div>
@@ -769,39 +812,38 @@
             <text x="19" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">T</text>
             <text x="54" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">N</text>
             <text x="89" y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">T</text>
-            <path id="htpAcrWorm" d="" fill="#b9f6ca" opacity="0"/>
-            <rect id="htpAcrChip" x="24" y="44" width="60" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
-            <text id="htpAcrChipTx" x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">TNT</text>
+            <rect id="htpAcrChip" x="14" y="50" width="80" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
+            <text id="htpAcrChipTx" x="54" y="65" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">TNT</text>
             <circle id="htpAcrDrag" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
           </svg>
         </div>
       </div>
-      <p style="font-size:12px;color:#2d1f0e;opacity:0.7;margin:0;line-height:1.5;text-align:left">Dragging an acronym as one chip keeps your sentence tray clean and readable!</p>
+      <p style="font-size:12px;color:var(--text-main);opacity:0.7;margin:0;line-height:1.5;text-align:left">Dragging an acronym as one chip keeps your sentence tray clean and readable!</p>
     </div>
 
     <!-- Step 5: Playful Weekend -->
     <div class="htp-panel" id="htpPanel4">
-      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Playful Weekend 🪱</h2>
-      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Friday and Saturday puzzles are a little more <strong>fun and unconventional</strong> — expect wordplay, unusual sentence structures, and answers that might make you smile.</p>
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:var(--text-main)">Playful Weekend 🪱</h2>
+      <p style="font-size:13px;color:var(--text-main);opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Friday and Saturday puzzles are a little more <strong>fun and unconventional</strong> — expect wordplay, unusual sentence structures, and answers that might make you smile.</p>
       <div class="how-example" style="margin-bottom:10px">
         You'll see <span style="color:#c0392b;font-weight:700;">!</span> or <span style="color:#c0392b;font-weight:700;">?</span> with the clue to signal it's a Playful puzzle.<br><br>
         <strong>Example</strong><br>
         Clue: <em>Snooze<span style="color:#c0392b;font-weight:700;">!</span></em><br>
         Answer: <em>nine more minutes of sleep please</em>
       </div>
-      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">TIP:</span> Think outside the box — the sentence might be a list, a joke, or a deliberately weird description!</em></p>
+      <p style="font-size:12px;color:var(--text-main);opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">TIP:</span> Think outside the box — the sentence might be a list, a joke, or a deliberately weird description!</em></p>
     </div>
 
     <!-- Step 6: Semicolon Sunday -->
     <div class="htp-panel" id="htpPanel5">
-      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:#2d1f0e">Semicolon Sunday 🪱</h2>
-      <p style="font-size:13px;color:#2d1f0e;opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Sunday puzzles contain <strong>two separate groups of words</strong> that both describe the clue — joined by a semicolon in the answer.</p>
+      <h2 style="margin:0 0 8px;font-size:18px;text-align:center;color:var(--text-main)">Semicolon Sunday 🪱</h2>
+      <p style="font-size:13px;color:var(--text-main);opacity:0.75;margin:0 0 10px;line-height:1.5;text-align:left">Sunday puzzles contain <strong>two separate groups of words</strong> that both describe the clue — joined by a semicolon in the answer.</p>
       <div class="sunday-example">
         <strong>Example</strong><br>
         Answer: <em>Robin<span style="color:#c0392b;font-weight:700;">;</span></em><br>
         Question: <em>red breasted songbird sidekick to the superhero batman</em>
       </div>
-      <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">Reminder:</span> Neighboring words still have touching first/last letters in the grid — the same rule applies across both halves!</em></p>
+      <p style="font-size:12px;color:var(--text-main);opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">Reminder:</span> Neighboring words still have touching first/last letters in the grid — the same rule applies across both halves!</em></p>
     </div>
 
     <!-- Nav -->
@@ -820,8 +862,8 @@
     <p style="font-size:13px;margin:0 0 6px">Today's answer:</p>
     <div class="ap-answer" id="win-clue"></div>
     <div id="win-par" style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:14px;min-height:14px"></div>
-    <div id="win-solve-count" style="font-size:11px;opacity:0.5;margin-bottom:14px;min-height:16px"></div>
-    <button class="modal-close" id="win-share-btn" style="margin-top:0;background:#d0ead0;border-right-color:#4a7a4a;border-bottom-color:#4a7a4a">📤 Share result</button>
+    <div id="win-solve-count" style="font-size:11px;opacity:0.5;margin-bottom:14px;min-height:16px;color:var(--text-main)"></div>
+    <button class="modal-close" id="win-share-btn" style="margin-top:0;background:#d0ead0;border-right-color:#4a7a4a;border-bottom-color:#4a7a4a;color:#2d1f0e">📤 Share result</button>
     <button class="modal-close" onclick="document.getElementById('win-popup').classList.remove('show')" style="margin-top:8px;opacity:0.6;font-size:12px">See the board</button>
   </div>
 </div>
@@ -833,7 +875,7 @@
     <p>You completed today's puzzle.</p>
     <div class="ap-answer" id="ap-answer"></div>
     <p style="font-size:12px">Come back tomorrow for a new puzzle.</p>
-    <button class="modal-close" id="ap-share-btn" style="margin-top:0">📤 Share result</button>
+    <button class="modal-close" id="ap-share-btn" style="margin-top:0;background:#d0ead0;box-shadow:0 2px 0 #7ab870;color:#2d1f0e">📤 Share result</button>
     <button class="modal-close" id="ap-see-board" style="margin-top:8px;opacity:0.6;font-size:12px">See the board anyway</button>
   </div>
 </div>
@@ -856,10 +898,10 @@
     <button id="archiveBtn" style="font-size:12px;padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;">📅</button>
     <div style="position:relative">
       <button id="helpBtn" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;position:relative;">💡<span id="helpDot" style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:#e8b0b0;display:none;"></span></button>
-      <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:#faf6ef;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
-        <div id="howToPlayBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);">📖 How to Play</div>
-        <div id="settingsBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);">⚙️ Settings</div>
-        <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;">💡 Submit a Puzzle</div>
+      <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:var(--bg-menu);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
+        <div id="howToPlayBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border-modal);color:var(--text-main);">📖 How to Play</div>
+        <div id="settingsBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border-modal);color:var(--text-main);">⚙️ Settings</div>
+        <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-main);">💡 Submit a Puzzle</div>
       </div>
     </div>
   </div>
@@ -874,8 +916,8 @@
   <div style="position:relative">
     <div id="sentenceRow" class="sentence-row" style="padding-right:30px"></div>
     <div id="trayWatermark" style="position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 34px 4px 8px;">
-      <div style="font-size:11px;font-weight:600;color:#2d1f0e;opacity:0.35;letter-spacing:0.02em;text-align:center">YOUR SENTENCE WILL BE ARRANGED HERE</div>
-      <div style="font-size:9px;font-weight:600;color:#2d1f0e;opacity:0.35;letter-spacing:0.01em;text-align:center">Drag words to reorder &bull; Drag words to 🗑️ (or press) to delete</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-main);opacity:0.35;letter-spacing:0.02em;text-align:center">YOUR SENTENCE WILL BE ARRANGED HERE</div>
+      <div style="font-size:9px;font-weight:600;color:var(--text-main);opacity:0.35;letter-spacing:0.01em;text-align:center">Drag words to reorder &bull; Drag words to 🗑️ (or press) to delete</div>
     </div>
     <button id="trashBtn" style="position:absolute;right:0;top:0;bottom:0;width:26px;font-size:10px;padding:0;display:flex;align-items:center;justify-content:center;background:#ffd0d0;box-shadow:inset -1px 0 0 #d48080, inset 0 -2px 0 #d48080;border-radius:0 12px 12px 0;border-left:1px solid rgba(0,0,0,0.08);">🗑️</button>
   </div>
@@ -965,7 +1007,7 @@
 <script src="puzzles-v8.1.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.87  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.88  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1004,7 +1046,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-04-v0.877';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-04-v0.88';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1985,7 +2027,7 @@ function buildArchiveCalendar() {
   };
 
   const label = document.createElement('div');
-  label.style.cssText = 'font-size:13px;font-weight:700;color:#2d1f0e;opacity:0.7';
+  label.style.cssText = 'font-size:13px;font-weight:700;color:var(--text-main);opacity:0.7';
   label.textContent = monthName;
 
   nav.appendChild(prevBtn);
@@ -2297,7 +2339,38 @@ async function submitPuzzle() {
 /* ── Settings & tray mode ── */
 const TRAY_MODE_KEY = 'canofwords_tray_mode';
 const SETTINGS_SEEN_KEY = 'canofwords_settings_seen';
+const DARK_MODE_KEY = 'canofwords_dark_mode';
 let trayMode = localStorage.getItem(TRAY_MODE_KEY) || 'insert'; // default to insert
+
+/* ── Dark mode ── */
+let darkMode = localStorage.getItem(DARK_MODE_KEY) === '1';
+
+function applyDarkMode(enabled) {
+  document.documentElement.setAttribute('data-theme', enabled ? 'dark' : 'light');
+  const toggle = document.getElementById('darkModeToggle');
+  const thumb  = document.getElementById('darkModeThumb');
+  if (toggle) toggle.style.background = enabled ? '#8a6a3a' : '#c9b99a';
+  if (thumb)  thumb.style.transform   = enabled ? 'translateX(16px)' : 'translateX(0)';
+}
+
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  localStorage.setItem(DARK_MODE_KEY, darkMode ? '1' : '0');
+  applyDarkMode(darkMode);
+}
+
+// Apply on load
+applyDarkMode(darkMode);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('darkModeToggle');
+  const label  = document.getElementById('darkModeLabel');
+  if (toggle) toggle.addEventListener('click', toggleDarkMode);
+  if (label)  label.addEventListener('click', (e) => {
+    if (!e.target.closest('#darkModeToggle')) toggleDarkMode();
+  });
+  applyDarkMode(darkMode); // re-sync visuals once DOM is ready
+});
 
 // Show notification dot on 💡 if player hasn't opened Settings yet
 if (!localStorage.getItem(SETTINGS_SEEN_KEY)) {
@@ -2308,6 +2381,7 @@ function openSettings() {
   document.getElementById('modeSwap').checked   = trayMode === 'swap';
   document.getElementById('modeInsert').checked = trayMode === 'insert';
   updateModeHighlight();
+  applyDarkMode(darkMode); // sync toggle visual
   document.getElementById('settingsModal').classList.add('show');
   // Dismiss the notification dot
   localStorage.setItem(SETTINGS_SEEN_KEY, '1');
@@ -2315,8 +2389,10 @@ function openSettings() {
 }
 
 function updateModeHighlight() {
-  document.getElementById('modeSwapLabel').style.background   = trayMode === 'swap'   ? '#d0eacc' : '#ede8de';
-  document.getElementById('modeInsertLabel').style.background = trayMode === 'insert' ? '#d0eacc' : '#ede8de';
+  const activeColor  = darkMode ? '#4a6e42' : '#d0eacc';
+  const inactiveColor = 'var(--bg-status)';
+  document.getElementById('modeSwapLabel').style.background   = trayMode === 'swap'   ? activeColor : inactiveColor;
+  document.getElementById('modeInsertLabel').style.background = trayMode === 'insert' ? activeColor : inactiveColor;
 }
 
 document.addEventListener('change', (e) => {
@@ -2461,38 +2537,37 @@ function htpStartAcrWrongAnim() {
 
 function htpStartAcrRightAnim() {
   const finger = document.getElementById('htpAcrDrag');
-  const worm   = document.getElementById('htpAcrWorm');
   const chip   = document.getElementById('htpAcrChip');
   const chipTx = document.getElementById('htpAcrChipTx');
   const cells  = [document.getElementById('htpAcrCellR1'), document.getElementById('htpAcrCellR2'), document.getElementById('htpAcrCellR3')];
   if (!finger) return;
-  const CYCLE=2400, CELL_COLOR='#b9f6ca', xs=[19,54,89], Y=19; let startTime=null;
-  function easeInOut(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
-  function wormPath(n){
-    if(n<1)return'';
-    const x1=4,x2=4+n*35-1,cy=Y,r=12;
-    return`M${x1+r},${cy-r} H${x2-r} A${r},${r} 0 0 1 ${x2+r-2},${cy} A${r},${r} 0 0 1 ${x2-r},${cy+r} H${x1+r} A${r},${r} 0 0 1 ${x1-r+2},${cy} A${r},${r} 0 0 1 ${x1+r},${cy-r}`;
-  }
+  const CYCLE = 2400, CELL_COLOR = '#b9f6ca', xs = [19, 54, 89], Y = 19;
+  let startTime = null;
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
   function frame(ts) {
     if (!htpAnimRunning.acr) {
-      finger.setAttribute('opacity',0); worm.setAttribute('opacity',0);
-      chip.setAttribute('opacity',0); chipTx.setAttribute('opacity',0);
-      cells.forEach(c=>c.setAttribute('fill','#fdf8f0')); return;
+      finger.setAttribute('opacity', 0);
+      chip.setAttribute('opacity', 0); chipTx.setAttribute('opacity', 0);
+      cells.forEach(c => c.setAttribute('fill', '#fdf8f0')); return;
     }
-    if (!startTime) startTime=ts;
-    const t=((ts-startTime)%CYCLE)/CYCLE;
-    let fingerOp=0,fx=xs[0],showChip=0;
-    if(t<0.05){fingerOp=t/0.05;fx=xs[0];}
-    else if(t<0.60){fingerOp=1;fx=xs[0]+(xs[2]-xs[0])*easeInOut((t-0.05)/0.55);}
-    else if(t<0.75){fingerOp=1-(t-0.60)/0.15;fx=xs[2];showChip=(t-0.60)/0.15;}
-    else if(t<0.85){fingerOp=0;fx=xs[2];showChip=1;}
-    else{fingerOp=0;fx=xs[0];showChip=1-(t-0.85)/0.15;}
-    finger.setAttribute('cx',fx.toFixed(1)); finger.setAttribute('cy',Y); finger.setAttribute('opacity',fingerOp.toFixed(3));
-    cells.forEach((c,i)=>c.setAttribute('fill',fx>=xs[i]-2&&fingerOp>0.1?CELL_COLOR:'#fdf8f0'));
-    const nCells=fx<xs[1]-2?1:fx<xs[2]-2?2:3;
-    if(fingerOp>0.1){worm.setAttribute('d',wormPath(nCells));worm.setAttribute('opacity','0.5');}
-    else{worm.setAttribute('opacity','0');cells.forEach(c=>c.setAttribute('fill','#fdf8f0'));}
-    chip.setAttribute('opacity',showChip.toFixed(3)); chipTx.setAttribute('opacity',showChip.toFixed(3));
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % CYCLE) / CYCLE;
+    let fingerOp = 0, fx = xs[0], showChip = 0;
+    if (t < 0.05)       { fingerOp = t / 0.05; fx = xs[0]; }
+    else if (t < 0.60)  { fingerOp = 1; fx = xs[0] + (xs[2] - xs[0]) * easeInOut((t - 0.05) / 0.55); }
+    else if (t < 0.75)  { fingerOp = 1 - (t - 0.60) / 0.15; fx = xs[2]; showChip = (t - 0.60) / 0.15; }
+    else if (t < 0.85)  { fingerOp = 0; fx = xs[2]; showChip = 1; }
+    else                { fingerOp = 0; fx = xs[0]; showChip = 1 - (t - 0.85) / 0.15; }
+    finger.setAttribute('cx', fx.toFixed(1));
+    finger.setAttribute('cy', Y);
+    finger.setAttribute('opacity', fingerOp.toFixed(3));
+    // Highlight cells as finger passes — same style as cellHighlight CSS animation
+    cells.forEach((c, i) => {
+      const activated = fx >= xs[i] - 2 && fingerOp > 0.1;
+      c.setAttribute('fill', activated ? CELL_COLOR : '#fdf8f0');
+    });
+    chip.setAttribute('opacity', showChip.toFixed(3));
+    chipTx.setAttribute('opacity', showChip.toFixed(3));
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -2599,7 +2674,6 @@ function startAcronymWrongAnimation() {
 
 function startAcronymRightAnimation() {
   const finger = document.getElementById('acrDragFinger');
-  const worm   = document.getElementById('acrWormPath');
   const chip   = document.getElementById('acrChip');
   const chipTx = document.getElementById('acrChipText');
   const cells  = [
@@ -2609,80 +2683,35 @@ function startAcronymRightAnimation() {
   ];
   if (!finger) return;
 
-  const CYCLE = 2400;
-  const CELL_COLOR = '#b9f6ca';
-  // Cell center x positions
-  const xs = [19, 54, 89];
-  const Y = 19;
-  let running = true;
-  let startTime = null;
-
+  const CYCLE = 2400, CELL_COLOR = '#b9f6ca', xs = [19, 54, 89], Y = 19;
+  let running = true, startTime = null;
   function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-
-  // Build a simple rounded worm rect path covering cells 0..n
-  function wormPath(nCells) {
-    if (nCells < 1) return '';
-    const x1 = 4, x2 = 4 + nCells * 35 - 1, cy = Y, r = 12;
-    return `M${x1+r},${cy-r} H${x2-r} A${r},${r} 0 0 1 ${x2+r-2},${cy} A${r},${r} 0 0 1 ${x2-r},${cy+r} H${x1+r} A${r},${r} 0 0 1 ${x1-r+2},${cy} A${r},${r} 0 0 1 ${x1+r},${cy-r}`;
-  }
 
   function frame(ts) {
     if (!running) return;
     if (!startTime) startTime = ts;
     const t = ((ts - startTime) % CYCLE) / CYCLE;
 
-    // Phases:
-    // 0–0.05: appear at cell 1
-    // 0.05–0.60: drag across to cell 3
-    // 0.60–0.75: hold, chip appears
-    // 0.75–0.85: fade out finger
-    // 0.85–1.00: chip fades, reset
-
-    let fingerOp = 0, fx = xs[0];
-    let showChip = 0;
-
-    if (t < 0.05) {
-      fingerOp = t / 0.05;
-      fx = xs[0];
-    } else if (t < 0.60) {
-      fingerOp = 1;
-      const progress = (t - 0.05) / 0.55;
-      fx = xs[0] + (xs[2] - xs[0]) * easeInOut(progress);
-    } else if (t < 0.75) {
-      fingerOp = 1 - (t - 0.60) / 0.15;
-      fx = xs[2];
-      showChip = (t - 0.60) / 0.15;
-    } else if (t < 0.85) {
-      fingerOp = 0; fx = xs[2];
-      showChip = 1;
-    } else {
-      fingerOp = 0; fx = xs[0];
-      showChip = 1 - (t - 0.85) / 0.15;
-    }
+    let fingerOp = 0, fx = xs[0], showChip = 0;
+    if (t < 0.05)       { fingerOp = t / 0.05; fx = xs[0]; }
+    else if (t < 0.60)  { fingerOp = 1; fx = xs[0] + (xs[2] - xs[0]) * easeInOut((t - 0.05) / 0.55); }
+    else if (t < 0.75)  { fingerOp = 1 - (t - 0.60) / 0.15; fx = xs[2]; showChip = (t - 0.60) / 0.15; }
+    else if (t < 0.85)  { fingerOp = 0; fx = xs[2]; showChip = 1; }
+    else                { fingerOp = 0; fx = xs[0]; showChip = 1 - (t - 0.85) / 0.15; }
 
     finger.setAttribute('cx', fx.toFixed(1));
     finger.setAttribute('cy', Y);
     finger.setAttribute('opacity', fingerOp.toFixed(3));
 
-    // Highlight cells as finger passes
+    // Highlight cells as finger passes — matches Dragging Words style
     cells.forEach((c, i) => {
-      const activated = fx >= xs[i] - 2;
-      c.setAttribute('fill', activated && fingerOp > 0.1 ? CELL_COLOR : '#fdf8f0');
+      const activated = fx >= xs[i] - 2 && fingerOp > 0.1;
+      c.setAttribute('fill', activated ? CELL_COLOR : '#fdf8f0');
     });
-
-    // Worm path grows with finger
-    const nCells = fx < xs[1] - 2 ? 1 : fx < xs[2] - 2 ? 2 : 3;
-    if (fingerOp > 0.1) {
-      worm.setAttribute('d', wormPath(nCells));
-      worm.setAttribute('opacity', '0.5');
-    } else {
-      worm.setAttribute('opacity', '0');
-      cells.forEach(c => c.setAttribute('fill', '#fdf8f0'));
-    }
+    if (!fingerOp) cells.forEach(c => c.setAttribute('fill', '#fdf8f0'));
 
     chip.setAttribute('opacity', showChip.toFixed(3));
     chipTx.setAttribute('opacity', showChip.toFixed(3));
-
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -2690,7 +2719,6 @@ function startAcronymRightAnimation() {
   document.getElementById('acronymPlayBtn').addEventListener('click', () => {
     running = false;
     finger.setAttribute('opacity', 0);
-    worm.setAttribute('opacity', 0);
     chip.setAttribute('opacity', 0);
     chipTx.setAttribute('opacity', 0);
     cells.forEach(c => c.setAttribute('fill', '#fdf8f0'));
@@ -3246,22 +3274,35 @@ if (PUZZLE) {
     <h2>⚙️ Settings</h2>
 
     <div style="margin-bottom:18px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:#2d1f0e;margin-bottom:10px">WORD ARRANGEMENT</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:var(--text-main);margin-bottom:10px">APPEARANCE</div>
+      <label id="darkModeLabel" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:10px 12px;border-radius:12px;background:var(--bg-status);transition:background 150ms">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text-main)">🌙 Dark mode</div>
+          <div style="font-size:11px;color:var(--text-main);opacity:0.6;margin-top:2px;line-height:1.4">Warm dark theme</div>
+        </div>
+        <div id="darkModeToggle" style="width:40px;height:24px;border-radius:12px;background:#c9b99a;position:relative;cursor:pointer;transition:background 200ms;flex-shrink:0">
+          <div id="darkModeThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 200ms;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+        </div>
+      </label>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:var(--text-main);margin-bottom:10px">WORD ARRANGEMENT</div>
       <div style="display:flex;flex-direction:column;gap:8px">
 
-        <label id="modeSwapLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:#ede8de;transition:background 150ms">
-          <input type="radio" name="trayMode" value="swap" id="modeSwap" style="margin-top:2px;cursor:pointer;accent-color:#2d1f0e">
+        <label id="modeSwapLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:var(--bg-status);transition:background 150ms">
+          <input type="radio" name="trayMode" value="swap" id="modeSwap" style="margin-top:2px;cursor:pointer;accent-color:var(--text-main)">
           <div>
-            <div style="font-size:13px;font-weight:700;color:#2d1f0e">Swap mode</div>
-            <div style="font-size:11px;color:#2d1f0e;opacity:0.6;margin-top:2px;line-height:1.4">Drag a word onto another to exchange their positions</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-main)">Swap mode</div>
+            <div style="font-size:11px;color:var(--text-main);opacity:0.6;margin-top:2px;line-height:1.4">Drag a word onto another to exchange their positions</div>
           </div>
         </label>
 
-        <label id="modeInsertLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:#ede8de;transition:background 150ms">
-          <input type="radio" name="trayMode" value="insert" id="modeInsert" style="margin-top:2px;cursor:pointer;accent-color:#2d1f0e">
+        <label id="modeInsertLabel" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border-radius:12px;background:var(--bg-status);transition:background 150ms">
+          <input type="radio" name="trayMode" value="insert" id="modeInsert" style="margin-top:2px;cursor:pointer;accent-color:var(--text-main)">
           <div>
-            <div style="font-size:13px;font-weight:700;color:#2d1f0e">Insert mode</div>
-            <div style="font-size:11px;color:#2d1f0e;opacity:0.6;margin-top:2px;line-height:1.4">Drag a word and slide it into any position between other words</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-main)">Insert mode</div>
+            <div style="font-size:11px;color:var(--text-main);opacity:0.6;margin-top:2px;line-height:1.4">Drag a word and slide it into any position between other words</div>
           </div>
         </label>
 
@@ -3269,7 +3310,7 @@ if (PUZZLE) {
     </div>
 
     <div style="margin-bottom:18px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:#2d1f0e;margin-bottom:10px">DANGER ZONE</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;opacity:0.5;color:var(--text-main);margin-bottom:10px">DANGER ZONE</div>
       <button onclick="document.getElementById('settingsModal').classList.remove('show'); confirmReset();" style="width:100%;text-align:center;background:#ffd0d0;box-shadow:0 2px 0 #d48080;font-size:12px;opacity:0.7;">↺ Reset all progress</button>
     </div>
 
@@ -3284,20 +3325,20 @@ if (PUZZLE) {
     <p style="font-size:12px;opacity:0.6;margin:0 0 14px">Got a great clue? Submit it and it might appear in a future puzzle!</p>
 
     <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">ANSWER CLUE</label>
-    <input id="submitClue" type="text" placeholder="e.g. Robin" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:12px"/>
+    <input id="submitClue" type="text" placeholder="e.g. Robin" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:var(--bg-modal);box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:12px"/>
 
     <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">SENTENCE / DESCRIPTION</label>
-    <textarea id="submitSentence" placeholder="e.g. sidekick to the superhero batman" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:12px;resize:vertical;min-height:70px"></textarea>
+    <textarea id="submitSentence" placeholder="e.g. sidekick to the superhero batman" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:var(--bg-modal);box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:12px;resize:vertical;min-height:70px"></textarea>
 
     <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">TYPE</label>
     <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button id="typeRegular" onclick="setSubmitType('regular')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Regular</button>
-      <button id="typePlayful" onclick="setSubmitType('playful')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Playful !?</button>
-      <button id="typeSunday" onclick="setSubmitType('sunday')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:#fdf8f0;box-shadow:0 2px 0 #c9b99a">Sunday ;</button>
+      <button id="typeRegular" onclick="setSubmitType('regular')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:var(--bg-modal);box-shadow:0 2px 0 #c9b99a">Regular</button>
+      <button id="typePlayful" onclick="setSubmitType('playful')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:var(--bg-modal);box-shadow:0 2px 0 #c9b99a">Playful !?</button>
+      <button id="typeSunday" onclick="setSubmitType('sunday')" style="flex:1;font-size:11px;padding:6px 0;border-radius:8px;background:var(--bg-modal);box-shadow:0 2px 0 #c9b99a">Sunday ;</button>
     </div>
 
     <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">YOUR NAME <span style="opacity:0.5;font-weight:400">(optional but I'd love to credit you!)</span></label>
-    <input id="submitName" type="text" placeholder="e.g. Andrew, Gwen, WormGurl22, etc" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:#fdf8f0;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:#2d1f0e;margin-bottom:16px"/>
+    <input id="submitName" type="text" placeholder="e.g. Andrew, Gwen, WormGurl22, etc" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:var(--bg-modal);box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:16px"/>
 
     <div id="submitError" style="font-size:11px;color:#c0392b;margin-bottom:8px;display:none"></div>
     <div id="submitSuccess" style="font-size:12px;color:#2a7a2a;text-align:center;margin-bottom:8px;display:none">Submitted! Thanks for the idea 🪱</div>
@@ -3408,11 +3449,9 @@ if (PUZZLE) {
           <text x="19"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">T</text>
           <text x="54"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">N</text>
           <text x="89"  y="25" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="16" fill="#2d1f0e">T</text>
-          <!-- Worm path drawn as the finger moves -->
-          <path id="acrWormPath" d="" fill="#b9f6ca" opacity="0"/>
           <!-- One chip at the end -->
-          <rect id="acrChip" x="24" y="44" width="60" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
-          <text id="acrChipText" x="54" y="59" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">TNT</text>
+          <rect id="acrChip" x="14" y="50" width="80" height="22" rx="11" fill="#b9f6ca" opacity="0"/>
+          <text id="acrChipText" x="54" y="65" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="11" fill="#2d1f0e" opacity="0">TNT</text>
           <!-- Single drag finger -->
           <circle id="acrDragFinger" cx="19" cy="19" r="10" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2" opacity="0"/>
         </svg>
@@ -3450,7 +3489,7 @@ if (PUZZLE) {
         <circle class="demo-finger" cy="30" r="12" fill="rgba(45,31,14,0.7)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
       </svg>
       <!-- Chip that appears after drag -->
-      <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:#2d1f0e;box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
+      <div class="demo-chip" style="margin-top:8px;display:inline-block;background:#b9f6ca;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:var(--text-main);box-shadow:0 2px 4px rgba(0,0,0,0.15)">word</div>
     </div>
     <p style="font-size:12px;margin:0 0 14px;opacity:0.6;line-height:1.5"><em>Click the ? in the top right<br>for more info on how to play!</em></p>
     <button id="onboardingPlayBtn" onclick="dismissOnboarding()">Let's Play! 🪱</button>
@@ -3464,16 +3503,16 @@ if (PUZZLE) {
 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin:2px 0 4px;width:calc(8 * var(--cell) + 20px)">
   <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
     <img src="PHAT2026.png" style="width:28px;height:28px;opacity:0.7"/>
-    <span style="font-size:10px;opacity:0.3;letter-spacing:0.05em;font-weight:600">a game by <a href="https://www.sethsscott.com" target="_blank" style="color:#2d1f0e;text-decoration:underline;">seth s. scott</a></span>
+    <span style="font-size:10px;opacity:0.3;letter-spacing:0.05em;font-weight:600">a game by <a href="https://www.sethsscott.com" target="_blank" style="color:var(--text-main);text-decoration:underline;">seth s. scott</a></span>
   </div>
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
     <div style="display:flex;gap:6px;align-items:center">
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.87</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.88</span> <!-- //UPDATE: version display -->
       </div>
-    <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
+    <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>
 </div>
 

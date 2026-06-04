@@ -53,7 +53,7 @@ const PUZZLES = [
     { clue: 'Thermos', sentence: 'aW5zdWxhdGVkIGZsYXNrIHRoYXQga2VlcHMgZHJpbmtzIGhvdCBvciBjb2xk', type: 'regular', par: 2 }, // Mon Jun 8
     { clue: 'Armpit', sentence: 'cGxhY2UgdG8gYXBwbHkgZGVvZG9yYW50IG9yIGFudGlwZXJzcGlyYW50', type: 'regular', par: 2 }, // Tue Jun 9
     { clue: 'Decaf', sentence: 'Y29mZmVlIHNob3Agb3B0aW9uIGZvciB0aG9zZSBhdm9pZGluZyBjYWZmZWluZQ==', type: 'regular', par: 1 }, // Wed Jun 10
-    { clue: 'Club Soda', sentence: 'Y2FyYm9uYXRlZCB3YXRlciB3aXRoIGFkZGVkIG1pbmVyYWwgc2FsdHM=', type: 'regular', par: 2 }, // Thu Jun 11
+    { clue: 'Club Soda', sentence: 'Y2FyYm9uYXRlZCB3YXRlciBjb250YWluaW5nIGFkZGVkIG1pbmVyYWwgc2FsdHM=', type: 'regular', par: 2 }, // Thu Jun 11
     { clue: 'Bagel!', sentence: 'cGxhaW4gc2VzYW1lIGV2ZXJ5dGhpbmcgcmFpc2luIHB1bXBlcm5pY2tlbCBvbmlvbg==', type: 'playful', par: 2 }, // Fri Jun 12
     { clue: 'Sliced Bread?', sentence: 'aHVtYmxlIGxvYWYgdGhhdCBiZWNhbWUgdGhlIGJlbmNobWFyayBvZiBhbGwgZ3JlYXQgaWRlYXM=', type: 'playful', par: 3 }, // Sat Jun 13
     { clue: 'Ace;', sentence: 'dW50b3VjaGVkIHRlbm5pcyBzZXJ2ZSBoaWdoIGNhcmQgaW4gYSByb3lhbCBmbHVzaA==', type: 'sunday', par: 2 }, // Sun Jun 14

@@ -44,7 +44,7 @@ const PUZZLES = [
     { clue: 'Marathon', sentence: 'bG9uZyBydW5uaW5nIHJhY2Ugb2YganVzdCBvdmVyIHR3ZW50eSBzaXggbWlsZXM=', type: 'regular', par: 2 }, // Mon Jun 1
     { clue: 'Adobe', sentence: 'c3VuIGRyaWVkIGJ1aWxkaW5nIG1hdGVyaWFsIG1hZGUgb2Ygd2V0IGVhcnRoIGFuZCBzdHJhdw==', type: 'regular', par: 3 }, // Tue Jun 2
     { clue: 'Umbrella', sentence: 'Zm9sZGluZyBjYW5vcHkgY2FycmllZCB0byBzdGF5IGRyeSBpbiB0aGUgcmFpbg==', type: 'regular', par: 2 }, // Wed Jun 3  
-    { clue: 'Titanic', sentence: 'bmluZXRpZXMgYmVzdCBwaWN0dXJlIG9zY2FyIHdpbm5lcg==', type: 'regular', par: 2 }, // Thu Jun 4
+    { clue: 'Titanic', sentence: 'bmluZXRpZXMgYmVzdCBwaWN0dXJlIG9zY2FyIHdpbm5lciBzdGFycmluZyBrYXRlIHdpbnNsZXQ=', type: 'regular', par: 2 }, // Thu Jun 4
     { clue: 'Monday?', sentence: 'c29jaWFsbHkgYWdyZWVkIHVwb24gd29yc3QgZGF5IG9mIHRoZSB3ZWVr', type: 'playful', par: 3 }, // Fri Jun 5
     { clue: 'Tuesday?', sentence: 'c29jaWFsbHkgYWdyZWVkIHVwb24gYmVzdCBkYXkgZm9yIHRhY29z', type: 'playful', par: 2 }, // Sat Jun 6
     { clue: 'Wednesday;', sentence: 'c29jaWFsbHkga25vd24gYXMgaHVtcCBkYXkgZGF1Z2h0ZXIgaW4gdGhlIGFkZGFtcyBmYW1pbHk=', type: 'sunday', par: 3 }, // Sun Jun 7

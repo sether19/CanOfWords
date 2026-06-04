@@ -38,7 +38,7 @@
   }
   [data-theme="dark"] {
     --bg-page:        #2e2418;
-    --bg-cell:        #4a3a28;
+    --bg-cell:        #d4c4b0;
     --bg-frame:       #5a4832;
     --bg-tray:        #5a4832;
     --bg-btn:         #4a3a28;
@@ -1046,7 +1046,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-04-v0.88';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-04-v0.888';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1415,7 +1415,7 @@ function build() {
 
 function clear() {
   document.querySelectorAll('#grid .cell').forEach(c => {
-    c.className = 'cell'; c.style.background = '#fdf8f0'; c.style.borderRadius = '6px';
+    c.className = 'cell'; c.style.background = ''; c.style.borderRadius = '6px';
   });
 }
 

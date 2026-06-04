@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪱</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Can of Words 🪱</title>
+<title>Can of Words🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -786,8 +786,8 @@
       <div class="how-example" style="margin-bottom:10px">
         You'll see <span style="color:#c0392b;font-weight:700;">!</span> or <span style="color:#c0392b;font-weight:700;">?</span> with the clue to signal it's a Playful puzzle.<br><br>
         <strong>Example</strong><br>
-        Clue: <em>Tofu<span style="color:#c0392b;font-weight:700;">!</span></em><br>
-        Answer: <em>silken soft firm extra firm</em>
+        Clue: <em>Snooze<span style="color:#c0392b;font-weight:700;">!</span></em><br>
+        Answer: <em>nine more minutes of sleep please</em>
       </div>
       <p style="font-size:12px;color:#2d1f0e;opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">TIP:</span> Think outside the box — the sentence might be a list, a joke, or a deliberately weird description!</em></p>
     </div>
@@ -969,7 +969,7 @@
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
-// Puzzle data loaded from external file (see puzzles-v7.1.js)
+// Puzzle data loaded from external file (see puzzles-v8.1.js)
 
 /* =====================================================================
    DAILY PUZZLE SELECTION
@@ -1004,7 +1004,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-1-v0.85';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-04-v0.86';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2129,8 +2129,7 @@ function rebuildForArchive(puzzle, dateKey, savedState) {
   redraw();
 
   if (savedState && savedState.solved) {
-    done = true;
-    replaySolvedStateFromData(savedState.words, puzzle);
+    replayArchiveSolved();
     // Restore par dots as neutral grey for solved archive replay
     if (savedState.parScore) {
       for (let i = 1; i <= savedState.parScore; i++) {
@@ -3011,14 +3010,14 @@ function checkCompletion(manual) {
   hintsBtn.disabled = true;
   fillParCircle('#b2e5b2'); // green for correct submit
 
-  const savedWords = words.map(w => ({
-    text:  w.text,
-    color: w.color,
-    path:  w.cells.map(c => ({ r: parseInt(c.dataset.r), c: parseInt(c.dataset.c) }))
-  }));
   if (archiveMode && archiveDateKey) {
-    localStorage.setItem(getArchiveStateKey(archiveDateKey), JSON.stringify({ solved: true, words: savedWords, parScore }));
+    localStorage.setItem(getArchiveStateKey(archiveDateKey), JSON.stringify({ solved: true, parScore }));
   } else {
+    const savedWords = words.map(w => ({
+      text:  w.text,
+      color: w.color,
+      path:  w.cells.map(c => ({ r: parseInt(c.dataset.r), c: parseInt(c.dataset.c) }))
+    }));
     // Collect par circle colors in order
     const parColors = [];
     let pi = 1;
@@ -3029,7 +3028,7 @@ function checkCompletion(manual) {
     }
     saveState({ dateKey: TODAY_KEY, solved: true, words: savedWords, hintsUsed: [...hintsUsed], parScore, parColors });
     // Also write to archive key so calendar shows solved when this day becomes part of the archive
-    localStorage.setItem(getArchiveStateKey(TODAY_KEY), JSON.stringify({ solved: true, words: savedWords, parScore }));
+    localStorage.setItem(getArchiveStateKey(TODAY_KEY), JSON.stringify({ solved: true, parScore }));
   }
   localStorage.setItem('canofwords_tutorial_seen', '1');
   localStorage.setItem('canofwords_tray_tutorial_seen', '1');
@@ -3112,6 +3111,37 @@ function replaySolvedStateFromData(savedWords) {
     document.getElementById('shareArea').style.display = 'block';
     document.getElementById('shareBtn').onclick = shareResult;
   }
+}
+
+/* ── Replay archive solved state from puzzle data (no saved word paths needed) ── */
+function replayArchiveSolved() {
+  done = true;
+  submitBtn.disabled = true;
+  hintsBtn.disabled = true;
+
+  const cellEls = {};
+  document.querySelectorAll('#grid .cell').forEach(el => {
+    cellEls[el.dataset.r + ',' + el.dataset.c] = el;
+  });
+
+  // Rebuild words from the puzzle sentence + path — no saved word data needed
+  const sentenceWords = ACTIVE_PUZZLE.sentence.trim().split(/\s+/);
+  let pathIdx = 0;
+  words = sentenceWords.map((text, wi) => {
+    const cells = [];
+    for (let i = 0; i < text.length; i++) {
+      const pos = ACTIVE_PATH[pathIdx++];
+      if (pos) cells.push(cellEls[pos[0] + ',' + pos[1]]);
+    }
+    return { text, color: COLORS[wi % COLORS.length], cells: cells.filter(Boolean) };
+  });
+
+  redraw();
+  document.body.classList.add('solved');
+  document.querySelector('.frame').style.animation = 'boardPulse 450ms ease-out';
+  words.flatMap(w => w.cells)
+       .forEach((c,i) => setTimeout(() => c.classList.add('success'), 80 + i * 30));
+  showWinIcon();
 }
 
 function replaySolvedState() {
@@ -3436,7 +3466,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.85</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.86</span> <!-- //UPDATE: version display -->
       <button onclick="confirmReset();" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;opacity:0.35;padding:4px 10px;cursor:pointer;background:#f0ebe0;border:none;border-radius:6px;box-shadow:0 1px 0 #c9b99a;font-weight:600;">↺ Reset</button>
     </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:#2d1f0e;text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>

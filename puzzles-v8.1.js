@@ -47,7 +47,7 @@ const PUZZLES = [
     { clue: 'Titanic', sentence: 'bmluZXRpZXMgYmVzdCBwaWN0dXJlIG9zY2FyIHdpbm5lciBzdGFycmluZyBrYXRlIHdpbnNsZXQ=', type: 'regular', par: 2 }, // Thu Jun 4
     { clue: 'Monday?', sentence: 'c29jaWFsbHkgYWdyZWVkIHVwb24gd29yc3QgZGF5IG9mIHRoZSB3ZWVr', type: 'playful', par: 3 }, // Fri Jun 5
     { clue: 'Tuesday?', sentence: 'c29jaWFsbHkgYWdyZWVkIHVwb24gYmVzdCBkYXkgZm9yIHRhY29z', type: 'playful', par: 2 }, // Sat Jun 6
-    { clue: 'Wednesday;', sentence: 'c29jaWFsbHkga25vd24gYXMgaHVtcCBkYXkgZGF1Z2h0ZXIgaW4gdGhlIGFkZGFtcyBmYW1pbHk=', type: 'sunday', par: 3 }, // Sun Jun 7
+    { clue: 'Wednesday;', sentence: 'c29jaWFsbHkga25vd24gYXMgaHVtcCBkYXkgZGF1Z2h0ZXIgaW4gdGhlIGFkZGFtcyBmYW1pbHk=', type: 'sunday', par: 2 }, // Sun Jun 7
 
     // ── WEEK 6 (Jun 8) ─────────────────────────────────
     { clue: 'Thermos', sentence: 'aW5zdWxhdGVkIGZsYXNrIHRoYXQga2VlcHMgZHJpbmtzIGhvdCBvciBjb2xk', type: 'regular', par: 2 }, // Mon Jun 8

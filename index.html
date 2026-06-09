@@ -828,8 +828,8 @@
       <div class="how-example" style="margin-bottom:10px">
         You'll see <span style="color:#c0392b;font-weight:700;">!</span> or <span style="color:#c0392b;font-weight:700;">?</span> with the clue to signal it's a Playful puzzle.<br><br>
         <strong>Example</strong><br>
-        Clue: <em>Tofu<span style="color:#c0392b;font-weight:700;">!</span></em><br>
-        Answer: <em>silken soft firm extra firm</em>
+        Clue: <em>Snooze<span style="color:#c0392b;font-weight:700;">!</span></em><br>
+        Answer: <em>nine more minutes of sleep please</em>
       </div>
       <p style="font-size:12px;color:var(--text-main);opacity:0.6;margin:0;line-height:1.5"><em><span style="color:#c0392b;font-weight:700;">TIP:</span> Think outside the box — the sentence might be a list, a joke, or a deliberately weird description!</em></p>
     </div>
@@ -1007,7 +1007,7 @@
 <script src="puzzles-v8.1.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.88  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.89  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1046,7 +1046,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-07-v0.88';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-09-v0.89';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -3032,6 +3032,30 @@ function checkCompletion(manual) {
     return;
   }
 
+  // Words match — now verify the worms are physically chained in the grid
+  function cellsAdjacent(a, b) {
+    return Math.abs(parseInt(a.dataset.r) - parseInt(b.dataset.r)) +
+           Math.abs(parseInt(a.dataset.c) - parseInt(b.dataset.c)) === 1;
+  }
+  let isChained = true;
+  for (let i = 0; i < words.length - 1; i++) {
+    const lastCell  = words[i].cells[words[i].cells.length - 1];
+    const firstCell = words[i + 1].cells[0];
+    if (!cellsAdjacent(lastCell, firstCell)) { isChained = false; break; }
+  }
+
+  if (!isChained) {
+    shakeFrame();
+    submitBtn.style.background = '#e8b0b0';
+    submitBtn.innerHTML = '<span>Not quite!</span><span id="submitDot" style="font-size:6px;color:#e8b0b0;opacity:1;transition:opacity 300ms">●</span>';
+    setTimeout(() => {
+      submitBtn.style.background = '';
+      submitBtn.innerHTML = '<span>Submit</span><span id="submitDot" style="font-size:6px;color:#e8b0b0;opacity:1;transition:opacity 300ms">●</span>';
+    }, 1200);
+    document.getElementById('unchainedModal').classList.add('show');
+    return;
+  }
+
   done = true;
   drag.length = 0;
   submitBtn.disabled = true;
@@ -3496,6 +3520,16 @@ if (PUZZLE) {
   </div>
 </div>
 
+<!-- Unchained words modal -->
+<div id="unchainedModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:300px;width:92%;text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">🤯</div>
+    <h2 style="color:var(--text-main);margin-bottom:12px">Whoa, hold on!</h2>
+    <p style="font-size:13px;line-height:1.6;color:var(--text-main);opacity:0.8;margin-bottom:18px">You somehow found all the right words — but they're not connected in the grid! Remember, each word's last letter must touch the next word's first letter. So close! 🐛</p>
+    <button class="modal-close" onclick="document.getElementById('unchainedModal').classList.remove('show')" style="width:100%;text-align:center;color:#2d1f0e">Got it, I'll try again</button>
+  </div>
+</div>
+
 </body>
 
 <!-- Temporary reset button for testing — remove before final publish -->
@@ -3510,7 +3544,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.88</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.89</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

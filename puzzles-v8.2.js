@@ -85,6 +85,16 @@ const PUZZLES = [
     { clue: 'Independence Day!', sentence: 'YWxpZW4gaW52YXNpb24gYmxvY2tidXN0ZXIgc3RhcnJpbmcgd2lsbCBzbWl0aCBhbmQgamVmZiBnb2xkYmx1bQ==', type: 'playful', par: 2 }, // Sat Jul 4
     { clue: 'Marco Polo;', sentence: 'Z2FtZSBwbGF5ZWQgaW4gYW5kIG91dCBvZiB0aGUgcG9vbCBmYW1vdXMgaXRhbGlhbiBleHBsb3Jlcg==', type: 'sunday', par: 3 }, // Sun Jul 5
 
+    // ── WEEK 10 (Jul 6) ────────────────────────────────
+    { clue: 'Thermostat',  sentence: 'd2FsbCBtb3VudGVkIGRldmljZSB1c2VkIHRvIHJlZ3VsYXRlIHJvb20gdGVtcGVyYXR1cmU=',                              type: 'regular', par: 2 }, // Mon Jul 6
+    { clue: 'Polaroid',    sentence: 'Y2FtZXJhIHRoYXQgcHJpbnRzIHBob3RvcyBpbnN0YW50bHkgYWZ0ZXIgeW91IHRha2UgdGhlbQ==',                          type: 'regular', par: 1 }, // Tue Jul 7
+    { clue: 'Periscope',   sentence: 'b3B0aWNhbCBkZXZpY2UgdXNlZCBieSBzdWJtYXJpbmVzIHRvIHNlZSBhYm92ZSB0aGUgd2F0ZXI=',                          type: 'regular', par: 2 }, // Wed Jul 8
+    { clue: 'Lava Lamp',   sentence: 'ZGVjb3JhdGl2ZSBsaWdodCB3aXRoIGJsb2JzIG9mIHdheCB0aGF0IGViYiBhbmQgZmxvdw==',                              type: 'regular', par: 2 }, // Thu Jul 9
+    { clue: "Reindeer!",   sentence: 'ZGFzaGVyIGRhbmNlciBwcmFuY2VyIHZpeGVuIHJ1ZG9scGggY29tZXQgY3VwaWQgZG9ubmVyIGJsaXR6ZW4=',                  type: 'playful', par: 2 }, // Fri Jul 10
+    { clue: "3.14's?",     sentence: 'cHVtcGtpbiBwZWFjaCBhcHBsZSBjaGVycnkga2V5IGxpbWUgYmx1ZWJlcnJ5IGNvY29udXQgY3JlYW0gcGVjYW4=',              type: 'playful', par: 2 }, // Sat Jul 11
+    { clue: 'Lemon;',      sentence: 'c291ciB5ZWxsb3cgY2l0cnVzIGZydWl0IGRlZmVjdGl2ZSBjYXIgc29sZCB0byBhbiB1bnN1c3BlY3RpbmcgYnV5ZXI=',          type: 'sunday',  par: 3 }, // Sun Jul 12
+
+    
     // ── WEEK # (####) ── TEMPLATE ───────────────────────
     // { clue: 'mmmmm',      sentence: 'bW1tbW0=',              type: 'regular', par: 2 }, // Mon
     // { clue: 'ttttt',      sentence: 'dHR0dHQ=',              type: 'regular', par: 2 }, // Tue

@@ -59,7 +59,7 @@ const PUZZLES = [
     { clue: 'Ace;', sentence: 'dW50b3VjaGVkIHRlbm5pcyBzZXJ2ZSBoaWdoIGNhcmQgaW4gYSByb3lhbCBmbHVzaA==', type: 'sunday', par: 2 }, // Sun Jun 14
 
     // ── WEEK 7 (Jun 15) ────────────────────────────────
-    { clue: 'Escalator', sentence: 'bW92aW5nIHN0YWlyY2FzZSBmb3VuZCBpbiBtYWxscyBhbmQgYWlycG9ydHM=', type: 'regular', par: 2 }, // Mon Jun 15
+    { clue: 'Escalator', sentence: 'bW92aW5nIHN0YWlyY2FzZSB0eXBpY2FsbHkgZm91bmQgaW4gbWFsbHMgYW5kIGFpcnBvcnRz', type: 'regular', par: 2 }, // Mon Jun 15
     { clue: 'Spaghetti', sentence: 'bG9uZyBwYXN0YSB0cmFkaXRpb25hbGx5IHNlcnZlZCB3aXRoIG1lYXRiYWxscw==', type: 'regular', par: 1 }, // Tue Jun 16
     { clue: 'Flamingo', sentence: 'dGFsbCBwaW5rIGJpcmQga25vd24gZm9yIHN0YW5kaW5nIG9uIG9uZSBsZWc=', type: 'regular', par: 2 }, // Wed Jun 17
     { clue: 'Hourglass', sentence: 'ZGV2aWNlIHRoYXQgbWVhc3VyZXMgdGltZSB1c2luZyBmYWxsaW5nIHNhbmQ=', type: 'regular', par: 2 }, // Thu Jun 18

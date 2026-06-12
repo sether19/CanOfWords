@@ -37,17 +37,17 @@
     --border-modal:   rgba(0,0,0,0.06);
   }
   [data-theme="dark"] {
-    --bg-page:        #2e2418;
-    --bg-cell:        #d4c4b0;
-    --bg-frame:       #5a4832;
-    --bg-tray:        #5a4832;
-    --bg-btn:         #4a3a28;
-    --bg-btn-shadow:  #2e2418;
-    --bg-modal:       #3a2e20;
+    --bg-page:        #3d2e1c;
+    --bg-cell:        #ded3bd;
+    --bg-frame:       #1e1610;
+    --bg-tray:        #1e1610;
+    --bg-btn:         #3a2e20;
+    --bg-btn-shadow:  #1e1610;
+    --bg-modal:       #2e2418;
     --bg-overlay:     rgba(0,0,0,0.65);
-    --bg-menu:        #3a2e20;
-    --bg-status:      #4a3a28;
-    --bg-hint-circle: #4a3a28;
+    --bg-menu:        #2e2418;
+    --bg-status:      #3a2e20;
+    --bg-hint-circle: #3a2e20;
     --text-main:      #f0e6d3;
     --text-sub:       rgba(240,230,211,0.55);
     --border-modal:   rgba(255,255,255,0.09);
@@ -529,6 +529,10 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     z-index: 0;
   }
+  [data-theme="dark"] .cell.hint4-circle::before {
+    background: #8a6f3e;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
 
   /* Hints dropdown */
   .hints-menu {
@@ -1007,7 +1011,7 @@
 <script src="puzzles-v8.2.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.89  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.90  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1046,7 +1050,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-10-v0.89';   //UPDATE: build force fresh reload
+const BUILD = '2026-06-12-v0.90';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1419,24 +1423,37 @@ function clear() {
   });
 }
 
-const RAD = {tl:'50% 0 0 0',tr:'0 50% 0 0',br:'0 0 50% 0',bl:'0 0 0 50%'};
+const RAD = {tl:'50% 5% 5% 5%',tr:'5% 50% 5% 5%',br:'5% 5% 50% 5%',bl:'5% 5% 5% 50%'};
 function corner(a,b) {
   const m = {'1,0|0,1':'tr','1,0|0,-1':'br','-1,0|0,1':'tl','-1,0|0,-1':'bl',
              '0,1|1,0':'bl','0,1|-1,0':'br','0,-1|1,0':'tl','0,-1|-1,0':'tr'};
   return m[a+'|'+b];
 }
 
-function applyWorm(cells, color) {
+function applyWorm(cells, color, touchStart = null, touchEnd = null) {
   cells.forEach((c,i) => {
     c.classList.add('selected'); c.style.background = color;
     if (cells.length === 1) { c.style.borderRadius = '50%'; return; }
     if (i === 0 || i === cells.length-1) {
       let n = i===0 ? cells[1] : cells[cells.length-2];
       let dr = n.dataset.r - c.dataset.r, dc = n.dataset.c - c.dataset.c;
-      if (dc== 1) c.style.borderRadius = '50% 0 0 50%';
-      if (dc==-1) c.style.borderRadius = '0 50% 50% 0';
-      if (dr== 1) c.style.borderRadius = '50% 50% 0 0';
-      if (dr==-1) c.style.borderRadius = '0 0 50% 50%';
+      const touch = i === 0 ? touchStart : touchEnd;
+
+      let tl=50, tr=0, br=0, bl=50;
+      if (dc== 1) { tl=50; bl=50; tr=0; br=0; }
+      if (dc==-1) { tl=0;  bl=0;  tr=50; br=50; }
+      if (dr== 1) { tl=50; tr=50; br=0; bl=0; }
+      if (dr==-1) { tl=0;  tr=0;  br=50; bl=50; }
+
+      if (touch) {
+        const { dr: tdr, dc: tdc } = touch;
+        if (tdc === 1)  { tr = 15; br = 15; }
+        if (tdc === -1) { tl = 15; bl = 15; }
+        if (tdr === 1)  { bl = 15; br = 15; }
+        if (tdr === -1) { tl = 15; tr = 15; }
+      }
+
+      c.style.borderRadius = `${tl}% ${tr}% ${br}% ${bl}%`;
       return;
     }
     let p = cells[i-1], n = cells[i+1];
@@ -1445,13 +1462,36 @@ function applyWorm(cells, color) {
       (n.dataset.c-c.dataset.c)+','+(n.dataset.r-c.dataset.r)
     );
     if (k) c.style.borderRadius = RAD[k];
-    else c.style.borderRadius = '0';
+    else c.style.borderRadius = '5%';
   });
+}
+
+function adjCells(a, b) {
+  if (!a || !b || !a.dataset || !b.dataset) return false;
+  return Math.abs(parseInt(a.dataset.r) - parseInt(b.dataset.r)) +
+         Math.abs(parseInt(a.dataset.c) - parseInt(b.dataset.c)) === 1;
+}
+
+function touchDir(from, to) {
+  if (!from || !to || !from.dataset || !to.dataset) return null;
+  const dr = parseInt(to.dataset.r) - parseInt(from.dataset.r);
+  const dc = parseInt(to.dataset.c) - parseInt(from.dataset.c);
+  if (Math.abs(dr) + Math.abs(dc) !== 1) return null;
+  return { dr, dc };
 }
 
 function redraw() {
   clear();
-  words.forEach(w => applyWorm(w.cells, w.color));
+  // Only taper ends that are part of the ordered sentence chain
+  words.forEach((w, wi) => {
+    const myFirst = w.cells[0], myLast = w.cells[w.cells.length - 1];
+    const prev = words[wi - 1], next = words[wi + 1];
+    const prevLast  = prev ? prev.cells[prev.cells.length - 1] : null;
+    const nextFirst = next ? next.cells[0] : null;
+    const ts = adjCells(myFirst, prevLast)  ? touchDir(myFirst, prevLast)  : null;
+    const te = adjCells(myLast,  nextFirst) ? touchDir(myLast,  nextFirst) : null;
+    applyWorm(w.cells, w.color, ts, te);
+  });
   if (drag.length) applyWorm(drag, getNextColor());
   drawWormsSvg();
   renderChips();
@@ -3544,7 +3584,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.89</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.90</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

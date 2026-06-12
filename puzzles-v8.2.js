@@ -64,7 +64,7 @@ const PUZZLES = [
     { clue: 'Flamingo', sentence: 'dGFsbCBwaW5rIGJpcmQga25vd24gZm9yIHN0YW5kaW5nIG9uIG9uZSBsZWc=', type: 'regular', par: 2 }, // Wed Jun 17
     { clue: 'Hourglass', sentence: 'ZGV2aWNlIHRoYXQgbWVhc3VyZXMgdGltZSB1c2luZyBmYWxsaW5nIHNhbmQ=', type: 'regular', par: 2 }, // Thu Jun 18
     { clue: 'Chess!', sentence: 'cGF3biByb29rIGtuaWdodCBiaXNob3AgcXVlZW4ga2luZw==', type: 'playful', par: 1 }, // Fri Jun 19
-    { clue: 'Socks?', sentence: 'bGF1bmRyeSBpdGVtIG1vc3QgbGlrZWx5IHRvIGRpc2FwcGVhcg==', type: 'playful', par: 3 }, // Sat Jun 20
+    { clue: 'Sock?', sentence: 'bGF1bmRyeSBpdGVtIG1vc3QgbGlrZWx5IHRvIGRpc2FwcGVhcg==', type: 'playful', par: 3 }, // Sat Jun 20
     { clue: 'Guinness;', sentence: 'ZmFtb3VzIGlyaXNoIHN0b3V0IGFubnVhbCBib29rIG9mIHdvcmxkIHJlY29yZHM=', type: 'sunday', par: 2 }, // Sun Jun 21
 
     // ── WEEK 8 (Jun 22) ────────────────────────────────

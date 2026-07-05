@@ -1011,7 +1011,7 @@
 <script src="puzzles-v8.3.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.90  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 0.91  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1050,7 +1050,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-06-12-v0.90';   //UPDATE: build force fresh reload
+const BUILD = '2026-07-5-v0.91';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -2995,6 +2995,7 @@ document.getElementById('ap-share-btn').onclick = shareResult;
 /* ── Par system ── */
 let parScore = 0;
 let submitCount = 0;
+let previousGuesses = new Set();
 
 const PAR_COLORS = { wrong: '#e8b0b0', hint1: '#9bdcff', hint2: '#ffcc80', hint3: '#d1c4e9', hint4: '#d7c4a0' };
 
@@ -3004,6 +3005,7 @@ function initPar() {
   if (label) label.textContent = 'Par:';
   parScore = 0;
   submitCount = 0;
+  previousGuesses = new Set();
 
   const container = document.getElementById('parDisplay');
   if (!container) return;
@@ -3059,7 +3061,19 @@ function checkCompletion(manual) {
   let isCorrect = playerSentence === targetSentence;
 
   if (!isCorrect) {
-    // Wrong — flash submit button red briefly
+    // Check if this exact arrangement has been submitted before
+    if (previousGuesses.has(playerSentence)) {
+      submitBtn.style.background = '#f0e0a0';
+      submitBtn.innerHTML = '<span>Already tried that!</span>';
+      shakeFrame();
+      setTimeout(() => {
+        submitBtn.style.background = '';
+        submitBtn.innerHTML = '<span>Submit</span><span id="submitDot" style="font-size:6px;color:#e8b0b0;opacity:1;transition:opacity 300ms">●</span>';
+      }, 1400);
+      return;
+    }
+    // New wrong guess — record it and penalize
+    previousGuesses.add(playerSentence);
     submitBtn.style.background = '#e8b0b0';
     submitBtn.innerHTML = '<span>Not quite!</span><span id="submitDot" style="font-size:6px;color:#e8b0b0;opacity:1;transition:opacity 300ms">●</span>';
     shakeFrame();
@@ -3584,7 +3598,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.90</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.91</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

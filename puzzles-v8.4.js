@@ -121,6 +121,6 @@ const PUZZLES = [
     // { clue: 'sssss?',     sentence: 'c3Nzc3M=',              type: 'playful', par: 2 }, // Sat
     // { clue: 'sssss;',     sentence: 'c3Nzc3M=',              type: 'sunday',  par: 2 }, // Sun
     // User Submitted Format:
-    // { clue: 'Piano', sentence: 'BASE64...', type: 'regular', par: 2, credit: 'Josh' }
+    // { clue: 'Piano', sentence: 'BASE64...', type: 'regular', par: 2, credit: 'Josh' } //
 
 ];

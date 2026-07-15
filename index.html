@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪱</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<title>Can of Words🪱</title>
+<title>Can of Words 🪱</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -1008,7 +1008,7 @@
   }
 </script>
 
-<script src="puzzles-v8.4.js"></script> <!-- //UPDATE: puzzle file version -->
+<script src="puzzles-v8.5.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
    PUZZLE LIBRARY — VERSION 0.91  //UPDATE: version number
@@ -1050,7 +1050,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-07-06-v0.92';   //UPDATE: build force fresh reload
+const BUILD = '2026-07-15-v0.93';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -3598,7 +3598,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.92</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.93</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

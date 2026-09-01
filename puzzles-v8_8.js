@@ -145,17 +145,17 @@ const PUZZLES = [
     { clue: 'Windmill', sentence: 'bGFyZ2Ugc3RydWN0dXJlIHdpdGggcm90YXRpbmcgYmxhZGVzIHRoYXQgaGFybmVzc2VzIHdpbmQgZm9yIHBvd2Vy', type: 'regular', par: 2 }, // Wed Aug 19
     { clue: 'Cactus', sentence: 'ZGVzZXJ0IHBsYW50IGNvdmVyZWQgaW4gc3BpbmVzIHRoYXQgc3RvcmVzIHdhdGVyIGluIGl0cyBzdGVt', type: 'regular', par: 2 }, // Thu Aug 20
     { clue: 'Taco!', sentence: 'Y2Fybml0YXMgYWwgcGFzdG9yIGNoaWNrZW4gYmFyYmFjb2EgYnJlYWtmYXN0IGNhcm5lIGFzYWRhIGZpc2g=', type: 'playful', par: 2 }, // Fri Aug 21
-    { clue: 'Emoji?', sentence: 'c2luZ2xlIHN5bWJvbCBleHBlY3RlZCB0byBjYXB0dXJlIHlvdXIgZW50aXJlIG1vb2QgaW4gb25lIHRleHQ=', type: 'playful', par: 2 }, // Sat Aug 22
-    { clue: 'Bat;', sentence: 'bm9jdHVybmFsIGZseWluZyBtYW1tYWwgd29vZGVuIGNsdWIgdXNlZCB0byBoaXQgYSBiYXNlYmFsbA==', type: 'sunday', par: 3 }, // Sun Aug 23
+    { clue: 'Emoji?', sentence: 'c2luZ2xlIHN5bWJvbCBleHBlY3RlZCB0byBjYXB0dXJlIHlvdXIgZW50aXJlIG1vb2QgaW4gb25lIHRleHQ=', type: 'playful', par: 3 }, // Sat Aug 22
+    { clue: 'Bat;', sentence: 'bm9jdHVybmFsIGZseWluZyBtYW1tYWwgd29vZGVuIGNsdWIgdXNlZCB0byBoaXQgYSBiYXNlYmFsbA==', type: 'sunday', par: 2 }, // Sun Aug 23
 
     // ── WEEK 17 (Aug 24) ─────────────────────────────────
     { clue: 'Backpack', sentence: 'YmFnIGNhcnJpZWQgb24gYm90aCBzaG91bGRlcnMgdG8gaG9sZCBib29rcyBhbmQgc3VwcGxpZXM=', type: 'regular', par: 2 }, // Mon Aug 24
     { clue: 'Rainbow', sentence: 'YXJjIG9mIGNvbG9ycyB0aGF0IGFwcGVhcnMgd2hlbiBzdW5saWdodCBiZW5kcyB0aHJvdWdoIHJhaW4=', type: 'regular', par: 2 }, // Tue Aug 25
     { clue: 'Accordion', sentence: 'Zm9sZGluZyBtdXNpY2FsIGluc3RydW1lbnQgcGxheWVkIGJ5IHNxdWVlemluZyBpdHMgYmVsbG93cw==', type: 'regular', par: 2 }, // Wed Aug 26
     { clue: 'Lighthouse', sentence: 'dGFsbCBjb2FzdGFsIHRvd2VyIHRoYXQgd2FybnMgc2hpcHMgYXdheSBmcm9tIHJvY2t5IHNob3Jlcw==', type: 'regular', par: 2 }, // Thu Aug 27
-    { clue: 'Autocorrect!', sentence: 'dHlwbyBmaXhpbmcgZmVhdHVyZSBmb3IgcGhvbmVzIHRoYXQgaGF0ZXMgdGhlIHdvcmQgZHVjaw==', type: 'playful', par: 2 }, // Fri Aug 28
+    { clue: 'Autocorrect!', sentence: 'dHlwbyBmaXhpbmcgZmVhdHVyZSBmb3IgcGhvbmVzIHRoYXQgaGF0ZXMgdGhlIHdvcmQgZHVjaw==', type: 'playful', par: 3 }, // Fri Aug 28
     { clue: 'Hats!', sentence: 'YmFzZWJhbGwgdG9wIGJlYW5pZSBjb3dib3kgZmVkb3JhIGJvd2xlciBoYXJkIHN1bg==', type: 'playful', par: 2 }, // Sat Aug 29
-    { clue: 'Crane;', sentence: 'bWFjaGluZSB0aGF0IGxpZnRzIGhlYXZ5IGxvYWRzIHRhbGwgd2FkaW5nIGJpcmQgd2l0aCBhIGxvbmcgbmVjaw==', type: 'sunday', par: 3 }, // Sun Aug 30
+    { clue: 'Crane;', sentence: 'bWFjaGluZSB0aGF0IGxpZnRzIGhlYXZ5IGxvYWRzIHRhbGwgd2FkaW5nIGJpcmQgd2l0aCBhIGxvbmcgbmVjaw==', type: 'sunday', par: 2 }, // Sun Aug 30
 
     // ── WEEK 18 (Aug 31) ─────────────────────────────────
     { clue: 'Recipe', sentence: 'c3RlcCBieSBzdGVwIGluc3RydWN0aW9ucyBmb3IgcHJlcGFyaW5nIGEgZGlzaA==', type: 'regular', par: 2 }, // Mon Aug 31
@@ -163,25 +163,25 @@ const PUZZLES = [
     { clue: 'Typewriter', sentence: 'bWVjaGFuaWNhbCBkZXZpY2UgdGhhdCBzdGFtcHMgaW5rIGxldHRlcnMgb250byBwYXBlcg==', type: 'regular', par: 2 }, // Wed Sep 2
     { clue: 'Firefly', sentence: 'c21hbGwgYmVldGxlIHRoYXQgZ2xvd3MgaW4gdGhlIGRhcmsgb24gc3VtbWVyIG5pZ2h0cw==', type: 'regular', par: 2 }, // Thu Sep 3
     { clue: 'Alarm Clock!', sentence: 'ZGV2aWNlIHRoYXQgYnV6emVzIGJlZXBzIGFuZCByaW5ncyB0byBydWluIHlvdXIgbW9ybmluZw==', type: 'playful', par: 2 }, // Fri Sep 4
-    { clue: 'Junk Drawer?', sentence: 'bXlzdGVyaW91cyBraXRjaGVuIGRyYXdlciBob2xkaW5nIGV2ZXJ5dGhpbmcgYW5kIG5vdGhpbmc=', type: 'playful', par: 2 }, // Sat Sep 5
+    { clue: 'Junk Drawer?', sentence: 'bXlzdGVyaW91cyBraXRjaGVuIGRyYXdlciBob2xkaW5nIGV2ZXJ5dGhpbmcgYW5kIG5vdGhpbmc=', type: 'playful', par: 3 }, // Sat Sep 5
     { clue: 'Trunk;', sentence: 'c3RvcmFnZSBzcGFjZSBhdCB0aGUgYmFjayBvZiBhIGNhciBhbiBlbGVwaGFudCdzIGxvbmcgbm9zZQ==', type: 'sunday', par: 2 }, // Sun Sep 6
 
     // ── WEEK 19 (Sep 7) ─────────────────────────────────
     { clue: 'Snowplow', sentence: 'dmVoaWNsZSB3aXRoIGxhcmdlIGJsYWRlIHVzZWQgdG8gY2xlYXIgc25vdyBmcm9tIHJvYWRz', type: 'regular', par: 2 }, // Mon Sep 7
-    { clue: 'Beehive', sentence: 'c3RydWN0dXJlIG9mIHdheCBjZWxscyB3aGVyZSBiZWVzIGxpdmUgYW5kIHN0b3JlIGhvbmV5', type: 'regular', par: 2 }, // Tue Sep 8
+    { clue: 'Beehive', sentence: 'c3RydWN0dXJlIG9mIHdheCBjZWxscyB3aGVyZSBiZWVzIGxpdmUgYW5kIHN0b3JlIGhvbmV5', type: 'regular', par: 1 }, // Tue Sep 8
     { clue: 'Omelette', sentence: 'ZWdncyB3aGlza2VkIGFuZCBjb29rZWQgZmxhdCB0aGVuIGZvbGRlZCBhcm91bmQgYSBmaWxsaW5n', type: 'regular', par: 2 }, // Wed Sep 9
     { clue: 'Anchor', sentence: 'aGVhdnkgbWV0YWwgd2VpZ2h0IGRyb3BwZWQgdG8ga2VlcCBhIHNoaXAgZnJvbSBkcmlmdGluZw==', type: 'regular', par: 2 }, // Thu Sep 10
     { clue: 'Birds!', sentence: 'cGlnZW9uIGNhcmRpbmFsIHN3YW4gY3JvdyBoZXJvbiBlYWdsZSByb2JpbiBkb3ZlIG93bCBoYXdr', type: 'playful', par: 2 }, // Fri Sep 11
-    { clue: 'Go Birds!', sentence: 'cmFsbHkgY3J5IGFuZCBncmVldGluZyBzaG91dGVkIGJ5IFBoaWxhZGVscGhpYSBFYWdsZXMgZmFucw==', type: 'playful', par: 2 }, // Sat Sep 12
+    { clue: 'Go Birds!', sentence: 'cmFsbHkgY3J5IGFuZCBncmVldGluZyBzaG91dGVkIGJ5IFBoaWxhZGVscGhpYSBFYWdsZXMgZmFucw==', type: 'playful', par: 3 }, // Sat Sep 12
     { clue: 'Watch;', sentence: 'ZGV2aWNlIHdvcm4gb24gdGhlIHdyaXN0IHRvIHRlbGwgdGltZSB0byBvYnNlcnZlIHNvbWV0aGluZyBjbG9zZWx5', type: 'sunday', par: 2 }, // Sun Sep 13
 
     // ── WEEK 20 (Sep 14) ────────────────────────────────
     { clue: 'Snorkel', sentence: 'dHViZSB0aGF0IGxldHMgeW91IGJyZWF0aGUgd2hpbGUgZmxvYXRpbmcgZmFjZSBkb3duIGluIHdhdGVy', type: 'regular', par: 2 }, // Mon Sep 14
     { clue: 'Spider', sentence: 'ZWlnaHQgbGVnZ2VkIGNyZWF0dXJlIHRoYXQgc3BpbnMgc2lsa3kgd2VicyB0byBjYXRjaCBwcmV5', type: 'regular', par: 2 }, // Tue Sep 15
-    { clue: 'Drawbridge', sentence: 'YnJpZGdlIHRoYXQgbGlmdHMgdXAgdG8gbGV0IGJvYXRzIHBhc3MgdW5kZXJuZWF0aA==', type: 'regular', par: 2 }, // Wed Sep 16
+    { clue: 'Drawbridge', sentence: 'YnJpZGdlIHRoYXQgbGlmdHMgdXAgdG8gbGV0IGJvYXRzIHBhc3MgdW5kZXJuZWF0aA==', type: 'regular', par: 1 }, // Wed Sep 16
     { clue: 'Xylophone', sentence: 'aW5zdHJ1bWVudCBwbGF5ZWQgYnkgc3RyaWtpbmcgd29vZGVuIGJhcnMgd2l0aCBtYWxsZXRz', type: 'regular', par: 2 }, // Thu Sep 17
     { clue: 'Bread!', sentence: 'c291cmRvdWdoIHJ5ZSBwdW1wZXJuaWNrZWwgYmFndWV0dGUgZm9jYWNjaWEgY2lhYmF0dGEgcGl0YSBuYWFu', type: 'playful', par: 2 }, // Fri Sep 18
-    { clue: 'Karaoke?', sentence: 'YWN0aXZpdHkgd2hlcmUgY29uZmlkZW5jZSBtYXR0ZXJzIG1vcmUgdGhhbiBhY3R1YWwgc2luZ2luZw==', type: 'playful', par: 2 }, // Sat Sep 19
+    { clue: 'Karaoke?', sentence: 'YWN0aXZpdHkgd2hlcmUgY29uZmlkZW5jZSBtYXR0ZXJzIG1vcmUgdGhhbiBhY3R1YWwgc2luZ2luZw==', type: 'playful', par: 3 }, // Sat Sep 19
     { clue: 'Ring;', sentence: 'amV3ZWxyeSB3b3JuIG9uIGEgZmluZ2VyIHNvdW5kIGEgYmVsbCBtYWtlcyB3aGVuIHN0cnVjaw==', type: 'sunday', par: 2 }, // Sun Sep 20
 
     // ── WEEK # (####) ── TEMPLATE ───────────────────────

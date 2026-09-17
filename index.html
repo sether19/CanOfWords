@@ -1067,8 +1067,10 @@ if (localStorage.getItem('canofwords_build') !== BUILD) {
 }
 
 const savedState = loadState();
+// UTF-8 safe base64 decode — supports symbols beyond Latin-1 (card suits, arrows, stars, etc.)
+function b64ToUtf8(str) { return decodeURIComponent(escape(atob(str))); }
 // Decode Base64 sentence early so all code can use it
-if (PUZZLE && !PUZZLE._decoded) { PUZZLE.sentence = atob(PUZZLE.sentence); PUZZLE._decoded = true; }
+if (PUZZLE && !PUZZLE._decoded) { PUZZLE.sentence = b64ToUtf8(PUZZLE.sentence); PUZZLE._decoded = true; }
 let ACTIVE_PUZZLE = PUZZLE;
 const alreadyPlayedToday = savedState.dateKey === TODAY_KEY && savedState.solved === true;
 
@@ -2194,7 +2196,7 @@ function loadArchivePuzzle(dateKey, puzzleIdx) {
 
   // Swap puzzle
   const archivePuzzle = Object.assign({}, PUZZLES[puzzleIdx]);
-  if (!archivePuzzle._decoded) { archivePuzzle.sentence = atob(archivePuzzle.sentence); archivePuzzle._decoded = true; }
+  if (!archivePuzzle._decoded) { archivePuzzle.sentence = b64ToUtf8(archivePuzzle.sentence); archivePuzzle._decoded = true; }
   if (archivePuzzle.sentence.includes('|')) {
     archivePuzzle._sentenceParts = archivePuzzle.sentence.split('|').map(p => p.trim());
     archivePuzzle.sentence = archivePuzzle._sentenceParts.join(' ');

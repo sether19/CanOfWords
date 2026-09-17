@@ -884,6 +884,16 @@
   </div>
 </div>
 
+<!-- Season concluded overlay -->
+<div id="season-end-modal" class="modal-overlay">
+  <div class="modal-box" style="text-align:center">
+    <h2>🪱 See you next season!</h2>
+    <p style="font-size:13px;line-height:1.6;opacity:0.75;text-align:left;margin:0 0 16px">Can of Words Season 1 has concluded and I am taking a brief hiatus. Please take this opportunity to check out our entire free archive of puzzles, or submit your own puzzle ideas to be included in future seasons!</p>
+    <button class="modal-close" id="seasonEndArchiveBtn" style="margin-top:0;background:#d0eacc;box-shadow:0 2px 0 #7ab870;color:#2d1f0e;width:100%">📅 Browse the Archive</button>
+    <button class="modal-close" id="seasonEndSubmitBtn" style="margin-top:8px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;color:#2d1f0e;width:100%">💡 Submit a Puzzle</button>
+  </div>
+</div>
+
 <div class="top-bar">
   <div class="top-bar-left">
     <div class="game-title">Can of Words 🪱</div>
@@ -1011,7 +1021,7 @@
 <script src="puzzles-v8_8.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 0.95  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 1.0  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1050,7 +1060,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-09-01-v0.96';   //UPDATE: build force fresh reload
+const BUILD = '2026-09-17-v1.0';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1274,6 +1284,23 @@ const ty = todayParts[0], tm = todayParts[1], td = todayParts[2];
 
 if (!PUZZLE) {
   document.getElementById('clue').textContent = 'No puzzle available for today — check back soon!';
+  document.getElementById('season-end-modal').classList.add('show');
+  document.getElementById('seasonEndArchiveBtn').onclick = () => {
+    document.getElementById('season-end-modal').classList.remove('show');
+    archiveCalendarMonth = null; // reset to current month each time
+    buildArchiveCalendar();
+    document.getElementById('archiveModal').classList.add('show');
+  };
+  document.getElementById('seasonEndSubmitBtn').onclick = () => {
+    document.getElementById('season-end-modal').classList.remove('show');
+    document.getElementById('submitError').style.display = 'none';
+    document.getElementById('submitSuccess').style.display = 'none';
+    document.getElementById('submitClue').value = '';
+    document.getElementById('submitSentence').value = '';
+    document.getElementById('submitName').value = '';
+    setSubmitType('regular');
+    document.getElementById('submitModal').classList.add('show');
+  };
 } else {
   document.getElementById('clue').innerHTML =
     formatClue(ACTIVE_PUZZLE);
@@ -3598,7 +3625,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v0.96</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.0</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

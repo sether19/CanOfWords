@@ -185,12 +185,12 @@ const PUZZLES = [
     { clue: 'Ring;', sentence: 'amV3ZWxyeSB3b3JuIG9uIGEgZmluZ2VyIHNvdW5kIGEgYmVsbCBtYWtlcyB3aGVuIHN0cnVjaw==', type: 'sunday', par: 2 }, // Sun Sep 20
 
     // ── WEEK 21 (Sep 21) ────────────────────────────────
-    { clue: 'Chimney', sentence: 'c3RydWN0dXJlIHRoYXQgY2hhbm5lbHMgc21va2UgYXdheSBmcm9tIGEgZmlyZXBsYWNl', type: 'regular', par: 2 }, // Mon Sep 21
+    { clue: 'Chimney', sentence: 'c3RydWN0dXJlIHRoYXQgY2hhbm5lbHMgc21va2UgYXdheSBmcm9tIGEgZmlyZXBsYWNl', type: 'regular', par: 1 }, // Mon Sep 21
     { clue: 'Blueprint', sentence: 'ZGV0YWlsZWQgdGVjaG5pY2FsIGRyYXdpbmcgdXNlZCB0byBjb25zdHJ1Y3QgYSBidWlsZGluZw==', type: 'regular', par: 2 }, // Tue Sep 22
     { clue: 'Barometer', sentence: 'c2NpZW50aWZpYyBpbnN0cnVtZW50IHVzZWQgdG8gbWVhc3VyZSBhdG1vc3BoZXJpYyBwcmVzc3VyZQ==', type: 'regular', par: 2 }, // Wed Sep 23
     { clue: 'Skeleton', sentence: 'aW50ZXJuYWwgZnJhbWV3b3JrIG9mIGJvbmVzIHRoYXQgc3VwcG9ydHMgdGhlIGJvZHk=', type: 'regular', par: 2 }, // Thu Sep 24
     { clue: 'Weathervane!', sentence: 'bm9ydGgg4oaRIHNvdXRoIOKGkyBlYXN0IOKGkiB3ZXN0IOKGkA==', type: 'playful', par: 2 }, // Fri Sep 25
-    { clue: 'A+?', sentence: 'b25lIGh1bmRyZWQgJSB3aXRoIGEgZ29sZCDimIUgb24gdG9w', type: 'playful', par: 2 }, // Sat Sep 26
+    { clue: 'A+?', sentence: 'b25lIGh1bmRyZWQgJSB3aXRoIGEgZ29sZCDimIUgb24gdG9w', type: 'playful', par: 3 }, // Sat Sep 26
     { clue: 'Spring;', sentence: 'c2Vhc29uIHRoYXQgZm9sbG93cyB3aW50ZXIgY29pbGVkIG1ldGFsIG1lY2hhbmlzbQ==', type: 'sunday', par: 2 }, // Sun Sep 27
 
     // ── WEEK 22 (Sep 28) ────────────────────────────────
@@ -198,7 +198,7 @@ const PUZZLES = [
     { clue: 'Odometer', sentence: 'ZGV2aWNlIHRoYXQgdHJhY2tzIHRoZSB0b3RhbCBkaXN0YW5jZSBhIGNhciBoYXMgdHJhdmVsZWQ=', type: 'regular', par: 2 }, // Tue Sep 29
     { clue: 'Satellite', sentence: 'b2JqZWN0IG9yYml0aW5nIGEgcGxhbmV0IHRoYXQgcmVsYXlzIHNpZ25hbHM=', type: 'regular', par: 2 }, // Wed Sep 30
     { clue: 'Aquarium', sentence: 'Z2xhc3MgdGFuayB0aGF0IGhvdXNlcyBmaXNoIGFuZCBvdGhlciBhcXVhdGljIGxpZmU=', type: 'regular', par: 2 }, // Thu Oct 1
-    { clue: 'Straight Flush!', sentence: 'YWNlIG9mIOKZpiB0d28gb2Yg4pmmIHRocmVlIG9mIOKZpiBmb3VyIG9mIOKZpiBmaXZlIG9mIOKZpg==', type: 'playful', par: 2 }, // Fri Oct 2
+    { clue: 'Straight Flush!', sentence: 'YWNlIG9mIOKZpiB0d28gb2Yg4pmmIHRocmVlIG9mIOKZpiBmb3VyIG9mIOKZpiBmaXZlIG9mIOKZpg==', type: 'playful', par: 3 }, // Fri Oct 2
     { clue: 'Weather Report?', sentence: 'c3Vubnkg4piAIGNsb3VkeSDimIEgcmFpbnkg4piCIHNub3d5IOKYgw==', type: 'playful', par: 2 }, // Sat Oct 3
     { clue: 'Tie;', sentence: 'a25vdHRlZCBuZWNrd2VhciB3b3JuIHdpdGggYSBzdWl0IGVxdWFsIHNjb3JlIGluIGEgZ2FtZQ==', type: 'sunday', par: 2 }, // Sun Oct 4
 

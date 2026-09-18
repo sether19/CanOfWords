@@ -944,6 +944,10 @@
       <div style="font-size:11px;font-weight:600;color:var(--text-main);opacity:0.35;letter-spacing:0.02em;text-align:center">YOUR SENTENCE WILL BE ARRANGED HERE</div>
       <div style="font-size:9px;font-weight:600;color:var(--text-main);opacity:0.35;letter-spacing:0.01em;text-align:center">Drag words to reorder &bull; Drag words to 🗑️ (or press) to delete</div>
     </div>
+    <!-- Auto-sort feature (🔗) rolled back for now — pending decision. To re-enable: uncomment this button,
+         restore padding-left:30px on #sentenceRow above, and see the matching JS block further down.
+    <button id="sortBtn" title="Auto-sort words by grid connection" style="position:absolute;left:0;top:0;bottom:0;width:26px;font-size:10px;padding:0;display:flex;align-items:center;justify-content:center;background:#d1c4e9;box-shadow:inset 1px 0 0 #a090c8, inset 0 -2px 0 #a090c8;border-radius:12px 0 0 12px;border-right:1px solid rgba(0,0,0,0.08);">🔗</button>
+    -->
     <button id="trashBtn" style="position:absolute;right:0;top:0;bottom:0;width:26px;font-size:10px;padding:0;display:flex;align-items:center;justify-content:center;background:#ffd0d0;box-shadow:inset -1px 0 0 #d48080, inset 0 -2px 0 #d48080;border-radius:0 12px 12px 0;border-left:1px solid rgba(0,0,0,0.08);">🗑️</button>
   </div>
 
@@ -1032,7 +1036,7 @@
 <script src="puzzles-v8_8.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 1.0  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 1.2  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1071,7 +1075,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-09-17-v1.0';   //UPDATE: build force fresh reload
+const BUILD = '2026-09-18-v1.2';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1117,7 +1121,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
    Beyond 7 simultaneous words, golden ratio generates extras.
    ===================================================================== */
 const COLORS = [
-  '#f8bbd0','#b9f6ca','#ffe082','#9bdcff','#ffcc80','#d1c4e9','#d7c4a0', // original 7
+  '#f8bbd0','#b9f6ca','#ffe082','#f0a5a5','#9bdcff','#ffcc80','#d1c4e9', // original 7
   '#ffccbc','#d7ccc8','#f0f4c3','#ffe0b2','#b0bec5','#fff59d','#e1bee7','#ef9a9a', // extended 8
 ];
 
@@ -1343,6 +1347,67 @@ trashBtn.onclick = () => {
   redraw();
 };
 
+/* ── Auto-sort feature rolled back for now — pending decision ──
+   To re-enable: uncomment this whole block, uncomment the matching #sortBtn
+   button in the HTML above, and restore padding-left:30px on #sentenceRow.
+
+const sortBtn = document.getElementById('sortBtn');
+
+// Sort button — reorders the tray to match how the words physically connect in the grid.
+// Chains words together by matching each word's last cell to another word's first cell
+// (the same adjacency check used to verify a win), so players don't have to manually
+// drag words into place once they've found them all.
+sortBtn.onclick = () => {
+  if (done || words.length < 2) return;
+  autoSortTray();
+  redraw();
+};
+
+function autoSortTray() {
+  function endsAdjacent(a, b) {
+    if (!a || !b) return false;
+    return Math.abs(parseInt(a.dataset.r) - parseInt(b.dataset.r)) +
+           Math.abs(parseInt(a.dataset.c) - parseInt(b.dataset.c)) === 1;
+  }
+
+  const n = words.length;
+  const nextIdx = new Array(n).fill(-1);
+  const prevIdx = new Array(n).fill(-1);
+
+  // Find each word's successor: the word whose first cell touches this word's last cell
+  for (let i = 0; i < n; i++) {
+    const lastCell = words[i].cells[words[i].cells.length - 1];
+    for (let j = 0; j < n; j++) {
+      if (i === j || prevIdx[j] !== -1) continue; // each word can only have one predecessor
+      const firstCell = words[j].cells[0];
+      if (endsAdjacent(lastCell, firstCell)) {
+        nextIdx[i] = j;
+        prevIdx[j] = i;
+        break;
+      }
+    }
+  }
+
+  // Walk each chain starting from words with no predecessor (chain heads),
+  // so unrelated/unconnected words are simply left in place at the end.
+  const visited = new Array(n).fill(false);
+  const ordered = [];
+  for (let i = 0; i < n; i++) {
+    if (prevIdx[i] === -1 && !visited[i]) {
+      let cur = i;
+      while (cur !== -1 && !visited[cur]) {
+        ordered.push(cur);
+        visited[cur] = true;
+        cur = nextIdx[cur];
+      }
+    }
+  }
+  for (let i = 0; i < n; i++) if (!visited[i]) ordered.push(i); // safety net, shouldn't trigger
+
+  words = ordered.map(idx => words[idx]);
+}
+── end auto-sort feature ── */
+
 // Submit button — manual win check
 submitBtn.onclick = () => {
   if (done) return;
@@ -1473,7 +1538,24 @@ function corner(a,b) {
 function applyWorm(cells, color, touchStart = null, touchEnd = null) {
   cells.forEach((c,i) => {
     c.classList.add('selected'); c.style.background = color;
-    if (cells.length === 1) { c.style.borderRadius = '50%'; return; }
+    if (cells.length === 1) {
+      // A single-letter word reads as a solid, subtly-rounded square (matching the
+      // tray chip look) rather than a full circle, which stood out as an odd "dot".
+      // It still honors touch-flush like every other word, in case it happens to be
+      // correctly connected to a neighbor on either side.
+      const DEFAULT_RADIUS = 20, FLUSH_RADIUS = 6;
+      let tl = DEFAULT_RADIUS, tr = DEFAULT_RADIUS, br = DEFAULT_RADIUS, bl = DEFAULT_RADIUS;
+      [touchStart, touchEnd].forEach(touch => {
+        if (!touch) return;
+        const { dr: tdr, dc: tdc } = touch;
+        if (tdc === 1)  { tr = FLUSH_RADIUS; br = FLUSH_RADIUS; }
+        if (tdc === -1) { tl = FLUSH_RADIUS; bl = FLUSH_RADIUS; }
+        if (tdr === 1)  { bl = FLUSH_RADIUS; br = FLUSH_RADIUS; }
+        if (tdr === -1) { tl = FLUSH_RADIUS; tr = FLUSH_RADIUS; }
+      });
+      c.style.borderRadius = `${tl}% ${tr}% ${br}% ${bl}%`;
+      return;
+    }
     if (i === 0 || i === cells.length-1) {
       let n = i===0 ? cells[1] : cells[cells.length-2];
       let dr = n.dataset.r - c.dataset.r, dc = n.dataset.c - c.dataset.c;
@@ -1485,12 +1567,15 @@ function applyWorm(cells, color, touchStart = null, touchEnd = null) {
       if (dr== 1) { tl=50; tr=50; br=0; bl=0; }
       if (dr==-1) { tl=0;  tr=0;  br=50; bl=50; }
 
+      // FLUSH_RADIUS controls how "square" a word's end looks when it correctly touches
+      // a neighboring word — smaller = flatter/more obviously flush (was 15, now 6).
       if (touch) {
+        const FLUSH_RADIUS = 6;
         const { dr: tdr, dc: tdc } = touch;
-        if (tdc === 1)  { tr = 15; br = 15; }
-        if (tdc === -1) { tl = 15; bl = 15; }
-        if (tdr === 1)  { bl = 15; br = 15; }
-        if (tdr === -1) { tl = 15; tr = 15; }
+        if (tdc === 1)  { tr = FLUSH_RADIUS; br = FLUSH_RADIUS; }
+        if (tdc === -1) { tl = FLUSH_RADIUS; bl = FLUSH_RADIUS; }
+        if (tdr === 1)  { bl = FLUSH_RADIUS; br = FLUSH_RADIUS; }
+        if (tdr === -1) { tl = FLUSH_RADIUS; tr = FLUSH_RADIUS; }
       }
 
       c.style.borderRadius = `${tl}% ${tr}% ${br}% ${bl}%`;
@@ -1688,6 +1773,20 @@ function renderChips() {
     chip.style.background = w.color;
     chip.dataset.idx = i;
     chip.onpointerdown = startChipDrag;
+
+    // Mirror the grid's "flush" edge cue in the tray: flatten whichever side of the
+    // chip physically touches its neighbor's cell in the grid, so players get the
+    // same connection signal here as they do on the board itself.
+    const prev = words[i - 1], next = words[i + 1];
+    const touchesPrev = prev && adjCells(prev.cells[prev.cells.length - 1], w.cells[0]);
+    const touchesNext = next && adjCells(w.cells[w.cells.length - 1], next.cells[0]);
+    const FULL = 20, FLUSH = 6;
+    const tl = touchesPrev ? FLUSH : FULL;
+    const bl = touchesPrev ? FLUSH : FULL;
+    const tr = touchesNext ? FLUSH : FULL;
+    const br = touchesNext ? FLUSH : FULL;
+    chip.style.borderRadius = `${tl}px ${tr}px ${br}px ${bl}px`;
+
     rowEl.appendChild(chip);
   });
 }
@@ -3764,7 +3863,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.1</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.2</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

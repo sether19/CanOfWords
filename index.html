@@ -889,6 +889,17 @@
   <div class="modal-box" style="text-align:center">
     <h2>🪱 See you next season!</h2>
     <p style="font-size:13px;line-height:1.6;opacity:0.75;text-align:left;margin:0 0 16px">Can of Words Season 1 has concluded and I am taking a brief hiatus. Please take this opportunity to check out our entire free archive of puzzles, or submit your own puzzle ideas to be included in future seasons!</p>
+
+    <div style="margin:0 0 16px;text-align:left">
+      <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:6px">GET NOTIFIED WHEN SEASON 2 LAUNCHES</label>
+      <div style="display:flex;gap:6px">
+        <input id="seasonEndEmail" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter'){subscribeSeasonTwo()}" style="flex:1;min-width:0;box-sizing:border-box;padding:9px 12px;border-radius:10px;border:none;background:var(--bg-cell);box-shadow:inset 0 1px 3px rgba(0,0,0,0.12);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main)"/>
+        <button id="seasonEndEmailBtn" onclick="subscribeSeasonTwo()" style="flex-shrink:0;background:#9bdcff;box-shadow:0 2px 0 #5a9ec0;border-radius:10px;font-size:12px;font-weight:700;padding:0 14px;white-space:nowrap;color:#2d1f0e">Notify Me</button>
+      </div>
+      <div id="seasonEndEmailError" style="font-size:11px;color:#c0392b;margin-top:6px;display:none"></div>
+      <div id="seasonEndEmailSuccess" style="font-size:11px;color:#2a7a2a;margin-top:6px;display:none">Thanks! We'll email you when Season 2 launches 🪱</div>
+    </div>
+
     <button class="modal-close" id="seasonEndArchiveBtn" style="margin-top:0;background:#d0eacc;box-shadow:0 2px 0 #7ab870;color:#2d1f0e;width:100%">📅 Browse the Archive</button>
     <button class="modal-close" id="seasonEndSubmitBtn" style="margin-top:8px;background:#fef3b0;box-shadow:0 2px 0 #d4b800;color:#2d1f0e;width:100%">💡 Submit a Puzzle</button>
   </div>
@@ -915,7 +926,8 @@
       <div id="helpMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:180px;background:var(--bg-menu);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:500;overflow:hidden;">
         <div id="howToPlayBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border-modal);color:var(--text-main);">📖 How to Play</div>
         <div id="settingsBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border-modal);color:var(--text-main);">⚙️ Settings</div>
-        <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-main);">💡 Submit a Puzzle</div>
+        <div id="submitPuzzleBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--border-modal);color:var(--text-main);">💡 Submit a Puzzle</div>
+        <div id="giveFeedbackBtn" style="padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-main);">📝 Give Feedback</div>
       </div>
     </div>
   </div>
@@ -2359,6 +2371,14 @@ document.getElementById('submitPuzzleBtn').onclick = () => {
   setSubmitType('regular');
   document.getElementById('submitModal').classList.add('show');
 };
+document.getElementById('giveFeedbackBtn').onclick = () => {
+  document.getElementById('helpMenu').style.display = 'none';
+  document.getElementById('feedbackError').style.display = 'none';
+  document.getElementById('feedbackSuccess').style.display = 'none';
+  document.getElementById('feedbackIdea').value = '';
+  document.getElementById('feedbackEmail').value = '';
+  document.getElementById('feedbackModal').classList.add('show');
+};
 document.addEventListener('click', (e) => {
   const menu = document.getElementById('helpMenu');
   if (menu && !menu.contains(e.target) && e.target !== document.getElementById('helpBtn')) {
@@ -2394,6 +2414,99 @@ async function submitPuzzle() {
     btn.textContent = 'Submitted! 🪱';
     setTimeout(() => {
       document.getElementById('submitModal').classList.remove('show');
+      btn.disabled = false;
+      btn.textContent = 'Submit 🪱';
+    }, 2000);
+  } catch(e) {
+    errorEl.textContent = 'Something went wrong. Please try again!';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit 🪱';
+  }
+}
+
+/* ── Season 2 email notification signup ── */
+/* ── Season 2 email notification signup ── */
+// Shared write — keyed by email so repeat signups update the timestamp instead of creating duplicates.
+// Used by both the season-end popup and the feedback form (when an email is provided).
+async function addToSeasonTwoSignups(email) {
+  await db.collection('season2_signups').doc(email).set({
+    email,
+    submitted_at: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
+async function subscribeSeasonTwo() {
+  const emailInput = document.getElementById('seasonEndEmail');
+  const email = emailInput.value.trim().toLowerCase();
+  const errorEl = document.getElementById('seasonEndEmailError');
+  const successEl = document.getElementById('seasonEndEmailSuccess');
+  const btn = document.getElementById('seasonEndEmailBtn');
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    await addToSeasonTwoSignups(email);
+    successEl.style.display = 'block';
+    emailInput.value = '';
+    btn.textContent = 'Notify Me';
+    btn.disabled = false;
+  } catch(e) {
+    errorEl.textContent = 'Something went wrong. Please try again!';
+    errorEl.style.display = 'block';
+    btn.textContent = 'Notify Me';
+    btn.disabled = false;
+  }
+}
+
+/* ── Give Feedback ── */
+async function submitFeedback() {
+  const idea = document.getElementById('feedbackIdea').value.trim();
+  const email = document.getElementById('feedbackEmail').value.trim().toLowerCase();
+  const errorEl = document.getElementById('feedbackError');
+  const successEl = document.getElementById('feedbackSuccess');
+  const btn = document.getElementById('feedbackConfirm');
+
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!idea) { errorEl.textContent = 'Please enter your idea or feedback.'; errorEl.style.display = 'block'; return; }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email && !emailPattern.test(email)) {
+    errorEl.textContent = 'Please enter a valid email address, or leave it blank.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    await db.collection('feedback_submissions').add({
+      feedback: idea,
+      email: email || null,
+      submitted_at: firebase.firestore.FieldValue.serverTimestamp(),
+      puzzle_date: TODAY_KEY
+    });
+    // If they shared an email, also opt them into the Season 2 launch notification list
+    if (email) await addToSeasonTwoSignups(email);
+
+    successEl.style.display = 'block';
+    btn.textContent = 'Submitted! 🪱';
+    setTimeout(() => {
+      document.getElementById('feedbackModal').classList.remove('show');
       btn.disabled = false;
       btn.textContent = 'Submit 🪱';
     }, 2000);
@@ -3457,6 +3570,28 @@ if (PUZZLE) {
   </div>
 </div>
 
+<!-- Give Feedback modal -->
+<div id="feedbackModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:320px;width:92%">
+    <h2>Give Feedback 📝</h2>
+    <p style="font-size:12px;opacity:0.6;margin:0 0 14px">Found a bug? Have an idea? I'd love to hear it!</p>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">YOUR IDEA OR FEEDBACK</label>
+    <textarea id="feedbackIdea" placeholder="e.g. it would be fun if..." style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:var(--bg-modal);box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:12px;resize:vertical;min-height:80px"></textarea>
+
+    <label style="font-size:11px;opacity:0.5;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:4px">YOUR EMAIL <span style="opacity:0.5;font-weight:400">(optional, so I can reply)</span></label>
+    <input id="feedbackEmail" type="email" placeholder="you@email.com" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:10px;border:none;background:var(--bg-modal);box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);font-family:'Quicksand',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:16px"/>
+
+    <div id="feedbackError" style="font-size:11px;color:#c0392b;margin-bottom:8px;display:none"></div>
+    <div id="feedbackSuccess" style="font-size:12px;color:#2a7a2a;text-align:center;margin-bottom:8px;display:none">Thanks for the feedback! 🪱</div>
+
+    <div style="display:flex;gap:8px">
+      <button class="modal-close" onclick="document.getElementById('feedbackModal').classList.remove('show')" style="flex:1;opacity:0.5;font-size:12px">Cancel</button>
+      <button id="feedbackConfirm" onclick="submitFeedback()" style="flex:2;background:#d0eacc;box-shadow:0 2px 0 #7ab870;border-radius:12px;font-size:13px;font-weight:700">Submit 🪱</button>
+    </div>
+  </div>
+</div>
+
 <!-- Upgrade modal -->
 <div id="upgradeModal" onclick="if(event.target===this)dismissUpgrade()">
   <div id="upgradeBox">
@@ -3627,7 +3762,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.0</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.1</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

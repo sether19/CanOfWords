@@ -1036,7 +1036,7 @@
 <script src="puzzles-v8_8.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 1.2  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 1.3  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1075,7 +1075,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-09-18-v1.2';   //UPDATE: build force fresh reload
+const BUILD = '2026-09-18-v1.3';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1635,30 +1635,59 @@ function drawWormsSvg() {
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = '';
 
-  const allWorms = [...words.map(w => ({cells: w.cells, color: w.color}))];
-  if (drag.length) allWorms.push({cells: drag, color: getNextColor()});
+  function cellCenter(cell) {
+    const r = cell.getBoundingClientRect();
+    return { x: r.left - gridRect.left + r.width / 2, y: r.top - gridRect.top + r.height / 2, w: r.width };
+  }
+  function midpoint(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, w: a.w }; }
 
-  allWorms.forEach(({cells, color}) => {
-    if (!cells.length) return;
+  words.forEach((w, wi) => {
+    const prev = words[wi - 1], next = words[wi + 1];
+    const myFirst = w.cells[0], myLast = w.cells[w.cells.length - 1];
+    const prevLast  = prev ? prev.cells[prev.cells.length - 1] : null;
+    const nextFirst = next ? next.cells[0] : null;
+    const touchesPrev = adjCells(myFirst, prevLast);
+    const touchesNext = adjCells(myLast, nextFirst);
 
-    const pts = cells.map(cell => {
-      const r = cell.getBoundingClientRect();
-      return {
-        x: r.left - gridRect.left + r.width / 2,
-        y: r.top  - gridRect.top  + r.height / 2,
-        w: r.width
-      };
-    });
+    // Extend the touching end(s) with a NEW point reaching the midpoint of the
+    // connecting gap, so this word's own color fills exactly half of the space
+    // between it and its neighbor (the neighbor does the same from its side,
+    // meeting flush in the middle). Adding a point — rather than replacing the
+    // real letter's own point — keeps every existing letter-to-letter segment
+    // completely untouched, so no interior curve gets stretched or distorted.
+    let pts;
+    if (w.cells.length === 1) {
+      const center = cellCenter(w.cells[0]);
+      pts = [];
+      if (touchesPrev) pts.push(midpoint(center, cellCenter(prevLast)));
+      pts.push(center);
+      if (touchesNext) pts.push(midpoint(center, cellCenter(nextFirst)));
+    } else {
+      pts = w.cells.map(cellCenter);
+      if (touchesPrev) pts.unshift(midpoint(pts[0], cellCenter(prevLast)));
+      if (touchesNext) pts.push(midpoint(pts[pts.length - 1], cellCenter(nextFirst)));
+    }
 
+    const R = w.cells[0].getBoundingClientRect().width / 2 - 1;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', buildWormPath(pts, R, !touchesPrev, !touchesNext));
+    path.setAttribute('fill', w.color);
+    svg.appendChild(path);
+  });
+
+  if (drag.length) {
+    const pts = drag.map(cellCenter);
     const R = pts[0].w / 2 - 1;
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', buildWormPath(pts, R));
-    path.setAttribute('fill', color);
+    path.setAttribute('fill', getNextColor());
     svg.appendChild(path);
-  });
+  }
 }
 
-function buildWormPath(pts, R) {
+// capStart/capEnd: true = rounded arc (default, an unconnected end), false = flat
+// cut (used when this end is flush against a correctly-connected neighboring word)
+function buildWormPath(pts, R, capStart = true, capEnd = true) {
   const INDENT = R * 0.22; // how deep the concave pinch goes inward
 
   function norm(a, b) {
@@ -1703,30 +1732,13 @@ function buildWormPath(pts, R) {
     }
   }
 
-  // First end cap direction
-  const firstN = norm(pts[0], pts[1]);
-  const firstDir = {x: pts[0].x - pts[1].x, y: pts[0].y - pts[1].y};
-  const fd = Math.sqrt(firstDir.x**2 + firstDir.y**2);
-  const fu = {x: firstDir.x/fd, y: firstDir.y/fd};
-
-  // Last end cap direction
-  const lastN = norm(pts[pts.length-2], pts[pts.length-1]);
-  const lastDir = {x: pts[pts.length-1].x - pts[pts.length-2].x, y: pts[pts.length-1].y - pts[pts.length-2].y};
-  const ld = Math.sqrt(lastDir.x**2 + lastDir.y**2);
-  const lu = {x: lastDir.x/ld, y: lastDir.y/ld};
-
   let d = `M ${topPts[0].x} ${topPts[0].y} `;
 
   // Top side — use quadratic bezier through midpoints for smooth concave curves
   for (let i = 1; i < topPts.length; i++) {
     const p = topPts[i];
     const prev = topPts[i-1];
-    if (p.mid) {
-      // Curve inward to pinch point
-      const cpx = (prev.x + p.x) / 2;
-      const cpy = (prev.y + p.y) / 2;
-      d += `Q ${cpx} ${cpy} ${p.x} ${p.y} `;
-    } else if (prev.mid) {
+    if (p.mid || prev.mid) {
       const cpx = (prev.x + p.x) / 2;
       const cpy = (prev.y + p.y) / 2;
       d += `Q ${cpx} ${cpy} ${p.x} ${p.y} `;
@@ -1735,10 +1747,11 @@ function buildWormPath(pts, R) {
     }
   }
 
-  // End cap — arc around last point
-  const lTop = topPts[topPts.length-1];
+  // End cap — rounded arc by default, or a flat cut when flush against a connected neighbor
   const lBot = botPts[botPts.length-1];
-  d += `A ${R} ${R} 0 0 1 ${lBot.x} ${lBot.y} `;
+  d += capEnd
+    ? `A ${R} ${R} 0 0 1 ${lBot.x} ${lBot.y} `
+    : `L ${lBot.x} ${lBot.y} `;
 
   // Bottom side — reversed
   for (let i = botPts.length - 2; i >= 0; i--) {
@@ -1753,8 +1766,10 @@ function buildWormPath(pts, R) {
     }
   }
 
-  // Start cap — arc around first point
-  d += `A ${R} ${R} 0 0 1 ${topPts[0].x} ${topPts[0].y} Z`;
+  // Start cap — rounded arc by default, or a flat cut when flush against a connected neighbor
+  d += capStart
+    ? `A ${R} ${R} 0 0 1 ${topPts[0].x} ${topPts[0].y} Z`
+    : `L ${topPts[0].x} ${topPts[0].y} Z`;
 
   return d;
 }
@@ -3863,7 +3878,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.2</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.3</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

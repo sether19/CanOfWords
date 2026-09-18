@@ -160,7 +160,7 @@
     position: relative; z-index: 1;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-    transition: background 150ms;
+    transition: background 150ms, opacity 350ms ease-out;
   }
   .cell.hint4-circle { color: #2d1f0e; }
   .selected {
@@ -633,8 +633,7 @@
     40%  { transform: scale(1.03); }
     100% { transform: scale(1); }
   }
-  body.solved .cell:not(.selected) { opacity: 0.35; }
-  [data-theme="dark"] body.solved .cell:not(.selected) { opacity: 0.15; }
+  body.solved .cell:not(.selected) { opacity: 0; }
   .cell.success { animation: pop 450ms ease-out forwards; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
 
@@ -2418,6 +2417,7 @@ async function submitPuzzle() {
       btn.textContent = 'Submit 🪱';
     }, 2000);
   } catch(e) {
+    console.error('Puzzle submission error:', e);
     errorEl.textContent = 'Something went wrong. Please try again!';
     errorEl.style.display = 'block';
     btn.disabled = false;
@@ -2463,6 +2463,7 @@ async function subscribeSeasonTwo() {
     btn.textContent = 'Notify Me';
     btn.disabled = false;
   } catch(e) {
+    console.error('Season 2 signup error:', e);
     errorEl.textContent = 'Something went wrong. Please try again!';
     errorEl.style.display = 'block';
     btn.textContent = 'Notify Me';
@@ -2511,6 +2512,7 @@ async function submitFeedback() {
       btn.textContent = 'Submit 🪱';
     }, 2000);
   } catch(e) {
+    console.error('Feedback submission error:', e);
     errorEl.textContent = 'Something went wrong. Please try again!';
     errorEl.style.display = 'block';
     btn.disabled = false;
@@ -3762,7 +3764,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.1</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.0</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

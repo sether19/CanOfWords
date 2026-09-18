@@ -1033,10 +1033,10 @@
   }
 </script>
 
-<script src="puzzles-v8_8.js"></script> <!-- //UPDATE: puzzle file version -->
+<script src="puzzles-v8_9.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
-   PUZZLE LIBRARY — VERSION 1.3  //UPDATE: version number
+   PUZZLE LIBRARY — VERSION 1.4  //UPDATE: version number
    Line 1 = 05-05-2026. Each new line you add = the next day.
    Just keep appending to the bottom!
    ===================================================================== */
@@ -1075,7 +1075,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-09-18-v1.33';   //UPDATE: build force fresh reload
+const BUILD = '2026-09-18-v1.4';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1122,7 +1122,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
    ===================================================================== */
 const COLORS = [
   '#f8bbd0','#b9f6ca','#ffe082','#f0a5a5','#9bdcff','#ffcc80','#d1c4e9', // original 7
-  '#ffccbc','#d7ccc8','#f0f4c3','#ffe0b2','#b0bec5','#fff59d','#e1bee7','#ef9a9a', // extended 8
+  '#d7ccc8','#f0f4c3','#ffccbc','#fff59d','#b6d8ed','#bbedb6','#edb6da','#d8ba97', // extended 8 (v1.4 — replaced hue-colliding set)
 ];
 
 function getNextColor() {
@@ -3878,7 +3878,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.3</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.4</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

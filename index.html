@@ -1033,7 +1033,7 @@
   }
 </script>
 
-<script src="puzzles-v8_9.js"></script> <!-- //UPDATE: puzzle file version -->
+<script src="puzzles-v8_8.js"></script> <!-- //UPDATE: puzzle file version -->
 <script>
 /* =====================================================================
    PUZZLE LIBRARY — VERSION 1.4  //UPDATE: version number
@@ -1075,7 +1075,7 @@ if (window.location.search.includes('reset')) {
 }
 
 // Cache-busting: if build version has changed, force a fresh reload
-const BUILD = '2026-09-18-v1.4';   //UPDATE: build force fresh reload
+const BUILD = '2026-09-21-v2.0';   //UPDATE: build force fresh reload
 if (localStorage.getItem('canofwords_build') !== BUILD) {
   localStorage.setItem('canofwords_build', BUILD);
   if (localStorage.getItem(STORAGE_KEY)) location.reload(true);
@@ -1083,7 +1083,19 @@ if (localStorage.getItem('canofwords_build') !== BUILD) {
 
 const savedState = loadState();
 // UTF-8 safe base64 decode — supports symbols beyond Latin-1 (card suits, arrows, stars, etc.)
-function b64ToUtf8(str) { return decodeURIComponent(escape(atob(str))); }
+function b64ToUtf8(str) {
+  const bin = atob(str);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+// Emoji support (v2.0): grapheme-safe splitting — handles surrogate pairs, skin-tone modifiers, ZWJ sequences, flags
+function splitGraphemes(str) {
+  const seg = new Intl.Segmenter('en', { granularity: 'grapheme' });
+  return Array.from(seg.segment(str), s => s.segment);
+}
+function toLetters(sentence) {
+  return splitGraphemes(sentence.replaceAll(' ', ''));
+}
 // Decode Base64 sentence early so all code can use it
 if (PUZZLE && !PUZZLE._decoded) { PUZZLE.sentence = b64ToUtf8(PUZZLE.sentence); PUZZLE._decoded = true; }
 let ACTIVE_PUZZLE = PUZZLE;
@@ -1144,7 +1156,7 @@ if (PUZZLE && PUZZLE.sentence.includes('|')) {
 
 let ACTIVE_PATH = null; // set after PATH is generated
 const TODAY_PUZZLE = PUZZLE; // immutable reference to today's puzzle
-const LETTERS = PUZZLE ? PUZZLE.sentence.replaceAll(' ','') : '';
+const LETTERS = PUZZLE ? toLetters(PUZZLE.sentence) : []; // v2.0: array of graphemes, not a plain string
 
 function hashString(str) {
   let h = 2166136261 >>> 0;
@@ -1186,7 +1198,7 @@ const SEED = getSeed();
 const alpha = 'abcdefghijklmnopqrstuvwxyz';
 
 function buildGridForPuzzle(sentence, dateKey) {
-  const letters = sentence.replaceAll(' ', '');
+  const letters = toLetters(sentence); // v2.0: grapheme-safe, matches top-level LETTERS logic
   const seed = hashString(`${dateKey}-${sentence}`);
   const path = genPath(letters.length, seed, true);
   const g = Array.from({length:8}, () => Array(8).fill(''));
@@ -1472,7 +1484,7 @@ function applyHint1() {
 
 function applyHint2() {
   // Show word lengths in sentence header
-  const lengths = ACTIVE_PUZZLE.sentence.trim().split(/\s+/).map(w => w.length);
+  const lengths = ACTIVE_PUZZLE.sentence.trim().split(/\s+/).map(w => toLetters(w).length); // v2.0: grapheme-aware, not UTF-16 length
   document.getElementById('hint2Text').textContent =
     `Lengths: ${lengths.join(' · ')}`;
 }
@@ -1494,7 +1506,7 @@ function applyHint4() {
   const firstLetterIndices = new Set();
   words_in_sentence.forEach(word => {
     firstLetterIndices.add(letterIdx);
-    letterIdx += word.length;
+    letterIdx += toLetters(word).length; // v2.0: must match LETTERS' grapheme-based indexing, not UTF-16 length
   });
 
   // Mark the path cells that are first letters
@@ -3878,7 +3890,7 @@ if (PUZZLE) {
       <div id="shareArea" style="display:none">
         <button id="shareBtn" style="font-family:'Quicksand',system-ui,sans-serif;font-size:10px;padding:4px 10px;cursor:pointer;background:#d0eacc;border:none;border-radius:6px;box-shadow:0 1px 0 #7ab870;font-weight:600;">📤 Share</button>
       </div>
-      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v1.4</span> <!-- //UPDATE: version display -->
+      <span style="font-size:9px;opacity:0.2;letter-spacing:0.03em">v2.0</span> <!-- //UPDATE: version display -->
       </div>
     <a onclick="localStorage.removeItem('canofwords_state');location.reload();" style="font-size:10px;opacity:0.35;cursor:pointer;color:var(--text-main);text-decoration:underline;letter-spacing:0.02em">Not seeing today's puzzle?</a>
   </div>

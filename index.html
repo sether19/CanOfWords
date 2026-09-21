@@ -1057,9 +1057,9 @@ function getDayIndex(dateKey) {
 }
 
 const TODAY_KEY  = getTodayKey();
-const PUZZLE_IDX = Math.max(0, Math.min(getDayIndex(TODAY_KEY), PUZZLES.length - 1));
+const PUZZLE_IDX = Math.max(0, getDayIndex(TODAY_KEY)); // v2.0: no upper clamp — let index run past the end of PUZZLES
 const PUZZLE_NUM = PUZZLE_IDX + 1;
-const PUZZLE     = PUZZLES[PUZZLE_IDX];
+const PUZZLE     = (PUZZLE_IDX < PUZZLES.length) ? PUZZLES[PUZZLE_IDX] : undefined; // v2.0: genuinely undefined once content runs out, so the season-end modal actually fires
 
 /* =====================================================================
    PERSISTENCE

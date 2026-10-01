@@ -198,9 +198,18 @@ const PUZZLES = [
     { clue: 'Odometer', sentence: 'ZGV2aWNlIHRoYXQgdHJhY2tzIHRoZSB0b3RhbCBkaXN0YW5jZSBhIGNhciBoYXMgdHJhdmVsZWQ=', type: 'regular', par: 2 }, // Tue Sep 29
     { clue: 'Satellite', sentence: 'b2JqZWN0IG9yYml0aW5nIGEgcGxhbmV0IHRoYXQgcmVsYXlzIHNpZ25hbHM=', type: 'regular', par: 2 }, // Wed Sep 30
     { clue: 'Aquarium', sentence: 'Z2xhc3MgdGFuayB0aGF0IGhvdXNlcyBmaXNoIGFuZCBvdGhlciBhcXVhdGljIGxpZmU=', type: 'regular', par: 2 }, // Thu Oct 1
-    { clue: 'Straight Flush!', sentence: 'YWNlIG9mIOKZpu+4jyB0d28gb2Yg4pmm77iPIHRocmVlIG9mIOKZpu+4jyBmb3VyIG9mIOKZpu+4jyBmaXZlIG9mIOKZpu+4jw==', type: 'playful', par: 2 }, // Fri Oct 2
-    { clue: 'Weather Report?', sentence: 'c3Vubnkg4piA77iPIGNsb3VkeSDimIHvuI8gcmFpbnkg8J+Mp++4jyBzbm93eSDinYTvuI8=', type: 'playful', par: 2 }, // Sat Oct 3
+    { clue: 'Flush?', sentence: 'Zml2ZSBvZiDimabvuI8gdGVuIG9mIOKZpu+4jyBmb3VyIG9mIOKZpu+4jyBlaWdodCBvZiDimabvuI8gcXVlZW4gb2Yg4pmm77iP', type: 'playful', par: 2 },
+    { clue: 'Fall Activity?', sentence: 'Y2FydmUgYSBzcG9va3kg8J+OgyBmb3IgaGFsbG93ZWVuIG5pZ2h0', type: 'regular', par: 2 },
     { clue: 'Tie;', sentence: 'a25vdHRlZCBuZWNrd2VhciB3b3JuIHdpdGggYSBzdWl0IGVxdWFsIHNjb3JlIGluIGEgZ2FtZQ==', type: 'sunday', par: 2 }, // Sun Oct 4
+
+        // ── WEEK 23 (Oct 5) ────────────────────────────────
+{ clue: 'Yo-Yo', sentence: 'dG95IG9uIGEgc3RyaW5nIHRoYXQgZHJvcHMg4qyH77iPIHRoZW4gY2xpbWJzIGJhY2sg4qyG77iP', type: 'regular', par: 2 },
+{ clue: 'Butterfly', sentence: 'aW5zZWN0IHRoYXQgc3RhcnRzIGFzIGEg8J+QmyBiZWZvcmUgZ3Jvd2luZyBjb2xvcmZ1bCB3aW5ncw==', type: 'regular', par: 2 },
+{ clue: 'Popcorn', sentence: 'Zmx1ZmZ5IHNuYWNrIG1hZGUgZnJvbSDwn4y9IHRoYXQgcHVmZnMgdXAgd2hlbiBoZWF0ZWQ=', type: 'regular', par: 2 },
+    { clue: '----', sentence: '----', type: 'regular', par: 2 }, // Thu Oct 1
+{ clue: 'Stoplight!', sentence: '8J+UtCBtZWFucyBzdG9wIPCfn6EgbWVhbnMgc2xvdyBhbmQg8J+foiBtZWFucyBnbw==', type: 'playful', par: 2 },
+{ clue: 'Fenway?', sentence: 'YmFzZWJhbGwgc3RhZGl1bSBsb2NhdGVkIGluIGJvc3RvbiB3aXRoIGEg8J+foiBtb25zdGVy', type: 'playful', par: 2 },
+    { clue: '---;', sentence: '----', type: 'sunday', par: 2 }, // Sun Oct 4
 
     // ── WEEK # (####) ── TEMPLATE ───────────────────────
     // { clue: 'mmmmm',      sentence: 'bW1tbW0=',              type: 'regular', par: 2 }, // Mon

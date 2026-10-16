@@ -222,20 +222,20 @@ const PUZZLES = [
 
     // ── WEEK 25 (Oct 19) ───────────────────────────────
     { clue: "Wheelbarrow", sentence: 'd2hlZWxlZCBnYXJkZW4gY2FydCBwdXNoZWQgYnkgMu+4j+KDoyBoYW5kbGVzIHRvIGhhdWwgZGlydA==', type: 'regular', par: 2 }, // Mon Oct 19
-    { clue: "Raccoon", sentence: 'bWFza2VkIG5vY3R1cm5hbCBiYW5kaXQga25vd24gZm9yIHJhaWRpbmcg8J+Xke+4jyBhdCBuaWdodA==', type: 'regular', par: 2 }, // Tue Oct 20
+    { clue: "Raccoon", sentence: 'bWFza2VkIG5vY3R1cm5hbCBiYW5kaXQga25vd24gZm9yIHJhaWRpbmcg8J+Xke+4jyBhdCBuaWdodA==', type: 'regular', par: 1 }, // Tue Oct 20
     { clue: "Trampoline", sentence: 'c3ByaW5neSBtYXQgc3RyZXRjaGVkIGFjcm9zcyBhIGZyYW1lIGZvciBib3VuY2luZyBoaWdo', type: 'regular', par: 2 }, // Wed Oct 21
     { clue: "Stethoscope", sentence: 'c3BlY2lhbCB0b29sIGEgZG9jdG9yIHVzZXMgdG8gbGlzdGVuIHRvIHlvdXIg4p2k77iPIGJlYXQ=', type: 'regular', par: 2 }, // Thu Oct 22
-    { clue: "Sandwich!", sentence: 'cmV1YmVuIGNsdWIgY3ViYW4gZ3JpbGxlZCBjaGVlc2UgcG8gYm95IGhvYWdpZSBwYW5pbmkgZ3lybw==', type: 'playful', par: 2 }, // Fri Oct 23
+    { clue: "Sandwich!", sentence: 'cmV1YmVuIGNsdWIgY3ViYW4gZ3JpbGxlZCBjaGVlc2UgcG8gYm95IGhvYWdpZSBwYW5pbmkgZ3lybw==', type: 'playful', par: 3 }, // Fri Oct 23
     { clue: "Hot Cider?", sentence: 'd2FybSDwn42OIGRyaW5rIHlvdSBvbmx5IHJlbWVtYmVyIGV4aXN0cyBhdCBmYWxsIGZlc3RpdmFscw==', type: 'playful', par: 2 }, // Sat Oct 24
     { clue: "Pen;", sentence: 'dG9vbCBmb3Igd3JpdGluZyBpbiBpbmsgZmVuY2VkIGVuY2xvc3VyZSBmb3Ig8J+QtyBvciBzaGVlcA==', type: 'sunday', par: 2 }, // Sun Oct 25
 
     // ── WEEK 26 (Oct 26) ───────────────────────────────
-    { clue: "Candle", sentence: 'd2F4IHN0aWNrIHdpdGggYSB3aWNrIHRoYXQgZ2l2ZXMgb2ZmIGEgc21hbGwg8J+UpQ==', type: 'regular', par: 2 }, // Mon Oct 26
+    { clue: "Candle", sentence: 'd2F4IHN0aWNrIHdpdGggYSB3aWNrIHRoYXQgZ2l2ZXMgb2ZmIGEgc21hbGwg8J+UpQ==', type: 'regular', par: 1 }, // Mon Oct 26
     { clue: "Mummy", sentence: 'YW5jaWVudCBlZ3lwdGlhbiBib2R5IHdyYXBwZWQgaGVhZCB0byB0b2UgaW4gbGluZW4gYmFuZGFnZXM=', type: 'regular', par: 2 }, // Tue Oct 27
-    { clue: "Broomstick", sentence: 'YnJpc3RsZWQgc3dlZXBpbmcgdG9vbCB0aGF0IGRvdWJsZXMgYXMgYSDwn6eZ4oCN4pmA77iPIHJpZGU=', type: 'regular', par: 2 }, // Wed Oct 28
+    { clue: "Broomstick", sentence: 'YnJpc3RsZWQgc3dlZXBpbmcgdG9vbCB0aGF0IGRvdWJsZXMgYXMgYSDwn6eZ4oCN4pmA77iPIHRyYW5zcG9ydA==', type: 'regular', par: 2 }, // Wed Oct 28
     { clue: "Werewolf", sentence: 'cGVyc29uIHdobyB0dXJucyBpbnRvIGEg8J+QuiB1bmRlciB0aGUgbGlnaHQgb2YgYSBmdWxsIPCfjJU=', type: 'regular', par: 2 }, // Thu Oct 29
     { clue: "Costume!", sentence: 'd2l0Y2ggZ2hvc3QgdmFtcGlyZSB6b21iaWUgc3VwZXJoZXJvIHByaW5jZXNzIGRpbm9zYXVyIGNhdA==', type: 'playful', par: 2 }, // Fri Oct 30
-    { clue: "Trick or Treat?", sentence: 'ZG9vcnN0ZXAgdWx0aW1hdHVtIGlzc3VlZCBieSB0aW55IHN0cmFuZ2VycyBob2xkaW5nIHBpbGxvd2Nhc2Vz', type: 'playful', par: 2 }, // Sat Oct 31
+    { clue: "Trick or Treat?", sentence: 'ZG9vcnN0ZXAgdWx0aW1hdHVtIGlzc3VlZCBieSB0aW55IHN0cmFuZ2VycyBob2xkaW5nIHBpbGxvd2Nhc2Vz', type: 'playful', par: 3 }, // Sat Oct 31
     { clue: "Squash;", sentence: 'Z291cmQgaGFydmVzdGVkIGluIGF1dHVtbiB0byBjcnVzaCBzb21ldGhpbmcgZmxhdA==', type: 'sunday', par: 2 }, // Sun Nov 1
 
     // ── WEEK # (####) ── TEMPLATE ───────────────────────

@@ -217,7 +217,7 @@ const PUZZLES = [
     { clue: 'Piggy Bank', sentence: 'Y2VyYW1pYyDwn5C3IHdpdGggYSBjb2luIHNsb3QgdXNlZCBmb3Igc2F2aW5nIHNwYXJlIGNoYW5nZQ==', type: 'regular', par: 1 }, // Wed Oct 14
     { clue: 'Haunted House', sentence: 'Y3JlYWt5IG9sZCBob21lIHNhaWQgdG8gYmUgZnVsbCBvZiDwn5G7IGFuZCBzdHJhbmdlIG5vaXNlcw==', type: 'regular', par: 3 },
     { clue: 'Apple!', sentence: 'aG9uZXljcmlzcCBnYWxhIGZ1amkgbWNpbnRvc2ggZ3Jhbm55IHNtaXRoIHBpbmsgbGFkeSBjb3J0bGFuZA==', type: 'playful', par: 2 }, // Fri Oct 16
-    { clue: 'Pumpkin Spice?', sentence: '4piVIGZsYXZvciB0aGF0IHNob3dzIHVwIGluIHNlcHRlbWJlciBhbmQgY2FsbHMgaXRzZWxmIGZhbGw=', type: 'playful', par: 2 }, // Sat Oct 17
+    { clue: 'Pumpkin Spice?', sentence: 'Zmxhdm9yIG9mIOKYlSB0aGF0IHNob3dzIHVwIGluIHNlcHRlbWJlciBhbmQgY2FsbHMgaXRzZWxmIGZhbGw=', type: 'playful', par: 2 }, // Sat Oct 17
     { clue: 'Palm;', sentence: 'aW5zaWRlIG9mIHlvdXIg4pyLIHRyb3BpY2FsIHRyZWUgdGhhdCBzd2F5cyBvbiB0aGUgYmVhY2g=', type: 'sunday', par: 2 }, // Sun Oct 18
 
     // ── WEEK # (####) ── TEMPLATE ───────────────────────

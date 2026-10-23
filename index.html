@@ -3328,7 +3328,21 @@ function checkCompletion(manual) {
   const targetSentence = ACTIVE_PUZZLE.sentence.replace(/\s+/g,' ').trim().toLowerCase();
 
   // For sunday puzzles with a | separator, accept either half order
-  let isCorrect = playerSentence === targetSentence;
+  // Accept tray words that merge consecutive target words (e.g. "poboy" for "po boy")
+  function matchesWithMerges(playerStr, targetStr) {
+    const p = playerStr.split(' ');
+    const t = targetStr.split(' ');
+    let ti = 0;
+    for (const pw of p) {
+      let acc = '';
+      while (ti < t.length && acc.length < pw.length) acc += t[ti++];
+      if (acc !== pw) return false;
+    }
+    return ti === t.length;
+  }
+
+  let isCorrect = playerSentence === targetSentence ||
+                  matchesWithMerges(playerSentence, targetSentence);
 
   if (!isCorrect) {
     // Check if this exact arrangement has been submitted before

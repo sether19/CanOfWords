@@ -2125,7 +2125,7 @@ function getArchiveStateKey(dateKey) { return 'canofwords_archive_' + dateKey; }
 
 let archiveCalendarMonth = null; // { year, month } currently displayed
 
-function updateArchiveBtn() {
+function ArchiveBtn() {
   const btn = document.getElementById('archiveBtn');
   if (!btn) return;
   // Check if ANY past puzzle (before today) is unsolved

@@ -227,7 +227,7 @@ const PUZZLES = [
     { clue: "Stethoscope", sentence: 'c3BlY2lhbCB0b29sIGEgZG9jdG9yIHVzZXMgdG8gbGlzdGVuIHRvIHlvdXIg4p2k77iPIGJlYXQ=', type: 'regular', par: 2 }, // Thu Oct 22
     { clue: "Sandwich!", sentence: 'cmV1YmVuIGNsdWIgY3ViYW4gZ3JpbGxlZCBjaGVlc2UgcG8gYm95IGhvYWdpZSBwYW5pbmkgZ3lybw==', type: 'playful', par: 3 }, // Fri Oct 23
     { clue: "Hot Cider?", sentence: 'd2FybSDwn42OIGRyaW5rIHlvdSBvbmx5IHJlbWVtYmVyIGV4aXN0cyBhdCBmYWxsIGZlc3RpdmFscw==', type: 'playful', par: 2 }, // Sat Oct 24
-    { clue: "Pen;", sentence: 'dG9vbCBmb3Igd3JpdGluZyBpbiBpbmsgZmVuY2VkIGVuY2xvc3VyZSBmb3Ig8J+QtyBvciBzaGVlcA==', type: 'sunday', par: 2 }, // Sun Oct 25
+    { clue: "Pen;", sentence: 'dG9vbCBmb3Igd3JpdGluZyBpbiBpbmsgZmVuY2VkIGVuY2xvc3VyZSBmb3Ig8J+QtyBvciBzaGVlcA==', type: 'sunday', par: 3 }, // Sun Oct 25
 
     // ── WEEK 26 (Oct 26) ───────────────────────────────
     { clue: "Candle", sentence: 'd2F4IHN0aWNrIHdpdGggYSB3aWNrIHRoYXQgZ2l2ZXMgb2ZmIGEgc21hbGwg8J+UpQ==', type: 'regular', par: 1 }, // Mon Oct 26

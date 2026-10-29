@@ -233,7 +233,7 @@ const PUZZLES = [
     { clue: "Candle", sentence: 'd2F4IHN0aWNrIHdpdGggYSB3aWNrIHRoYXQgZ2l2ZXMgb2ZmIGEgc21hbGwg8J+UpQ==', type: 'regular', par: 1 }, // Mon Oct 26
     { clue: "Mummy", sentence: 'YW5jaWVudCBlZ3lwdGlhbiBib2R5IHdyYXBwZWQgaGVhZCB0byB0b2UgaW4gbGluZW4gYmFuZGFnZXM=', type: 'regular', par: 2 }, // Tue Oct 27
     { clue: "Broomstick", sentence: 'YnJpc3RsZWQgc3dlZXBpbmcgdG9vbCB0aGF0IGRvdWJsZXMgYXMgYSDwn6eZ4oCN4pmA77iPIHRyYW5zcG9ydA==', type: 'regular', par: 2 }, // Wed Oct 28
-    { clue: "Werewolf", sentence: 'cGVyc29uIHdobyB0dXJucyBpbnRvIGEg8J+QuiB1bmRlciB0aGUgbGlnaHQgb2YgYSBmdWxsIPCfjJU=', type: 'regular', par: 2 }, // Thu Oct 29
+    { clue: "Werewolf", sentence: 'cGVyc29uIHdobyB0dXJucyBpbnRvIGEg8J+QuiB1bmRlciB0aGUgbGlnaHQgb2YgYSBmdWxsIPCfjJU=', type: 'regular', par: 1 }, // Thu Oct 29
     { clue: "Costume!", sentence: 'd2l0Y2ggZ2hvc3QgdmFtcGlyZSB6b21iaWUgc3VwZXJoZXJvIHByaW5jZXNzIGRpbm9zYXVyIGNhdA==', type: 'playful', par: 2 }, // Fri Oct 30
     { clue: "Trick or Treat?", sentence: 'ZG9vcnN0ZXAgdWx0aW1hdHVtIGlzc3VlZCBieSB0aW55IHN0cmFuZ2VycyBob2xkaW5nIHBpbGxvd2Nhc2Vz', type: 'playful', par: 3 }, // Sat Oct 31
     { clue: "Squash;", sentence: 'Z291cmQgaGFydmVzdGVkIGluIGF1dHVtbiB0byBjcnVzaCBzb21ldGhpbmcgZmxhdA==', type: 'sunday', par: 2 }, // Sun Nov 1
